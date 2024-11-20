@@ -3,8 +3,12 @@ buildscript {
         mavenCentral()
         jcenter()
         maven {
+            name = "aliyun"
+            url = "https://maven.aliyun.com/repository/public/"
+        }
+        maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net"
         }
         maven {
             name = 'sponge'
