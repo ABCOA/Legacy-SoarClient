@@ -92,22 +92,12 @@ public class MicrosoftAuthentication {
         String accessToken = Http.gson().fromJson(oauth, JsonObject.class).get("access_token").getAsString();
         String refreshToken = Http.gson().fromJson(oauth, JsonObject.class).get("refresh_token").getAsString();
         System.out.println(accessToken);
-//        JsonObject response = HttpUtils.readJson("https://login.live.com/oauth20_token.srf?client_id=d1ed1b72-9f7c-41bc-9702-365d2cbd2e38&grant_type=authorization_code&http://127.0.0.1:17342&code=" + tokenURL.toString().split("=")[1], null);
         getXboxLiveToken(accessToken, refreshToken);
     }
     
     private void getXboxLiveToken(String accessToken, String refreshToken) {
         System.out.println("getXboxLiveToken");
         JsonObject xbl = null;
-//        JsonObject properties = new JsonObject();
-//        properties.addProperty("AuthMethod", "RPS");
-//        properties.addProperty("SiteName", "user.auth.xboxlive.com");
-//        properties.addProperty("RpsTicket", "d=" + token);
-
-//        JsonObject request = new JsonObject();
-//        request.add("Properties", properties);
-//        request.addProperty("RelyingParty", "http://auth.xboxlive.com");
-//        request.addProperty("TokenType", "JWT");
         Map<String, Object> xblParams = new HashMap<>();
         Map<String, String> properties = new HashMap<>();
         properties.put("AuthMethod", "RPS");
@@ -130,22 +120,9 @@ public class MicrosoftAuthentication {
     }
     
     private void getXSTS(String xbl_token, String refreshToken) {
-//        System.out.println("getXSTS");
-//        JsonPrimitive jsonToken = new JsonPrimitive(token);
-//        JsonArray userTokens = new JsonArray();
-//        userTokens.add(jsonToken);
-//
-//        JsonObject properties = new JsonObject();
-//        properties.addProperty("SandboxId", "RETAIL");
-//        properties.add("UserTokens", userTokens);
-//
-//        JsonObject request = new JsonObject();
-//        request.add("Properties", properties);
-//        request.addProperty("RelyingParty", "rp://api.minecraftservices.com/");
-//        request.addProperty("TokenType", "JWT");
-//
-//        JsonObject response = HttpUtils.postJson("https://xsts.auth.xboxlive.com/xsts/authorize", request);
+
         JsonObject xsts = null;
+        System.out.println("1");
         Map<String, Object> xstsParams = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         properties.put("SandboxId", "RETAIL");
@@ -183,10 +160,6 @@ public class MicrosoftAuthentication {
     
     private void getMinecraftToken(String xstsUhs, String xstsToken, String refreshToken) {
         System.out.println("getMinecraftToken");
-//        JsonObject request = new JsonObject();
-//        request.addProperty("identityToken", String.format("XBL3.0 x=%s;%s", uhs, token));
-//
-//        JsonObject response = HttpUtils.postJson("https://api.minecraftservices.com/authentication/login_with_xbox", request);
         JsonObject mcJson = null;
         Map<String, Object> loginParams = new HashMap<>();
         loginParams.put("identityToken", String.format("XBL3.0 x=%s;%s", xstsUhs, xstsToken));
@@ -207,8 +180,7 @@ public class MicrosoftAuthentication {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + mcToken);
         boolean ownsMinecraft = false;
-        
-//        JsonObject request = HttpUtils.readJson("https://api.minecraftservices.com/entitlements/mcstore", headers);
+
         JsonObject response = null;
         try {
             response = Http.gson().fromJson(Http.get("https://api.minecraftservices.com/entitlements/mcstore", headers), JsonObject.class);
@@ -242,8 +214,7 @@ public class MicrosoftAuthentication {
     	File headDir = new File(fileManager.getCacheDir(), "head");
         Map<String, Object> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + token);
-        
-//        JsonObject request = HttpUtils.readJson("https://api.minecraftservices.com/minecraft/profile", headers);
+
         JsonObject response = null;
         try {
             response = Http.gson().fromJson(Http.get("https://api.minecraftservices.com/minecraft/profile", headers), JsonObject.class);
