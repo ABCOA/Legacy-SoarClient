@@ -1,25 +1,8 @@
 package me.eldodebug.soar.gui.mainmenu;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.lwjgl.input.Mouse;
-
 import me.eldodebug.soar.Soar;
-import me.eldodebug.soar.gui.mainmenu.impl.AccountScene;
-import me.eldodebug.soar.gui.mainmenu.impl.BackgroundScene;
-import me.eldodebug.soar.gui.mainmenu.impl.MainScene;
-import me.eldodebug.soar.gui.mainmenu.impl.MicrosoftLoginScene;
-import me.eldodebug.soar.gui.mainmenu.impl.ShopScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.AccentColorSelectScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.CheckingDataScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.FirstLoginScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.LastMessageScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.LoginMessageScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.ThemeSelectScene;
-import me.eldodebug.soar.gui.mainmenu.impl.welcome.WelcomeMessageScene;
+import me.eldodebug.soar.gui.mainmenu.impl.*;
+import me.eldodebug.soar.gui.mainmenu.impl.welcome.*;
 import me.eldodebug.soar.management.account.Account;
 import me.eldodebug.soar.management.account.AccountManager;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
@@ -38,6 +21,13 @@ import me.eldodebug.soar.utils.mouse.MouseUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class GuiSoarMainMenu extends GuiScreen {
 
@@ -349,10 +339,11 @@ public class GuiSoarMainMenu extends GuiScreen {
 			}
 		}
 		
-		currentScene.mouseClicked(mouseX, mouseY, mouseButton);
+
 		try {
+			currentScene.mouseClicked(mouseX, mouseY, mouseButton);
 			super.mouseClicked(mouseX, mouseY, mouseButton);
-		} catch (IOException e) {}
+		} catch (IOException | URISyntaxException e) {}
 	}
 	
 	@Override

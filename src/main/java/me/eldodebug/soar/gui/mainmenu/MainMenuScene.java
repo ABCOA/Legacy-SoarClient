@@ -1,9 +1,11 @@
 package me.eldodebug.soar.gui.mainmenu;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import net.minecraft.client.Minecraft;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class MainMenuScene {
 
@@ -22,7 +24,7 @@ public class MainMenuScene {
 	
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {}
 	
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {}
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException, URISyntaxException {}
 	
 	public void keyTyped(char typedChar, int keyCode) {}
 	
