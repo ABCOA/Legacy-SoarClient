@@ -1,8 +1,5 @@
 package me.eldodebug.soar.gui.mainmenu.impl;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.mainmenu.GuiSoarMainMenu;
 import me.eldodebug.soar.gui.mainmenu.MainMenuScene;
@@ -12,6 +9,11 @@ import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.mcef.Mcef;
 import me.eldodebug.soar.mcef.McefBrowser;
 import me.eldodebug.soar.utils.Multithreading;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import java.awt.*;
+import java.net.URI;
 
 public class MicrosoftLoginScene extends MainMenuScene {
 
@@ -30,18 +32,12 @@ public class MicrosoftLoginScene extends MainMenuScene {
 	
 	@Override
 	public void initScene() {
-		
-    	if(browser == null) {
-    		
-	        String url = "https://login.live.com/oauth20_authorize.srf?client_id=00000000402b5328&response_type=code&redirect_uri=https://login.live.com/oauth20_desktop.srf&scope=XboxLive.signin%20offline_access&prompt=login";
-	        boolean transparent = false;
-	        
-	        browser = Mcef.createBrowser(url, transparent);
-    	}
-		
-        if(browser != null) {
-        	resizeBrowser();
-        }
+		try {
+			String url = "https://login.live.com/oauth20_authorize.srf?client_id=d1ed1b72-9f7c-41bc-9702-365d2cbd2e38&response_type=code&redirect_uri=http://127.0.0.1:17342&scope=XboxLive.signin%20offline_access&prompt=login";
+			Desktop.getDesktop().browse(new URI(url));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
     @Override

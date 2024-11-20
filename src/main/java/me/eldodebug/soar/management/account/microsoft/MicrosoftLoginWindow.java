@@ -1,15 +1,5 @@
 package me.eldodebug.soar.management.account.microsoft;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.Proxy;
-import java.net.URL;
-import java.net.URLConnection;
-
-import javax.swing.JFrame;
-
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
@@ -18,6 +8,15 @@ import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.account.AccountManager;
 import sun.net.www.protocol.https.Handler;
+
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class MicrosoftLoginWindow extends JFrame {
 
@@ -54,7 +53,7 @@ public class MicrosoftLoginWindow extends JFrame {
         });
 
         webView.getEngine().setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36");
-        webView.getEngine().load("https://login.live.com/oauth20_authorize.srf?client_id=00000000402b5328&response_type=code&redirect_uri=https://login.live.com/oauth20_desktop.srf&scope=XboxLive.signin%20offline_access&prompt=login");
+        webView.getEngine().load("https://login.live.com/oauth20_authorize.srf?client_id=d1ed1b72-9f7c-41bc-9702-365d2cbd2e38&response_type=code&redirect_uri=http://127.0.0.1:17342&scope=XboxLive.signin%20offline_access&prompt=login");
         content.setScene(new Scene(webView, this.getWidth(), this.getHeight()));
         this.setVisible(true);
     }

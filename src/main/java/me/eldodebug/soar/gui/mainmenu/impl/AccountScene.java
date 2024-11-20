@@ -1,13 +1,5 @@
 package me.eldodebug.soar.gui.mainmenu.impl;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.imageio.ImageIO;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.mainmenu.GuiSoarMainMenu;
 import me.eldodebug.soar.gui.mainmenu.MainMenuScene;
@@ -30,6 +22,14 @@ import me.eldodebug.soar.utils.mouse.MouseUtils;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Session;
+import org.lwjgl.input.Keyboard;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class AccountScene extends MainMenuScene {
 
@@ -97,7 +97,7 @@ public class AccountScene extends MainMenuScene {
 	}
 	
 	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException, URISyntaxException {
 		
 		ScaledResolution sr = new ScaledResolution(mc);
 		
@@ -176,11 +176,7 @@ public class AccountScene extends MainMenuScene {
 			}
 			
 			if(MouseUtils.isInside(mouseX, mouseY, acX + 10, acY + 29, 200, 30)) {
-				if(Mcef.isInitialized()) {
-					this.setCurrentScene(this.getSceneByClass(MicrosoftLoginScene.class));
-				} else {
-					accountManager.getAuthenticator().loginWithPopUpWindow(getAfterLoginRunnable());
-				}
+				accountManager.getAuthenticator().loginWithPopUpWindow(getAfterLoginRunnable());
 			}
 		}
 		
