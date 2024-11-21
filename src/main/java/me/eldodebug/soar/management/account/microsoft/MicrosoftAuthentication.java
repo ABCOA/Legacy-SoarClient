@@ -39,20 +39,31 @@ public class MicrosoftAuthentication {
 	
 	public void loginWithRefreshToken(String refreshToken) {
         System.out.println("loginWithRefreshToken");
-//        JsonObject response = HttpUtils.readJson("https://login.live.com/oauth20_token.srf?client_id=d1ed1b72-9f7c-41bc-9702-365d2cbd2e38&grant_type=refresh_token&refresh_token=" + refreshToken, null);
+
+        // 构建请求参数
+        Map<String, String> params = new HashMap<>();
+        params.put("client_id", "d1ed1b72-9f7c-41bc-9702-365d2cbd2e38");
+        params.put("grant_type", "refresh_token");
+        params.put("refresh_token", refreshToken);
+
         JsonObject response = null;
         try {
-            response = Http.gson().fromJson(Http.postURL("https://login.live.com/oauth20_token.srf?client_id=d1ed1b72-9f7c-41bc-9702-365d2cbd2e38&grant_type=refresh_token&refresh_token=" + refreshToken, null), JsonObject.class);
-        } catch (IOException e) {
+            // 发送POST请求
+            response = Http.gson().fromJson(Http.postURL("https://login.live.com/oauth20_token.srf", params), JsonObject.class);
+        } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        if(response.get("access_token") == null) {
-        	return;
         }
 
-        getXboxLiveToken(response.get("access_token").getAsString(), refreshToken);
+        // 检查响应是否包含access_token
+        if (response != null && response.has("access_token")) {
+            String accessToken = response.get("access_token").getAsString();
+            System.out.println("Access Token: " + accessToken);
+            // 继续处理access_token
+            getXboxLiveToken(accessToken, refreshToken);
+        } else {
+            System.out.println("Failed to obtain access token");
+        }
+
 	}
 	
 	public void loginWithUrl(String url) {
