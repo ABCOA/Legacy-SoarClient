@@ -5,6 +5,7 @@ import me.eldodebug.soar.gui.mainmenu.impl.*;
 import me.eldodebug.soar.gui.mainmenu.impl.welcome.*;
 import me.eldodebug.soar.management.account.Account;
 import me.eldodebug.soar.management.account.AccountManager;
+import me.eldodebug.soar.management.account.AccountType;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.event.impl.EventRenderNotification;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
@@ -330,7 +331,11 @@ public class GuiSoarMainMenu extends GuiScreen {
 						}
 						
 						if(MouseUtils.isInside(mouseX, mouseY, 6, 6 + offsetY, maxUserWidth + 20, 20)) {
-							accountManager.getAuthenticator().loginWithRefreshToken(acc.getRefreshToken());
+							if (acc.getType() == AccountType.MICROSOFT) {
+								accountManager.getAuthenticator().loginWithRefreshToken(acc.getRefreshToken());
+							} else {
+								accountManager.setCurrentAccount(acc);
+							}
 						}
 						
 						offsetY+=20;
