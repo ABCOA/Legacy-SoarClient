@@ -127,7 +127,6 @@ public class Http {
         }
 
         int responseCode = connection.getResponseCode();
-        System.out.println("GET Response Code: " + responseCode);
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {

@@ -38,8 +38,6 @@ public class MicrosoftAuthentication {
 	}
 	
 	public void loginWithRefreshToken(String refreshToken) {
-        System.out.println("loginWithRefreshToken");
-
         // 构建请求参数
         Map<String, String> params = new HashMap<>();
         params.put("client_id", "d1ed1b72-9f7c-41bc-9702-365d2cbd2e38");
@@ -57,7 +55,6 @@ public class MicrosoftAuthentication {
         // 检查响应是否包含access_token
         if (response != null && response.has("access_token")) {
             String accessToken = response.get("access_token").getAsString();
-            System.out.println("Access Token: " + accessToken);
             // 继续处理access_token
             getXboxLiveToken(accessToken, refreshToken);
         } else {
@@ -68,20 +65,16 @@ public class MicrosoftAuthentication {
 	
 	public void loginWithUrl(String url) {
 		try {
-            System.out.println("loginWithUrl");
 			getMicrosoftToken(new URL(url));
 		} catch (MalformedURLException e) {}
 	}
 	
 	public void loginWithPopUpWindow(Runnable afterLogin) throws URISyntaxException, IOException {
 		new MicrosoftLoginBrowser(afterLogin);
-        System.out.println("loginWithPopUpWindow");
 	}
 	
     private void getMicrosoftToken(URL tokenURL) {
-        System.out.println("Token URL: " + tokenURL.toString());
         String code = tokenURL.toString();
-
 
         code = code.substring(code.lastIndexOf('=') + 1);
         String token = "https://login.live.com/oauth20_token.srf";
@@ -98,16 +91,13 @@ public class MicrosoftAuthentication {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        System.out.println("oauth:"+oauth);
 
         String accessToken = Http.gson().fromJson(oauth, JsonObject.class).get("access_token").getAsString();
         String refreshToken = Http.gson().fromJson(oauth, JsonObject.class).get("refresh_token").getAsString();
-        System.out.println(accessToken);
         getXboxLiveToken(accessToken, refreshToken);
     }
     
     private void getXboxLiveToken(String accessToken, String refreshToken) {
-        System.out.println("getXboxLiveToken");
         JsonObject xbl = null;
         Map<String, Object> xblParams = new HashMap<>();
         Map<String, String> properties = new HashMap<>();
@@ -133,7 +123,6 @@ public class MicrosoftAuthentication {
     private void getXSTS(String xbl_token, String refreshToken) {
 
         JsonObject xsts = null;
-        System.out.println("1");
         Map<String, Object> xstsParams = new HashMap<>();
         Map<String, Object> properties = new HashMap<>();
         properties.put("SandboxId", "RETAIL");
@@ -170,7 +159,6 @@ public class MicrosoftAuthentication {
     }
     
     private void getMinecraftToken(String xstsUhs, String xstsToken, String refreshToken) {
-        System.out.println("getMinecraftToken");
         JsonObject mcJson = null;
         Map<String, Object> loginParams = new HashMap<>();
         loginParams.put("identityToken", String.format("XBL3.0 x=%s;%s", xstsUhs, xstsToken));
@@ -187,7 +175,6 @@ public class MicrosoftAuthentication {
     }
     
     private void checkMinecraftOwnership(String mcToken, String refreshToken) {
-        System.out.println("checkMinecraftOwnership");
         Map<String, Object> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + mcToken);
         boolean ownsMinecraft = false;
@@ -198,7 +185,6 @@ public class MicrosoftAuthentication {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(response);
         if (response != null && response.has("items")) {
             for (JsonElement item : response.getAsJsonArray("items")) {
                 String itemName = item.getAsJsonObject().get("name").getAsString();
@@ -218,7 +204,6 @@ public class MicrosoftAuthentication {
     }
     
     private void getMinecraftProfile(String token, String refreshToken) {
-        System.out.println("getMinecraftProfile");
     	Soar instance = Soar.getInstance();
     	AccountManager accountManager = instance.getAccountManager();
     	FileManager fileManager = instance.getFileManager();
@@ -254,8 +239,6 @@ public class MicrosoftAuthentication {
     }
 
     private void check() {
-        System.out.println("check");
-
         Soar instance = Soar.getInstance();
         SoarAPI api = Soar.getInstance().getApi();
         CapeManager capeManager = instance.getCapeManager();
