@@ -1,10 +1,10 @@
 package me.eldodebug.soar.management.mods;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import me.eldodebug.soar.management.mods.impl.*;
 import me.eldodebug.soar.management.mods.settings.Setting;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ModManager {
 
@@ -25,6 +25,7 @@ public class ModManager {
 		mods.add(new BowZoomMod());
 		mods.add(new BreadcrumbsMod());
 		mods.add(new CalendarMod());
+		mods.add(new ChatCopyMod());
 		mods.add(new ChatMod());
 		mods.add(new ChatTranslateMod());
 		mods.add(new ChunkAnimatorMod());

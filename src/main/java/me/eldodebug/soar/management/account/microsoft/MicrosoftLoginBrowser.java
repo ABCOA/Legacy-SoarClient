@@ -40,12 +40,9 @@ public class MicrosoftLoginBrowser {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(17342), 0);
         httpServer.createContext("/", exchange -> {
             String query = exchange.getRequestURI().getQuery();
-            System.out.println(query);
             URL tokenUrl = new URL("http://127.0.0.1:17342/?"+query);
-            System.out.println("get1");
             getMicrosoftToken(tokenUrl);
-            System.out.println("get3");
-            String success = "Success";
+            String success = "Success! You can now close this window.";
             exchange.sendResponseHeaders(200, success.length());
             OutputStream responseBody = exchange.getResponseBody();
             responseBody.write(success.getBytes(StandardCharsets.UTF_8));
@@ -54,11 +51,9 @@ public class MicrosoftLoginBrowser {
         });
         httpServer.setExecutor(null);
         httpServer.start();
-        System.out.println("HTTP server started");
     }
 
     private void getMicrosoftToken(URL url) {
-        System.out.println("get2");
         AccountManager accountManager = Soar.getInstance().getAccountManager();
         accountManager.getAuthenticator().loginWithUrl(url.toString());
         accountManager.save();
