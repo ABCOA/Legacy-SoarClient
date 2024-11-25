@@ -142,8 +142,9 @@ public enum TranslateText {
 	LOADING("text.loading"), PING_DISPLAY("text.pingdisplay.name"), PING_DISPLAY_DESCRIPTION("text.pingdisplay.description"), SESSION_INFO("text.sessioninfo.name"), SESSION_INFO_DESCRIPTION("text.sessioninfo.description"), MINEMEN("text.minemen.name"),
 	MINEMEN_DESCRIPTION("text.minemen.description"), CLIPBOARD("text.clipboard"), VIA_VERSION("text.viaversion.name"), VIA_VERSION_DESCRIPTION("text.viaversion.description"), WEB_BROWSER("text.webbrowser.name"), WEB_BROWSER_DESCRIPTION("text.webbrowser.description"),
 	REQUIRED_FILE_MISSING("text.requiredfilemissing"), GODBRIDGE_ASSIST("text.godbridgeassist.name"), GODBRIDGE_ASSIST_DESCRIPTION("text.godbridgeassist.description"), ENTITY_CULLING("text.entityculling.name"), ENTITY_CULLING_DESCRIPTIONN("text.entityculling.description"),
-	DISTANCE("text.distance"), DISCORD_RPC("text.discordrpc.name"), DISCORD_RPC_DESCRIPTION("text.discordrpc.description"), HIDE_ARMOR_STAND("text.hidearmorstand"), REMOVE_BOT("text.removebot"), PARTICLE("text.particle"), LIGHT("text.light"), DARK("text.dark");
-	
+	DISTANCE("text.distance"), DISCORD_RPC("text.discordrpc.name"), DISCORD_RPC_DESCRIPTION("text.discordrpc.description"), HIDE_ARMOR_STAND("text.hidearmorstand"), REMOVE_BOT("text.removebot"), PARTICLE("text.particle"), LIGHT("text.light"), DARK("text.dark"),
+	RESOURCE_COUNTER("text.resourcecounter.name"), RESOURCE_COUNTER_DESCRIPTION("text.resourcecounter.description");
+
 	private String key, text;
 	
 	private TranslateText(String key) {

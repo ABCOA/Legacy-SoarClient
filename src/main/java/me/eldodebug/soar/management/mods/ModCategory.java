@@ -10,7 +10,9 @@ public enum ModCategory {
 	RENDER(TranslateText.RENDER),
 	HUD(TranslateText.HUD),
 	WORLD(TranslateText.WORLD),
+	HYPIXEL(TranslateText.HYPIXEL),
 	OTHER(TranslateText.OTHER);
+
 	
 	private TranslateText nameTranslate;
 	private ColorAnimation textColorAnimation;

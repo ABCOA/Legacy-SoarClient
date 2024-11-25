@@ -1,5 +1,6 @@
 package me.eldodebug.soar.management.mods;
 
+import me.eldodebug.soar.management.ResourceCounterMod;
 import me.eldodebug.soar.management.mods.impl.*;
 import me.eldodebug.soar.management.mods.settings.Setting;
 
@@ -109,6 +110,7 @@ public class ModManager {
 		mods.add(new ReachCirclesMod());
 		mods.add(new ReachDisplayMod());
 		mods.add(new RearviewMod());
+		mods.add(new ResourceCounterMod());
 		mods.add(new ScoreboardMod());
 		mods.add(new ServerIPDisplayMod());
 		mods.add(new SessionInfoMod());
