@@ -1,9 +1,5 @@
 package me.eldodebug.soar.utils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -11,18 +7,15 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemPotion;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.item.*;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PlayerUtils {
 	
@@ -66,6 +59,22 @@ public class PlayerUtils {
 		}
 		
 		return false;
+	}
+
+	public static int countItem(Item item) {
+
+		int count = 0;
+
+		for(int i = 0; i < 36; i++) {
+
+			ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(i);
+
+			if(itemStack != null && itemStack.getItem().equals(item)) {
+				count += itemStack.stackSize;
+			}
+		}
+
+		return count;
 	}
 	
 	public static float getSpeed() {

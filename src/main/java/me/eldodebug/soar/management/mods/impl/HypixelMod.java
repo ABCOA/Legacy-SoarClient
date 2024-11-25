@@ -1,9 +1,5 @@
 package me.eldodebug.soar.management.mods.impl;
 
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import me.eldodebug.soar.management.event.EventTarget;
 import me.eldodebug.soar.management.event.impl.EventReceivePacket;
 import me.eldodebug.soar.management.event.impl.EventSendChat;
@@ -28,6 +24,10 @@ import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraft.scoreboard.Scoreboard;
 
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class HypixelMod extends Mod {
 
 	private static HypixelMod instance;
@@ -47,7 +47,7 @@ public class HypixelMod extends Mod {
 	private HypixelGameMode currentMode;
 	
 	public HypixelMod() {
-		super(TranslateText.HYPIXEL, TranslateText.HYPIXEL_DESCRIPTION, ModCategory.OTHER);
+		super(TranslateText.HYPIXEL, TranslateText.HYPIXEL_DESCRIPTION, ModCategory.HYPIXEL);
 		
 		instance = this;
 	}
