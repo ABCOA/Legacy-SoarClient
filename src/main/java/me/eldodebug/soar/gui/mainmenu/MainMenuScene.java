@@ -1,5 +1,6 @@
 package me.eldodebug.soar.gui.mainmenu;
 
+import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import net.minecraft.client.Minecraft;
 
@@ -23,6 +24,10 @@ public class MainMenuScene {
 	public void initGui() {}
 	
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {}
+
+	public void drawScreen(int mouseX, int mouseY, float partialTicks, SimpleAnimation animation) {}
+
+	public void drawButton(NanoVGManager nvg, String text, float x, float y, int mouseX, int mouseY, SimpleAnimation animation) {}
 	
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException, URISyntaxException {}
 	
