@@ -1,15 +1,5 @@
 package me.eldodebug.soar.management.nanovg;
 
-import java.awt.Color;
-import java.io.File;
-import java.util.HashMap;
-
-import org.lwjgl.nanovg.NVGColor;
-import org.lwjgl.nanovg.NVGPaint;
-import org.lwjgl.nanovg.NanoVG;
-import org.lwjgl.nanovg.NanoVGGL2;
-import org.lwjgl.opengl.GL11;
-
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.nanovg.asset.AssetManager;
 import me.eldodebug.soar.management.nanovg.font.Font;
@@ -19,6 +9,15 @@ import me.eldodebug.soar.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.nanovg.NVGColor;
+import org.lwjgl.nanovg.NVGPaint;
+import org.lwjgl.nanovg.NanoVG;
+import org.lwjgl.nanovg.NanoVGGL2;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
+import java.io.File;
+import java.util.HashMap;
 
 public class NanoVGManager {
 
@@ -373,6 +372,10 @@ public class NanoVGManager {
 	public void scissor(float x, float y, float width, float height) {
 		NanoVG.nvgScissor(nvg, x, y, width, height);
 	}
+
+	public void intersectScissor(float x, float y, float width, float height) {
+		NanoVG.nvgIntersectScissor(nvg, x, y, width, height);
+	}
 	
 	public void drawSvg(ResourceLocation location, float x, float y, float width, float height, Color color) {
 		
@@ -628,4 +631,31 @@ public class NanoVGManager {
 	public long getContext() {
 		return nvg;
 	}
+
+	public void roundRect(float x, float y, float width, float height, float radius) {
+		NanoVG.nvgRoundedRect(nvg, x, y, width, height, radius);
+	}
+
+	public void beginPath() {
+		NanoVG.nvgBeginPath(nvg);
+	}
+
+	public void fill() {
+		NanoVG.nvgFill(nvg);
+	}
+
+	public void fillColor(Color color) {
+		NVGColor nvgColor = getColor(color);
+		NanoVG.nvgFillColor(nvg, nvgColor);
+		NanoVG.nvgFill(nvg);
+	}
+
+	public void roundedRect(float x, float y, float width, float height, float radius) {
+		NanoVG.nvgRoundedRect(nvg, x, y, width, height, radius);
+	}
+
+	public void pathWinding(int winding) {
+		NanoVG.nvgPathWinding(nvg, winding);
+	}
+
 }

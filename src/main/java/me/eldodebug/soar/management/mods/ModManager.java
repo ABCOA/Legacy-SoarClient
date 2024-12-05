@@ -71,6 +71,7 @@ public class ModManager {
 		mods.add(new ImageDisplayMod());
 		mods.add(new InventoryDisplayMod());
 		mods.add(new InventoryMod());
+		mods.add(new IRCMod());
 		mods.add(new ItemInfoMod());
 		mods.add(new ItemPhysicsMod());
 		mods.add(new Items2DMod());

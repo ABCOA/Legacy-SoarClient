@@ -2,6 +2,7 @@ package me.eldodebug.soar.management.command;
 
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.command.impl.CopyCommand;
+import me.eldodebug.soar.management.command.impl.IRCCommand;
 import me.eldodebug.soar.management.command.impl.ScreenshotCommand;
 import me.eldodebug.soar.management.command.impl.TranslateCommand;
 import me.eldodebug.soar.management.event.EventTarget;
@@ -18,6 +19,7 @@ public class CommandManager {
 		commands.add(new ScreenshotCommand());
 		commands.add(new TranslateCommand());
 		commands.add(new CopyCommand());
+		commands.add(new IRCCommand());
 		
 		Soar.getInstance().getEventManager().register(this);
 	}

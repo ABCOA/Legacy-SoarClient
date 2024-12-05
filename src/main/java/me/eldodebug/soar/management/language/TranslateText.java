@@ -143,7 +143,9 @@ public enum TranslateText {
 	MINEMEN_DESCRIPTION("text.minemen.description"), CLIPBOARD("text.clipboard"), VIA_VERSION("text.viaversion.name"), VIA_VERSION_DESCRIPTION("text.viaversion.description"), WEB_BROWSER("text.webbrowser.name"), WEB_BROWSER_DESCRIPTION("text.webbrowser.description"),
 	REQUIRED_FILE_MISSING("text.requiredfilemissing"), GODBRIDGE_ASSIST("text.godbridgeassist.name"), GODBRIDGE_ASSIST_DESCRIPTION("text.godbridgeassist.description"), ENTITY_CULLING("text.entityculling.name"), ENTITY_CULLING_DESCRIPTIONN("text.entityculling.description"),
 	DISTANCE("text.distance"), DISCORD_RPC("text.discordrpc.name"), DISCORD_RPC_DESCRIPTION("text.discordrpc.description"), HIDE_ARMOR_STAND("text.hidearmorstand"), REMOVE_BOT("text.removebot"), PARTICLE("text.particle"), LIGHT("text.light"), DARK("text.dark"),
-	RESOURCE_COUNTER("text.resourcecounter.name"), RESOURCE_COUNTER_DESCRIPTION("text.resourcecounter.description");
+	RESOURCE_COUNTER("text.resourcecounter.name"), RESOURCE_COUNTER_DESCRIPTION("text.resourcecounter.description"),
+	JOIN_SERVER("txt.joinserver"), DIRECT_CONNECT("txt.directconnect"), ADD_SERVER("txt.addserver"), EDIT("txt.edit"), DELETE("txt.delete"), REFRESH("txt.refresh"), CANCEL("txt.cancel"),
+	IRC("text.irc.name"), IRC_DESCRIPTION("text.irc.description"), IRC_CHANNEL("text.ircchannel"), IRC_CHANNEL_DESCRIPTION("text.ircchanneldescription"), IRC_NICK("text.ircnick"), IRC_NICK_DESCRIPTION("text.ircnickdescription");
 
 	private String key, text;
 	

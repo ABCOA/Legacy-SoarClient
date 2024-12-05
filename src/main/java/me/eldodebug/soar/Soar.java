@@ -1,11 +1,5 @@
 package me.eldodebug.soar;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import me.eldodebug.soar.injection.mixin.SoarTweaker;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.account.AccountManager;
@@ -31,6 +25,11 @@ import me.eldodebug.soar.utils.OptifineUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class Soar {
 
@@ -61,7 +60,7 @@ public class Soar {
 	
 	public Soar() {
 		name = "Soar";
-		version = "7.1.2";
+		version = "ABCOC's special version";
 	}
 	
 	public void start() {
