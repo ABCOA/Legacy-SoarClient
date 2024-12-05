@@ -67,15 +67,20 @@ public class MyBot extends ListenerAdapter {
     public static void stopBot() {
         if (bot != null) {
             try {
-                botThread.interrupt();
-                running = false;
+
                 bot.stopBotReconnect();
                 bot.close();
+                if (botThread != null) {
+                    botThread.interrupt();
+                    botThread.join();
+                }
+                running = false;
             } catch (Exception e) {
                 SoarLogger.error("Failed to stop IRC bot", e);
+            } finally {
+                bot = null;
+                botThread = null;
             }
-
-            bot = null;
         }
     }
 
