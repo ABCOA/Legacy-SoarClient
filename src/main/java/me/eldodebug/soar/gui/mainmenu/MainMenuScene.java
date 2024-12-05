@@ -27,7 +27,7 @@ public class MainMenuScene {
 
 	public void drawScreen(int mouseX, int mouseY, float partialTicks, SimpleAnimation animation) {}
 
-	public void drawButton(NanoVGManager nvg, String text, float x, float y, int mouseX, int mouseY, SimpleAnimation animation) {}
+	public void drawButton(NanoVGManager nvg, String text, float x, float y, int mouseX, int mouseY, int width, int height, SimpleAnimation animation) {}
 	
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException, URISyntaxException {}
 	

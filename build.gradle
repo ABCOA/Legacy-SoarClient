@@ -70,6 +70,15 @@ dependencies {
         exclude module: 'gson'
         exclude module: 'commons-io'
     }
+    dependencies {
+        embed('org.pircbotx:pircbotx:2.1') {
+            exclude module: 'launchwrapper'
+            exclude module: 'guava'
+            exclude module: 'gson'
+            exclude module: 'commons-io'
+        }
+    }
+
 }
 
 mixin {

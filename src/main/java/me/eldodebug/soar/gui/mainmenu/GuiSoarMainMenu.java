@@ -6,6 +6,7 @@ import me.eldodebug.soar.gui.mainmenu.impl.welcome.*;
 import me.eldodebug.soar.management.account.Account;
 import me.eldodebug.soar.management.account.AccountManager;
 import me.eldodebug.soar.management.account.AccountType;
+import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.event.impl.EventRenderNotification;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
@@ -107,7 +108,10 @@ public class GuiSoarMainMenu extends GuiScreen {
 			drawNanoVG(sr, instance, nvg);
 			
 			if(!isFirstLogin) {
-				drawButtons(mouseX, mouseY, sr, nvg);
+//				drawButtons(mouseX, mouseY, sr, nvg);
+				drawButton(nvg, Icon.X, sr.getScaledWidth() - 28, 6, mouseX, mouseY, 22, 22, closeFocusAnimation);
+				drawButton(nvg, Icon.IMAGE, sr.getScaledWidth() - 28 * 2, 6, mouseX, mouseY, 22, 22, backgroundSelectFocusAnimation);
+				drawButton(nvg, Icon.SHOPPING, sr.getScaledWidth() - 28 * 3, 6, mouseX, mouseY, 22, 22, shopFocusAnimation);
 			}
 		});
 		
@@ -150,21 +154,53 @@ public class GuiSoarMainMenu extends GuiScreen {
 		nvg.drawText(copyright, sr.getScaledWidth() - (nvg.getTextWidth(copyright, 9, Fonts.REGULAR)) - 4, sr.getScaledHeight() - 12, new Color(255, 255, 255), 9, Fonts.REGULAR);
 		nvg.drawText("Soar Client v" + instance.getVersion(), 4, sr.getScaledHeight() - 12, new Color(255, 255, 255), 9, Fonts.REGULAR);
 	}
+
+	private void drawButton(NanoVGManager nvg, String text, float x, float y, int mouseX, int mouseY, int width, int height, SimpleAnimation animation) {
+		boolean isHovered = MouseUtils.isInside(mouseX, mouseY, x, y, width, height);
+		Color backgroundColor = this.getBackgroundColor();
+		AccentColor currentColor = Soar.getInstance().getColorManager().getCurrentColor();
+		Color hoverColor = currentColor.getInterpolateColor(0);
+
+		animation.setAnimation(isHovered ? 1.0F : 0.0F, 10);
+
+		float animationValue = animation.getValue();
+		int red = (int) (255 - animationValue * (255 - hoverColor.getRed()));
+		int green = (int) (255 - animationValue * (255 - hoverColor.getGreen()));
+		int blue = (int) (255 - animationValue * (255 - hoverColor.getBlue()));
+		Color interpolatedColor = new Color(red, green, blue);
+
+		if (isHovered) {
+			nvg.save();
+//			nvg.scissor(x - 90, y, width, height);
+//			nvg.drawGradientCircle(mouseX, mouseY, radius, new Color(200, 200, 200), backgroundColor);
+//			float fillWidth = animation.getValue() * width; // 动态调整填充宽度
+//			nvg.drawRoundedRect(x - 90, y, fillWidth, height, 4.5F, Color.LIGHT_GRAY); // 从左到右填充
+			nvg.drawRoundedRect(x, y, width, height, 4F, Color.LIGHT_GRAY);
+			nvg.drawOutlineRoundedRect(x, y, width, height, 4F, 1F, interpolatedColor);
+		}
+		nvg.drawRoundedRect(x, y, width, height, 4F, backgroundColor);
+		if(text.equals(Icon.X)) {
+			nvg.drawCenteredText(text, x + 9F, y + 2F, interpolatedColor, 18F, Fonts.ICON);
+		} else {
+			nvg.drawCenteredText(text, x + 10F, y + 3F, interpolatedColor, 16F, Fonts.ICON);
+		}
+		nvg.restore();
+	}
 	
 	private void drawButtons(int mouseX, int mouseY, ScaledResolution sr, NanoVGManager nvg) {
-		
+
 		closeFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - 28, 6, 22, 22) ? 1.0F : 0.0F, 16);
-		
+
 		nvg.drawRoundedRect(sr.getScaledWidth() - 28, 6, 22, 22, 4, this.getBackgroundColor());
 		nvg.drawCenteredText(Icon.X, sr.getScaledWidth() - 19F, 8F, new Color(255, 255 - (int) (closeFocusAnimation.getValue() * 200), 255 - (int) (closeFocusAnimation.getValue() * 200)), 18, Fonts.ICON);
-		
+
 		backgroundSelectFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - 28 - 28, 6, 22, 22) ? 1.0F : 0.0F, 16);
-		
+
 		nvg.drawRoundedRect(sr.getScaledWidth() - 28 - 28, 6, 22, 22, 4, this.getBackgroundColor());
 		nvg.drawCenteredText(Icon.IMAGE, sr.getScaledWidth() - 19F - 26.5F, 9.5F, new Color(255 - (int) (backgroundSelectFocusAnimation.getValue() * 200), 255, 255 - (int) (backgroundSelectFocusAnimation.getValue() * 200)), 15, Fonts.ICON);
-		
+
 		shopFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - (28 * 3), 6, 22, 22) ? 1.0F : 0.0F, 16);
-		
+
 		nvg.drawRoundedRect(sr.getScaledWidth() - (28 * 3), 6, 22, 22, 4, this.getBackgroundColor());
 		nvg.drawCenteredText(Icon.SHOPPING, sr.getScaledWidth() - (26 * 3) + 4.5F, 9.5F, new Color(255 - (int) (shopFocusAnimation.getValue() * 200), 255, 255), 15, Fonts.ICON);
 	}
