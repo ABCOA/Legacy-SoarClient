@@ -1,12 +1,17 @@
 # Legacy SoarClient
 此项目是由EldoDebug开发的主要面向现代和强大的PvP客户端！  
-此Fork是由我(ABCOA)接续开发的版本。我仅为此项目爱好者，与EldoDebug无关。
+此Fork是由我(ABCOA)接续开发的版本。我仅为此项目爱好者，与EldoDebug无关。  
+[我的个人博客](https://blog.abcoc.cn)  
+[我的b站主页](https://space.bilibili.com/395383725)  
+此项目有关IRC的代码借鉴了小沙雕的hypixelhelper的在线聊天   
+[小沙雕b站主页](https://xiaoshadiao.yqloss.net/xsdb)  
+
 ## ABCOA的开发计划
 ### 短期计划：
-- [ ] 修复已知的bug （我水平不足，刚接触开发）
+- [ ] 修复已知的bug
+- [ ] 新增新代码
 ### 长期计划：
 - [ ] 深度优化代码
-- [ ] 新增新功能
 ## SoarClient的官方开发是否已经停止？
 部分是的，v8.0正在开发中，尽管进度很慢
 ## 如何启动（作为普通用户，不参与开发）
@@ -38,7 +43,11 @@ idea提供了gradle插件，可以直接导入gradle项目，并且会自动下�
 
 # Legacy SoarClient
 The project is mainly aimed at a modern and powerful PvP client developed by EldoDebug!
-This Fork is a version developed by me (ABCOA). I am only a hobbyist for this project and have nothing to do with EldoDebug.
+This Fork is a version developed by me (ABCOA). I am only a hobbyist for this project and have nothing to do with EldoDebug.  
+[My person blog](https://blog.abcoc.cn)  
+[My bilibili page](https://space.bilibili.com/395383725)  
+The IRC code of this project is borrowed from Xiaoshadiao's hypixelhelper online chat   
+[Xiaoshadiao's bilibili page](https://xiaoshadiao.yqloss.net/xsdb)
 ## ABCOA's development plan
 ### Short-term plan:
 - [ ] Fix known bugs (I have insufficient level and just started development)
