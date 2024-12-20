@@ -42,19 +42,11 @@ public class ChatClientListener extends CSCommunicator {
                                 JsonObject jo = new JsonParser().parse(s).getAsJsonObject();
                                 packet.raw = jo;
                                 packet.setFromJson(jo);
-                                // {"message":"SB","packetType":"chat","sender":"5j_XiaoShadiao","senderUUID":"Player0"}
-                                // System.out.println("Received packet " + jo + " from " + socket.getInetAddress());
-                                // 工具列表.mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[XSDChat] §" + packet.sender + "§7: §f" + packet.message));
-                                // 工具列表.mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[XSDChat] 请使用/xsdc message聊天!"));
                                 if(!packet.packetType.equals("heartbeat")) {
                                     SoarLogger.info("Received packet: " + packet.getJson());
                                 }
                                 handler.handle(packet, this);
                             } catch (Exception e) {
-//                                if(工具列表.getInstance().是否在Dev环境()) {
-//                                    System.out.println("BAD PACKET: " + new String(data.toByteArray(), StandardCharsets.UTF_8));
-//                                    e.printStackTrace();
-//                                }
                                 buffer.reset();
                                 data.reset();
                                 continue;
