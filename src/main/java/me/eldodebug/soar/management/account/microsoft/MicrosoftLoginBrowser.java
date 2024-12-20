@@ -5,11 +5,9 @@ import me.abcoc.soar.utils.netwok.Http;
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.account.AccountManager;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +34,7 @@ public class MicrosoftLoginBrowser {
         authorizeParams.put("scope", "XboxLive.signin offline_access");
 
         String authorize = Http.buildUrl("https://login.live.com/oauth20_authorize.srf", authorizeParams);
-        Desktop.getDesktop().browse(new URI(authorize));
+        openIncognitoBrowser(authorize);
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(17342), 0);
         httpServer.createContext("/", exchange -> {
             String query = exchange.getRequestURI().getQuery();
@@ -51,6 +49,20 @@ public class MicrosoftLoginBrowser {
         });
         httpServer.setExecutor(null);
         httpServer.start();
+    }
+
+    private void openIncognitoBrowser(String url) throws IOException {
+        String os = System.getProperty("os.name").toLowerCase();
+        Runtime rt = Runtime.getRuntime();
+        if (os.contains("win")) {
+            rt.exec(new String[]{"cmd", "/c", "start", "msedge", "--inprivate", "\"" + url + "\""});
+        } else if (os.contains("mac")) {
+            rt.exec(new String[]{"/usr/bin/open", "-a", "Google Chrome", "--args", "--incognito", url});
+        } else if (os.contains("nix") || os.contains("nux")) {
+            rt.exec(new String[]{"google-chrome", "--incognito", url});
+        } else {
+            throw new UnsupportedOperationException("Unsupported operating system.");
+        }
     }
 
     private void getMicrosoftToken(URL url) {
