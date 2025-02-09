@@ -15,7 +15,7 @@ public class ChatClient extends CSCommunicator {
     public static boolean isServerAvailable = false;
     public static int retryCount = 0;
     public static Minecraft mc = Minecraft.getMinecraft();
-    IRCMod ircMod = (IRCMod) Soar.getInstance().getModManager().getModByTranslateKey(TranslateText.IRC.getKey());
+    public static IRCMod ircMod = (IRCMod) Soar.getInstance().getModManager().getModByTranslateKey(TranslateText.IRC.getKey());
 
 
     public static int doWhileToken = 0;
@@ -27,7 +27,6 @@ public class ChatClient extends CSCommunicator {
             long time = System.currentTimeMillis();
             doWhileToken = currentToken = new Random().nextInt();
             SoarLogger.info("IRC client starting with token " + currentToken);
-            SoarLogger.info("Connecting to IRC server...");
             connect();
             listener = new ChatClientListener();
             sender = new ChatClientSender();
@@ -57,7 +56,7 @@ public class ChatClient extends CSCommunicator {
             listener.interrupt();
             sender.interrupt();
             try { socket.close(); } catch (IOException e) { }
-            try { sleep(30000); } catch (InterruptedException e) { }
+            try { sleep(15000); } catch (InterruptedException e) { }
             ChatClientManager.refreshChatClient();
         }
     }
@@ -85,14 +84,12 @@ public class ChatClient extends CSCommunicator {
     }
 
     public void connect() throws Exception{
-        if (socket == null) {
-            SoarLogger.info("Connecting to IRC server...");
-            try {
-                socket = new Socket("149.88.86.137", 831);
-            } catch (IOException e) {
-                SoarLogger.error("Failed to connect to IRC server, please retry later", e);
-                reconnect();
-            }
+        SoarLogger.info("Connecting to IRC server...");
+        try {
+            socket = new Socket("149.88.86.137", 831);
+        } catch (IOException e) {
+            SoarLogger.error("Failed to connect to IRC server, please retry later", e);
+            reconnect();
         }
     }
 

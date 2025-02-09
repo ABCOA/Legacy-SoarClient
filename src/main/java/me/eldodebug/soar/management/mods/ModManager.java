@@ -112,6 +112,7 @@ public class ModManager {
 		mods.add(new ReachDisplayMod());
 		mods.add(new RearviewMod());
 		mods.add(new ResourceCounterMod());
+		mods.add(new RewardClaimer());
 		mods.add(new ScoreboardMod());
 		mods.add(new ServerIPDisplayMod());
 		mods.add(new SessionInfoMod());

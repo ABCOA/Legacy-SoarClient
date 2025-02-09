@@ -1,12 +1,5 @@
 package me.eldodebug.soar.management.cape;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.cape.impl.Cape;
@@ -18,6 +11,12 @@ import me.eldodebug.soar.utils.file.FileUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class CapeManager {
 
@@ -56,8 +55,16 @@ public class CapeManager {
 		add("Italy", "flag/italy-sample.png", "flag/italy.png", true, CapeCategory.FLAG);
 		add("Japan", "flag/japan-sample.png", "flag/japan.png", true, CapeCategory.FLAG);
 		add("Korean", "flag/korean-sample.png", "flag/korean.png", true, CapeCategory.FLAG);
+		add("Qing Dynasty", "flag/qing-dynasty-sample.png", "flag/qing-dynasty.png", true, CapeCategory.FLAG);
 		add("United Kingdom", "flag/united-kingdom-sample.png", "flag/united-kingdom.png", true, CapeCategory.FLAG);
 		add("United States", "flag/united-states-sample.png", "flag/united-states.png", true, CapeCategory.FLAG);
+		add("Miku", "abcoc/miku-sample.png", "abcoc/miku.png", true, CapeCategory.ABCOC);
+		add("neko1", "nachoneko/neko1-sample.png", "nachoneko/neko1.png", true, CapeCategory.NACHONEKO);
+		add("neko2", "nachoneko/neko2-sample.png", "nachoneko/neko2.png", true, CapeCategory.NACHONEKO);
+		add("neko3", "nachoneko/neko3-sample.png", "nachoneko/neko3.png", true, CapeCategory.NACHONEKO);
+		add("neko4", "nachoneko/neko4-sample.png", "nachoneko/neko4.png", true, CapeCategory.NACHONEKO);
+		add("neko5", "nachoneko/neko5-sample.png", "nachoneko/neko5.png", true, CapeCategory.NACHONEKO);
+		add("neko6", "nachoneko/neko6-sample.png", "nachoneko/neko6.png", true, CapeCategory.NACHONEKO);
 
 		currentCape = getCapeByName("None");
 

@@ -6,8 +6,11 @@ import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.language.TranslateText;
 import me.eldodebug.soar.management.mods.Mod;
 import me.eldodebug.soar.management.mods.ModCategory;
+import me.eldodebug.soar.management.mods.settings.impl.BooleanSetting;
 
 public class IRCMod extends Mod {
+
+    private BooleanSetting closeTips = new BooleanSetting(TranslateText.CLOSE_TIPS, this, false);
 
     public IRCMod() {
         super(TranslateText.IRC, TranslateText.IRC_DESCRIPTION, ModCategory.OTHER);
@@ -30,6 +33,10 @@ public class IRCMod extends Mod {
         if (chatClient != null) {
             chatClient.stopIRC();
         }
+    }
+
+    public boolean isCloseTips() {
+        return closeTips.isToggled();
     }
 
 }

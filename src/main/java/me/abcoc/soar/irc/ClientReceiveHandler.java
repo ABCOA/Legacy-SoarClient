@@ -39,7 +39,12 @@ public class ClientReceiveHandler {
                 sender.flagHeartbeat();
                 break;
             case "tip":
-                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] 请使用.soarcmd irc message聊天"));
+                if (!ChatClient.ircMod.isCloseTips()) {
+                    mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] 请使用.soarcmd irc message聊天"));
+                }
+                break;
+            case "users_list":
+                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] §7当前在线玩家: " + packet.message));
                 break;
         }
     }

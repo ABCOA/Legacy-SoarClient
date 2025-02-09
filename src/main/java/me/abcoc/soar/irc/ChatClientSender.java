@@ -59,6 +59,14 @@ public class ChatClientSender extends CSCommunicator {
         }
     }
 
+    public void senQueryAllUsersCommand() {
+        if (ircMod.isToggled()) {
+            ChatPacket packet = new ChatPacket();
+            packet.packetType = "query_all_users";
+            send(packet);
+        }
+    }
+
     public void sendHeartbeat() {
         if (ircMod.isToggled()) {
             ChatPacket packet = new ChatPacket();
