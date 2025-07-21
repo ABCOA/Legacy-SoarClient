@@ -4,7 +4,8 @@
 [我的个人博客](https://blog.abcoc.cn)  
 [我的b站主页](https://space.bilibili.com/395383725)  
 此项目有关IRC的代码借鉴了小沙雕的hypixelhelper的在线聊天   
-[小沙雕b站主页](https://xiaoshadiao.yqloss.net/xsdb)  
+[小沙雕b站主页](https://xiaoshadiao.club/xsdb)  
+[Hypixel Helper Mod](https://xiaoshadiao.club/modrinth)  
 
 ## ABCOA的开发计划
 ### 短期计划：
