@@ -4,7 +4,8 @@
 [我的个人博客](https://blog.abcoc.cn)  
 [我的b站主页](https://space.bilibili.com/395383725)  
 此项目有关IRC的代码借鉴了小沙雕的hypixelhelper的在线聊天   
-[小沙雕b站主页](https://xiaoshadiao.yqloss.net/xsdb)  
+[小沙雕b站主页](https://xiaoshadiao.club/xsdb)  
+[Hypixel Helper Mod](https://xiaoshadiao.club/modrinth)  
 
 ## ABCOA的开发计划
 ### 短期计划：
@@ -13,7 +14,7 @@
 ### 长期计划：
 - [ ] 深度优化代码
 ## SoarClient的官方开发是否已经停止？
-部分是的，v8.0正在开发中，尽管进度很慢
+已经停止，并且已经开源。
 ## 如何启动（作为普通用户，不参与开发）
 从发布页面下载SoarClient.zip并运行start.bat（离线版）
 ## 如何设置项目（作为开发者）
@@ -55,7 +56,7 @@ The IRC code of this project is borrowed from Xiaoshadiao's hypixelhelper online
 - [ ] Deeply optimize the code
 - [ ] Add new features
 ## Has the official development of SoarClient stopped?
-Partially Yes, v8.0 is being developed, albeit very slowly
+Yes, but it's opensource now.
 ## How to launch (as an ordinary user, not involved in development)
 Download SoarClient.zip from the release page and run start.bat (offline version)
 ## How to set up the project (as a developer)
