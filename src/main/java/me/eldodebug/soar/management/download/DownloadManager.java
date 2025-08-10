@@ -1,8 +1,5 @@
 package me.eldodebug.soar.management.download;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.download.file.DownloadFile;
 import me.eldodebug.soar.management.download.file.DownloadZipFile;
@@ -10,6 +7,9 @@ import me.eldodebug.soar.management.file.FileManager;
 import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.file.FileUtils;
 import me.eldodebug.soar.utils.network.HttpUtils;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class DownloadManager {
 
@@ -23,11 +23,11 @@ public class DownloadManager {
 		
 		downloaded = false;
 		
-		downloadFiles.add(new DownloadFile("https://files.soarclient.com/ytdlp/ytdlp.exe",
+		downloadFiles.add(new DownloadFile("https://file.abcoc.uk/ytdlp.exe",
 				"ytdlp.exe", new File(fileManager.getExternalDir(), "ytdlp"), 13947126));
-		downloadFiles.add(new DownloadZipFile("https://files.soarclient.com/ytdlp/ffmpeg.zip",
+		downloadFiles.add(new DownloadZipFile("https://file.abcoc.uk/ffmpeg.zip",
 				"ffmpeg.zip", new File(fileManager.getExternalDir(), "ffmpeg"), 51986763, 147600195));
-		downloadFiles.add(new DownloadZipFile("https://files.soarclient.com/v1/data/cef/windows.zip",
+		downloadFiles.add(new DownloadZipFile("https://file.abcoc.uk/cef.zip",
 				"cef.zip", new File(fileManager.getExternalDir(), "cef"), 115822583, 265676507));
 		
 		Multithreading.runAsync(() -> startDownloads());

@@ -9,12 +9,16 @@ import me.eldodebug.soar.management.account.AccountType;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.event.impl.EventRenderNotification;
+import me.eldodebug.soar.management.language.TranslateText;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.management.notification.NotificationManager;
+import me.eldodebug.soar.management.notification.NotificationType;
 import me.eldodebug.soar.management.profile.mainmenu.impl.Background;
 import me.eldodebug.soar.management.profile.mainmenu.impl.CustomBackground;
 import me.eldodebug.soar.management.profile.mainmenu.impl.DefaultBackground;
+import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.DecelerateAnimation;
@@ -176,7 +180,7 @@ public class GuiSoarMainMenu extends GuiScreen {
 //			float fillWidth = animation.getValue() * width; // 动态调整填充宽度
 //			nvg.drawRoundedRect(x - 90, y, fillWidth, height, 4.5F, Color.LIGHT_GRAY); // 从左到右填充
 			nvg.drawRoundedRect(x, y, width, height, 4F, Color.LIGHT_GRAY);
-			nvg.drawOutlineRoundedRect(x, y, width, height, 4F, 1F, interpolatedColor);
+			nvg.drawGradientOutlineRoundedRect(x, y, width, height, 4F, 1.5F, ColorUtils.applyAlpha(currentColor.getColor1(), (int) (animation.getValue() * 255)), ColorUtils.applyAlpha(currentColor.getColor2(), (int) (animation.getValue() * 255)));
 		}
 		nvg.drawRoundedRect(x, y, width, height, 4F, backgroundColor);
 		if(text.equals(Icon.X)) {
@@ -368,8 +372,13 @@ public class GuiSoarMainMenu extends GuiScreen {
 						
 						if(MouseUtils.isInside(mouseX, mouseY, 6, 6 + offsetY, maxUserWidth + 20, 20)) {
 							if (acc.getType() == AccountType.MICROSOFT) {
-								accountManager.getAuthenticator().loginWithRefreshToken(acc.getRefreshToken());
-							} else {
+                                try {
+                                    accountManager.getAuthenticator().loginWithRefreshToken(acc.getRefreshToken());
+                                } catch (Exception e) {
+									NotificationManager notificationManager = instance.getNotificationManager();
+									notificationManager.post(TranslateText.LOGIN_FAILED, TranslateText.PLEASE_LOGIN_AGAIN, NotificationType.ERROR);
+                                }
+                            } else {
 								accountManager.setCurrentAccount(acc);
 							}
 						}

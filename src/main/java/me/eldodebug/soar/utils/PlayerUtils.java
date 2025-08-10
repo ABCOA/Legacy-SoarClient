@@ -62,18 +62,17 @@ public class PlayerUtils {
 	}
 
 	public static int countItem(Item item) {
+		if (mc.thePlayer == null || mc.thePlayer.inventory == null) {
+			return 0;
+		}
 
 		int count = 0;
-
-		for(int i = 0; i < 36; i++) {
-
+		for (int i = 0; i < 36; i++) {
 			ItemStack itemStack = mc.thePlayer.inventory.getStackInSlot(i);
-
-			if(itemStack != null && itemStack.getItem().equals(item)) {
+			if (itemStack != null && itemStack.getItem().equals(item)) {
 				count += itemStack.stackSize;
 			}
 		}
-
 		return count;
 	}
 	
