@@ -1,14 +1,7 @@
 package me.eldodebug.soar.management.profile;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.color.ColorManager;
@@ -19,18 +12,20 @@ import me.eldodebug.soar.management.mods.HUDMod;
 import me.eldodebug.soar.management.mods.Mod;
 import me.eldodebug.soar.management.mods.ModManager;
 import me.eldodebug.soar.management.mods.settings.Setting;
-import me.eldodebug.soar.management.mods.settings.impl.BooleanSetting;
-import me.eldodebug.soar.management.mods.settings.impl.ColorSetting;
-import me.eldodebug.soar.management.mods.settings.impl.ComboSetting;
-import me.eldodebug.soar.management.mods.settings.impl.ImageSetting;
-import me.eldodebug.soar.management.mods.settings.impl.KeybindSetting;
-import me.eldodebug.soar.management.mods.settings.impl.NumberSetting;
-import me.eldodebug.soar.management.mods.settings.impl.SoundSetting;
-import me.eldodebug.soar.management.mods.settings.impl.TextSetting;
+import me.eldodebug.soar.management.mods.settings.impl.*;
 import me.eldodebug.soar.management.profile.mainmenu.BackgroundManager;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.JsonUtils;
 import me.eldodebug.soar.utils.file.FileUtils;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ProfileManager {
 
@@ -354,6 +349,17 @@ public class ProfileManager {
 	public void delete(Profile profile) {
 		profiles.remove(profile);
 		profile.getJsonFile().delete();
+	}
+
+	public void upload(File selectedFile) {
+		File destinationFile = new File(Soar.getInstance().getFileManager().getProfileDir(), selectedFile.getName());
+		try {
+			Files.copy(selectedFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			load(destinationFile);
+			loadProfiles(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public BackgroundManager getBackgroundManager() {

@@ -1,6 +1,5 @@
 package me.eldodebug.soar.management.mods;
 
-import me.eldodebug.soar.management.ResourceCounterMod;
 import me.eldodebug.soar.management.mods.impl.*;
 import me.eldodebug.soar.management.mods.settings.Setting;
 

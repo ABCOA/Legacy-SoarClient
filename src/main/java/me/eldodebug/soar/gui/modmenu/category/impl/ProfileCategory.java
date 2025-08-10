@@ -1,10 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-import java.io.File;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -29,6 +24,12 @@ import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+import org.lwjgl.input.Keyboard;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
 
 public class ProfileCategory extends Category {
 
@@ -158,6 +159,10 @@ public class ProfileCategory extends Category {
 		offsetX = 0;
 		
 		nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, this.getHeight() - 30, 10, palette.getBackgroundColor(ColorType.DARK));
+		nvg.drawRoundedRect(this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 231,
+				100, 21, 6, palette.getBackgroundColor(ColorType.NORMAL));
+		nvg.drawCenteredText(TranslateText.UPLOAD_PROFILE.getText(), this.getX() + this.getWidth() - 124 + 50, this.getY() + this.getHeight() - 224.5F,
+				palette.getFontColor(ColorType.DARK), 10, Fonts.REGULAR);
 		nvg.drawRect(this.getX() + 15, this.getY() + offsetY + 27, this.getWidth() - 30, 1, palette.getBackgroundColor(ColorType.NORMAL));
 		nvg.drawText(TranslateText.ADD_PROFILE.getText(), this.getX() + 26, this.getY() + offsetY + 9, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 		nvg.drawText(TranslateText.ICON.getText(), this.getX() + 30, this.getY() + offsetY + 35, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
@@ -240,6 +245,18 @@ public class ProfileCategory extends Category {
 					
 					openProfile = false;
 				}
+			}
+			if(MouseUtils.isInside(mouseX, mouseY, this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 231, 100, 21) && mouseButton == 0) {
+				SwingUtilities.invokeLater(() -> {
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setFileFilter(new FileNameExtensionFilter("JSON File", "json"));
+					int returnValue = fileChooser.showOpenDialog(null);
+					if (returnValue == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = fileChooser.getSelectedFile();
+						profileManager.upload(selectedFile);
+						openProfile = false;
+					}
+				});
 			}
 		} else {
 			

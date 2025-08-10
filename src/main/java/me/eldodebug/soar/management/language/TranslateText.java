@@ -145,8 +145,9 @@ public enum TranslateText {
 	DISTANCE("text.distance"), DISCORD_RPC("text.discordrpc.name"), DISCORD_RPC_DESCRIPTION("text.discordrpc.description"), HIDE_ARMOR_STAND("text.hidearmorstand"), REMOVE_BOT("text.removebot"), PARTICLE("text.particle"), LIGHT("text.light"), DARK("text.dark"),
 	RESOURCE_COUNTER("text.resourcecounter.name"), RESOURCE_COUNTER_DESCRIPTION("text.resourcecounter.description"),
 	JOIN_SERVER("txt.joinserver"), DIRECT_CONNECT("txt.directconnect"), ADD_SERVER("txt.addserver"), EDIT("txt.edit"), DELETE("txt.delete"), REFRESH("txt.refresh"), CANCEL("txt.cancel"),
-	IRC("text.irc.name"), IRC_DESCRIPTION("text.irc.description"),
-	CLOSE_TIPS("text.closetips"), REWARD_CLAIMER("text.rewardclaimer"), REWARD_CLAIMER_DESCRIPTION("text.rewardclaimerdescription"), CLICK_TO_CLAIM_THIS("text.clicktoclaimthis"),;
+	IRC("text.irc.name"), IRC_DESCRIPTION("text.irc.description"),UPLOAD_PROFILE("text.uploadprofile"),
+	CLOSE_TIPS("text.closetips"), REWARD_CLAIMER("text.rewardclaimer"), REWARD_CLAIMER_DESCRIPTION("text.rewardclaimerdescription"), CLICK_TO_CLAIM_THIS("text.clicktoclaimthis"),
+	LOGIN_FAILED("text.loginfailed"), LOGIN_SUCCESSFUL("text.loginsuccessful"), PLEASE_LOGIN_AGAIN("text.pleaseloginagain"), LOGIN_AS("text.loginas");
 
 	private String key, text;
 	

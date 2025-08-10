@@ -1,6 +1,7 @@
 package me.eldodebug.soar.gui.mainmenu.impl;
 
 import me.eldodebug.soar.Soar;
+import me.eldodebug.soar.gui.Button;
 import me.eldodebug.soar.gui.mainmenu.GuiSoarMainMenu;
 import me.eldodebug.soar.gui.mainmenu.MainMenuScene;
 import me.eldodebug.soar.management.color.AccentColor;
@@ -49,32 +50,30 @@ public class MainScene extends MainMenuScene {
 		
 		nvg.drawCenteredText(Icon.SOAR, sr.getScaledWidth() / 2, sr.getScaledHeight() / 2 - (nvg.getTextHeight(Icon.SOAR, 54, Fonts.ICON) / 2) - 60, logoColor, 54, Fonts.ICON);
 
-		drawButton(nvg, TranslateText.SINGLEPLAYER.getText(), sr.getScaledWidth() / 2, yPos, mouseX, mouseY, 180, 20,singlePlayerAnimation);
-		drawButton(nvg, TranslateText.MULTIPLAYER.getText(), sr.getScaledWidth() / 2, yPos + 26, mouseX, mouseY, 180, 20, multiPlayerAnimation);
-		drawButton(nvg, TranslateText.SETTINGS.getText(), sr.getScaledWidth() / 2, yPos + (26 * 2), mouseX, mouseY, 180, 20, settingsAnimation);
+		Button.drawButton(nvg, TranslateText.SINGLEPLAYER.getText(), sr.getScaledWidth() / 2, yPos, mouseX, mouseY, 180, 20,singlePlayerAnimation, this.getBackgroundColor());
+		Button.drawButton(nvg, TranslateText.MULTIPLAYER.getText(), sr.getScaledWidth() / 2, yPos + 26, mouseX, mouseY, 180, 20, multiPlayerAnimation, this.getBackgroundColor());
+		Button.drawButton(nvg, TranslateText.SETTINGS.getText(), sr.getScaledWidth() / 2, yPos + (26 * 2), mouseX, mouseY, 180, 20, settingsAnimation, this.getBackgroundColor());
 	}
 
-	@Override
+	/*@Override
 	public void drawButton(NanoVGManager nvg, String text, float x, float y, int mouseX, int mouseY, int width, int height, SimpleAnimation animation) {
 		boolean isHovered = MouseUtils.isInside(mouseX, mouseY, x - 90, y, width, height);
 		Color backgroundColor = this.getBackgroundColor();
-		AccentColor currentColor = Soar.getInstance().getColorManager().getCurrentColor();
-		Color hoverColor = currentColor.getInterpolateColor(0);
+		AccentColor accentColor = Soar.getInstance().getColorManager().getCurrentColor();
+		int alpha = (int) (animation.getValue() * 255);
 
 		animation.setAnimation(isHovered ? 1.0F : 0.0F, 10);
 
 		if (isHovered) {
 			nvg.save();
-//			nvg.scissor(x - 90, y, width, height);
-//			nvg.drawGradientCircle(mouseX, mouseY, radius, new Color(200, 200, 200), backgroundColor);
 			float fillWidth = animation.getValue() * width; // 动态调整填充宽度
 			nvg.drawRoundedRect(x - 90, y, fillWidth, height, 4.5F, Color.LIGHT_GRAY); // 从左到右填充
-			nvg.drawOutlineRoundedRect(x - 90, y, width, height, 4.5F, 1F, hoverColor);
+			nvg.drawGradientOutlineRoundedRect(x - 90, y, width, height, 4.5F, 1F, ColorUtils.applyAlpha(accentColor.getColor1(), alpha), ColorUtils.applyAlpha(accentColor.getColor2(), alpha));
 		}
 		nvg.drawRoundedRect(x - 90, y, width, height, 4.5F, backgroundColor);
 		nvg.drawCenteredText(text, x, y + 6.5F, isHovered ? new Color(255 - (int) (animation.getValue() * 200), 255 - (int) (animation.getValue() * 200), 255 - (int) (animation.getValue() * 200)) : Color.white, 9.5F, Fonts.REGULAR);
 		nvg.restore();
-	}
+	}*/
 
 	@Override
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {

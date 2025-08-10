@@ -1,4 +1,4 @@
-package me.eldodebug.soar.management;
+package me.eldodebug.soar.management.mods.impl;
 
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.event.EventTarget;

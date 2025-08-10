@@ -68,7 +68,7 @@ public class ChatClient extends CSCommunicator {
                 sleep(60000);
                 SoarLogger.info("Connecting to IRC server...");
                 try {
-                    socket = new Socket("149.88.86.137", 831);
+                    socket = new Socket("irc.abcoc.uk",831);
                 } catch (IOException e) {
                     SoarLogger.error("Failed to connect to IRC server, please retry later", e);
                 }
@@ -86,7 +86,7 @@ public class ChatClient extends CSCommunicator {
     public void connect() throws Exception{
         SoarLogger.info("Connecting to IRC server...");
         try {
-            socket = new Socket("149.88.86.137", 831);
+            socket = new Socket("irc.abcoc.uk",831);
         } catch (IOException e) {
             SoarLogger.error("Failed to connect to IRC server, please retry later", e);
             reconnect();
