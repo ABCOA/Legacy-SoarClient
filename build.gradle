@@ -78,6 +78,8 @@ dependencies {
     compile 'org.pircbotx:pircbotx:2.1'
     compile 'org.jogamp.jogl:jogl-all-main:2.4.0'
     compile 'org.jogamp.gluegen:gluegen-rt-main:2.4.0'
+    embed 'javazoom:jlayer:1.0.1'
+    compileOnly 'org.lwjgl.lwjgl:lwjgl:2.9.3'
 }
 
 mixin {

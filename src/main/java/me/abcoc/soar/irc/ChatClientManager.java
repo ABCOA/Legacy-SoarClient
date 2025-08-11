@@ -23,8 +23,23 @@ public class ChatClientManager {
         return ChatClient.isServerAvailable;
     }
 
-    public static ChatClient getChatClient() {
-        if(chatClient == null || !chatClient.isAlive()) refreshChatClient();
+    public static synchronized void stopAndClear() {
+        if (chatClient != null) {
+            try {
+                chatClient.stopIRC();
+            } catch (Exception e) {
+                SoarLogger.error("Error stopping IRC client", e);
+            } finally {
+                chatClient = null;
+            }
+        }
+    }
+
+    public static synchronized ChatClient getChatClient() {
+        if (!ircMod.isToggled()) return null;
+        if (chatClient == null || !chatClient.isAlive()) {
+            refreshChatClient();
+        }
         return chatClient;
     }
 }

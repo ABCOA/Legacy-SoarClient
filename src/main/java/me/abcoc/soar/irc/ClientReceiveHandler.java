@@ -16,21 +16,12 @@ public class ClientReceiveHandler {
         switch(packet.packetType) {
             case "chat":
                 mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] " + (isOfflinePlayer ? "§c[离线]" : packet.getRank(true)) + "§d" + packet.sender + "§7: §f" + packet.message));
-//                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[XSDChat] 请使用/xsdc message聊天!"));
-
-                // 小沙雕音乐分享码: b1ZQ
-                /*if(packet.message.startsWith("小沙雕音乐分享码:")) {
-                    EventMusicShare.eventMusicShare.onChatEventMessage(packet.message);
-                }
-                */
                 break;
             case "system":
                 mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] §c[SYSTEM] §f" + packet.message));
-//                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[XSDChat] 请使用/xsdc message聊天!"));
                 break;
             case "join":
                 mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] §7[§b+§7] " + packet.getRank(true) + "§b" + packet.sender + "..."));
-//                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[XSDChat] 请使用/xsdc message聊天!"));
                 break;
             case "leave":
                 mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] §7[§c-§7] " + packet.getRank(true) + "§c" + packet.sender + "..."));
@@ -46,6 +37,8 @@ public class ClientReceiveHandler {
             case "users_list":
                 mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] §7当前在线玩家: " + packet.message));
                 break;
+            case "afk":
+                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("§a[SoarChat] " + packet.getRank(true) + "§d" + packet.sender + (Boolean.parseBoolean(packet.message) ? " §7" + "暂时离开了..." : " §e" + "回来了...")));
         }
     }
 }

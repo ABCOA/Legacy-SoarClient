@@ -1,6 +1,7 @@
 package me.abcoc.soar.irc;
 
 import com.google.gson.JsonObject;
+import me.eldodebug.soar.Soar;
 
 import java.nio.charset.StandardCharsets;
 
@@ -46,4 +47,8 @@ public class ChatPacket {
         return (senderRankName == null || senderRankName.isEmpty()) ? "" : (senderRankName + (addSpace ? " " : ""));
     }
 
+    public void initSender() {
+        senderUUID = Soar.getInstance().getAccountManager().getCurrentAccount().getUuid();
+        sender = Soar.getInstance().getAccountManager().getCurrentAccount().getName();
+    }
 }

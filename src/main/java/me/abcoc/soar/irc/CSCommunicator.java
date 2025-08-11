@@ -10,6 +10,10 @@ public class CSCommunicator extends Thread{
     public static ChatClientSender sender = null;
     private static long heartbeatTime = System.currentTimeMillis();
 
+    public static long getHeartbeatTime() {
+        return heartbeatTime;
+    }
+
     public void flagHeartbeat() {
         heartbeatTime = System.currentTimeMillis();
     }
