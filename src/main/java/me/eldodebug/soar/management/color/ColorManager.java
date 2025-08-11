@@ -1,9 +1,9 @@
 package me.eldodebug.soar.management.color;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
 import me.eldodebug.soar.management.color.palette.ColorPalette;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class ColorManager {
 
@@ -48,6 +48,7 @@ public class ColorManager {
 		add("Inbox", new Color(69, 127, 202), new Color(86, 145, 200));
 		add("Amethyst", new Color(157, 80, 187), new Color(110, 72, 170));
 		add("Blush", new Color(178, 69, 146), new Color(241, 95, 121));
+		add("Default Dark", new Color(0, 0, 0, 15), new Color(100, 100, 100,15));
 		
 		currentColor = getColorByName("Default");
 	}
