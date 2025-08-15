@@ -60,7 +60,7 @@ public class Soar {
 	
 	public Soar() {
 		name = "Soar";
-		version = "ABCOC's special version";
+		version = "7.3.02";
 	}
 	
 	public void start() {

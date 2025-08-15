@@ -1,5 +1,6 @@
 package me.eldodebug.soar.injection.mixin.mixins.gui;
 
+import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.mods.impl.ClickEffectMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -27,15 +28,12 @@ public abstract class MixinGuiScreen extends Gui {
 
     @Shadow protected Minecraft mc;
 
-    private static final ResourceLocation SOAR_BG = new ResourceLocation("soar/mainmenu/background.png");
+    private ResourceLocation SOAR_BG = Soar.getInstance().getProfileManager().getBackgroundManager().getBackgroundLocation(Soar.getInstance().getProfileManager().getBackgroundManager().getCurrentBackground());
 
-    @Shadow public abstract void keyTyped(char typedChar, int keyCode);
+    @Shadow protected abstract void keyTyped(char typedChar, int keyCode);
 
     private boolean shouldReplace() {
-        if ((Object) this instanceof GuiIngameMenu) return false;
-        if (mc.theWorld == null) return true;
-
-        return false;
+        return !((Object) this instanceof GuiIngameMenu);
     }
 
     private void drawSoarBg(int tint) {
@@ -72,27 +70,6 @@ public abstract class MixinGuiScreen extends Gui {
         GlStateManager.enableDepth();
     }
 
-    @Inject(method = "drawWorldBackground", at = @At("HEAD"), cancellable = true)
-    private void soar$onDrawWorldBackground(int tint, CallbackInfo ci) {
-        if (!shouldReplace()) return;
-        drawSoarBg(tint);
-        ci.cancel();
-    }
-
-    @Inject(method = "drawDefaultBackground", at = @At("HEAD"), cancellable = true)
-    private void soar$onDrawDefaultBackground(CallbackInfo ci) {
-        if (!shouldReplace()) return;
-        drawSoarBg(0);
-        ci.cancel();
-    }
-
-    @Inject(method = "drawBackground", at = @At("HEAD"), cancellable = true, require = 0)
-    private void soar$onDrawBackgroundNoArg(CallbackInfo ci) {
-        if (!shouldReplace()) return;
-        drawSoarBg(0);
-        ci.cancel();
-    }
-
     @Inject(method = "drawBackground(I)V", at = @At("HEAD"), cancellable = true, require = 0)
     private void soar$onDrawBackgroundWithTint(int tint, CallbackInfo ci) {
         if (!shouldReplace()) return;
@@ -115,7 +92,7 @@ public abstract class MixinGuiScreen extends Gui {
     }
 
     /**
-     * @author ABCOA
+     * @author EldoDebug
      */
     @Overwrite
     public void handleKeyboardInput() throws IOException {

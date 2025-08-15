@@ -1,17 +1,9 @@
 package me.eldodebug.soar.management.profile.mainmenu;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.file.FileManager;
 import me.eldodebug.soar.management.language.TranslateText;
@@ -21,14 +13,26 @@ import me.eldodebug.soar.management.profile.mainmenu.impl.CustomBackground;
 import me.eldodebug.soar.management.profile.mainmenu.impl.DefaultBackground;
 import me.eldodebug.soar.utils.JsonUtils;
 import me.eldodebug.soar.utils.file.FileUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BackgroundManager {
 
 	private CopyOnWriteArrayList<Background> backgrounds = new CopyOnWriteArrayList<Background>();
 	private CopyOnWriteArrayList<CustomBackground> removeBackgrounds = new CopyOnWriteArrayList<CustomBackground>();
 	private Background currentBackground;
-	
+
 	public BackgroundManager() {
 		
 		FileManager fileManager = Soar.getInstance().getFileManager();
@@ -179,4 +183,26 @@ public class BackgroundManager {
 	public void setCurrentBackground(Background currentBackground) {
 		this.currentBackground = currentBackground;
 	}
+
+    public ResourceLocation getBackgroundLocation(Background background) {
+        if (background instanceof DefaultBackground) {
+            DefaultBackground defaultBackground = (DefaultBackground) background;
+            return defaultBackground.getImage();
+        } else if (background instanceof CustomBackground) {
+            CustomBackground customBackground = (CustomBackground) background;
+
+            try {
+                BufferedImage image = ImageIO.read(customBackground.getImage());
+                DynamicTexture dynamicTexture = new DynamicTexture(image);
+                ResourceLocation location = new ResourceLocation("soarclient", "custom_background");
+                Minecraft.getMinecraft().getTextureManager().loadTexture(location, dynamicTexture);
+                return location;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        } else {
+            return null;
+        }
+    }
 }
