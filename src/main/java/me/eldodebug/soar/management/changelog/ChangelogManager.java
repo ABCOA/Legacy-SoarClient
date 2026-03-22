@@ -1,16 +1,15 @@
 package me.eldodebug.soar.management.changelog;
 
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import me.eldodebug.soar.utils.JsonUtils;
 import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.network.HttpUtils;
+
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChangelogManager {
 
@@ -22,7 +21,7 @@ public class ChangelogManager {
 	
 	private void loadChangelog() {
 		
-		JsonObject jsonObject = HttpUtils.readJson("https://files.soarclient.com/data/changelog.json", null);
+		JsonObject jsonObject = HttpUtils.readJson("https://files.soarclient.com/data/changelog.json", null); //TODO
 		
 		if(jsonObject != null) {
 			
