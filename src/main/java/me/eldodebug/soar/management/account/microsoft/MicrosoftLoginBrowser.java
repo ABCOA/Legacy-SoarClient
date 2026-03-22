@@ -28,17 +28,17 @@ public class MicrosoftLoginBrowser {
 
     public void overrideWindow() throws URISyntaxException, IOException {
         Map<String, String> authorizeParams = new HashMap<>();
-        authorizeParams.put("client_id", "d1ed1b72-9f7c-41bc-9702-365d2cbd2e38");
+        authorizeParams.put("client_id", "3ab948ab-bfab-4ab9-88c3-132e3d385e09");
         authorizeParams.put("response_type", "code");
-        authorizeParams.put("redirect_uri", "http://127.0.0.1:17342");
+        authorizeParams.put("redirect_uri", "http://127.0.0.1:39802");
         authorizeParams.put("scope", "XboxLive.signin offline_access");
 
         String authorize = Http.buildUrl("https://login.live.com/oauth20_authorize.srf", authorizeParams);
         openIncognitoBrowser(authorize);
-        HttpServer httpServer = HttpServer.create(new InetSocketAddress(17342), 0);
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress(39802), 0);
         httpServer.createContext("/", exchange -> {
             String query = exchange.getRequestURI().getQuery();
-            URL tokenUrl = new URL("http://127.0.0.1:17342/?"+query);
+            URL tokenUrl = new URL("http://127.0.0.1:39802/?"+query);
             getMicrosoftToken(tokenUrl);
             String success = "Success! You can now close this window.";
             exchange.sendResponseHeaders(200, success.length());

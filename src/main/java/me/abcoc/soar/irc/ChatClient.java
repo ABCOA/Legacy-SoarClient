@@ -19,8 +19,8 @@ public class ChatClient extends CSCommunicator {
 
     public static int doWhileToken = 0;
     public int currentToken = 0;
-    private String ircUrl = "irctest.soarclient.org";
-    private int ircPort = 831;
+    private String ircUrl = "w7pugv7a.ovsdun.vpsaw.me";
+    private int ircPort = 30000;
 
     @Override
     public void run() {
@@ -32,7 +32,7 @@ public class ChatClient extends CSCommunicator {
             listener = new ChatClientListener();
             sender = new ChatClientSender();
             listener.setName("IRC Listener");
-            sender.setName("IRC Sender");
+            sender.setName("IRC Sender1");
             listener.start();
             sender.start();
 

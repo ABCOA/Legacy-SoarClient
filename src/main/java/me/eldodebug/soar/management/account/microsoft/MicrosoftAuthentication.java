@@ -38,24 +38,20 @@ public class MicrosoftAuthentication {
 	}
 	
 	public void loginWithRefreshToken(String refreshToken) {
-        // 构建请求参数
         Map<String, String> params = new HashMap<>();
-        params.put("client_id", "d1ed1b72-9f7c-41bc-9702-365d2cbd2e38");
+        params.put("client_id", "3ab948ab-bfab-4ab9-88c3-132e3d385e09");
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", refreshToken);
 
         JsonObject response = null;
         try {
-            // 发送POST请求
             response = Http.gson().fromJson(Http.postURL("https://login.live.com/oauth20_token.srf", params), JsonObject.class);
         } catch (IOException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
-        // 检查响应是否包含access_token
         if (response != null && response.has("access_token")) {
             String accessToken = response.get("access_token").getAsString();
-            // 继续处理access_token
             getXboxLiveToken(accessToken, refreshToken);
         } else {
             System.out.println("Failed to obtain access token");
@@ -80,10 +76,10 @@ public class MicrosoftAuthentication {
         String token = "https://login.live.com/oauth20_token.srf";
         String oauth = null;
         Map<String, String> tokenParams = new HashMap<>();
-        tokenParams.put("client_id", "d1ed1b72-9f7c-41bc-9702-365d2cbd2e38");
+        tokenParams.put("client_id", "3ab948ab-bfab-4ab9-88c3-132e3d385e09");
         tokenParams.put("code", code);
         tokenParams.put("grant_type", "authorization_code");
-        tokenParams.put("redirect_uri", "http://127.0.0.1:17342");
+        tokenParams.put("redirect_uri", "http://127.0.0.1:39802");
         try {
             oauth = Http.postURL(token, tokenParams);
         } catch (IOException e) {
@@ -228,11 +224,11 @@ public class MicrosoftAuthentication {
         skinDownloader.downloadFace(headDir, name, UUIDTypeAdapter.fromString(uuid));
         
         ((IMixinMinecraft) mc).setSession(new Session(name, uuid, token, "mojang"));
-        
-		if(accountManager.getAccountByName(account.getName()) == null) {
-            accountManager.getAccounts().add(account);
-		}
-        
+
+        if(accountManager.getAccountByName(account.getName()) != null) {
+            accountManager.getAccounts().remove(accountManager.getAccountByName(account.getName()));
+        }
+        accountManager.getAccounts().add(account);
         accountManager.setCurrentAccount(account);
 
         check();

@@ -33,7 +33,7 @@ public class MicrosoftLoginScene extends MainMenuScene {
 	@Override
 	public void initScene() {
 		try {
-			String url = "https://login.live.com/oauth20_authorize.srf?client_id=d1ed1b72-9f7c-41bc-9702-365d2cbd2e38&response_type=code&redirect_uri=http://127.0.0.1:17342&scope=XboxLive.signin%20offline_access&prompt=login";
+			String url = "https://login.live.com/oauth20_authorize.srf?client_id=3ab948ab-bfab-4ab9-88c3-132e3d385e09&response_type=code&redirect_uri=http://127.0.0.1:39802&scope=XboxLive.signin%20offline_access&prompt=login";
 			Desktop.getDesktop().browse(new URI(url));
 		} catch (Exception e) {
 			e.printStackTrace();

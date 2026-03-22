@@ -15,6 +15,7 @@ import me.eldodebug.soar.utils.OptifineUtils;
 import me.eldodebug.soar.utils.TargetUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.play.server.S01PacketJoinGame;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,8 @@ public class SoarHandler {
 	
 	private String prevOfflineName;
 	private ResourceLocation offlineSkin;
+
+    private String lastChatInitServer = null;
 
 	public SoarHandler() {
 		instance = Soar.getInstance();
@@ -49,12 +52,12 @@ public class SoarHandler {
 				break;
 			}
 		}
-		ChatClientManager.refreshChatClient();
 	}
 
 	@EventTarget
 	public void onLeaveServer(EventLeaveServer event) {
 		ChatClientManager.stopAndClear();
+        lastChatInitServer = null;
 	}
 	
 	@EventTarget
@@ -72,6 +75,14 @@ public class SoarHandler {
 	
 	@EventTarget
 	public void onReceivePacket(EventReceivePacket event) {
+        if (event.getPacket() instanceof S01PacketJoinGame) {
+            String ip = currentServerKey();
+            if (!StringUtils.equals(ip, lastChatInitServer)) {
+                ChatClientManager.refreshChatClient();
+                lastChatInitServer = ip;
+            }
+        }
+
     	if(event.getPacket() instanceof S2EPacketCloseWindow && mc.currentScreen instanceof GuiModMenu) {
     		event.setCancelled(true);
     	}
@@ -125,4 +136,13 @@ public class SoarHandler {
 			}
 		}
 	}
+
+    private String currentServerKey() {
+        if (mc.getCurrentServerData() != null) {
+            String ip = mc.getCurrentServerData().serverIP;
+            return StringUtils.defaultIfBlank(ip, "unknown");
+        }
+        if (mc.isSingleplayer()) return "singleplayer";
+        return "realms_or_unknown";
+    }
 }
