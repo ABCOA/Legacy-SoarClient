@@ -21,7 +21,7 @@ public class ChangelogManager {
 	
 	private void loadChangelog() {
 		
-		JsonObject jsonObject = HttpUtils.readJson("https://files.soarclient.com/data/changelog.json", null); //TODO
+		JsonObject jsonObject = HttpUtils.readJson("https://file.abcoc.uk/changelog.json", null);
 		
 		if(jsonObject != null) {
 			

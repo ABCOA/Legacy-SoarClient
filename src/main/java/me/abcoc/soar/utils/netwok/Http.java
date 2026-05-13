@@ -85,7 +85,7 @@ public class Http {
             in.close();
             return response.toString();
         } else {
-            throw new RuntimeException("POST request not worked");
+            throw new IOException("POST " + url + " failed with " + responseCode + ": " + readErrorBody(con));
         }
     }
 
@@ -111,7 +111,7 @@ public class Http {
             in.close();
             return response.toString();
         } else {
-            throw new RuntimeException("POST request not worked");
+            throw new IOException("POST " + url + " failed with " + responseCode + ": " + readErrorBody(con));
         }
     }
 
@@ -138,8 +138,23 @@ public class Http {
                 return response.toString();
             }
         } else {
-            System.out.println("GET request not worked");
+            throw new IOException("GET " + urlString + " failed with " + responseCode + ": " + readErrorBody(connection));
         }
-        return null;
+    }
+
+    private static String readErrorBody(HttpURLConnection connection) throws IOException {
+        InputStream stream = connection.getErrorStream();
+        if (stream == null) {
+            return "<empty>";
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            return response.toString();
+        }
     }
 }
