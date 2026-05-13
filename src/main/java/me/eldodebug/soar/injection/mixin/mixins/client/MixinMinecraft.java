@@ -4,6 +4,7 @@ import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.GuiSplashScreen;
 import me.eldodebug.soar.injection.interfaces.IMixinEntityLivingBase;
 import me.eldodebug.soar.injection.interfaces.IMixinMinecraft;
+import me.eldodebug.soar.injection.mixin.SoarTweaker;
 import me.eldodebug.soar.management.event.impl.*;
 import me.eldodebug.soar.management.mods.impl.*;
 import me.eldodebug.soar.viaversion.fixes.AttackOrder;
@@ -226,7 +227,8 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
     
 	@Redirect(method = "createDisplay", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V"))
 	public void overrideTitle(String title) {
-		Display.setTitle("Soar Client " + Soar.getInstance().getVersion() + " for " + title);
+		String defaultTitle = "Soar Client " + Soar.getInstance().getVersion() + " for " + title;
+		Display.setTitle(SoarTweaker.getWindowTitle(defaultTitle));
 	}
 	
     @Inject(method = "updateFramebufferSize", at = @At("HEAD"))

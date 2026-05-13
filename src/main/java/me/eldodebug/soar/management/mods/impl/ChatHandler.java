@@ -1,6 +1,7 @@
 package me.eldodebug.soar.management.mods.impl;
 
 import me.eldodebug.soar.management.language.TranslateText;
+import me.eldodebug.soar.utils.ColorUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -15,9 +16,9 @@ public class ChatHandler {
         Minecraft mc = Minecraft.getMinecraft();
         IChatComponent chatComponent = chatPacket.getChatComponent();
         String chatMessage = chatComponent.getUnformattedText();
-        String cleanMessage = chatMessage.replaceAll("§[0-9a-fk-or]", "");
+        String cleanMessage = ColorUtils.removeColorCode(chatMessage);
 
-        if (chatComponent.getSiblings().stream().anyMatch(sibling -> sibling.getUnformattedText().contains("[☭]") || sibling.getUnformattedText().contains("[✎]"))) {
+        if (chatComponent.getSiblings().stream().anyMatch(sibling -> sibling.getUnformattedText().contains("[Copy]") || sibling.getUnformattedText().contains("[Translate]"))) {
             return;
         }
 
@@ -26,28 +27,28 @@ public class ChatHandler {
         }
 
         if (ChatTranslateMod.getInstance().isToggled() && ChatCopyMod.getInstance().isToggled()) {
-            IChatComponent translateComponent = new ChatComponentText(" [" + String.valueOf('\u270E') + "]")
+            IChatComponent translateComponent = new ChatComponentText(" [Translate]")
                 .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)
                         .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ".soarcmd translate " + chatMessage))
                         .setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(TranslateText.CLICK_TO_TRANSLATE.getText()))));
 
-            IChatComponent copyComponent = new ChatComponentText(" [" + String.valueOf('\u262D') + "]")
+            IChatComponent copyComponent = new ChatComponentText(" [Copy]")
                     .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)
                             .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ".soarcmd copy " + cleanMessage))
                             .setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(TranslateText.CLICK_TO_COPY.getText()))));
             chatComponent.appendSibling(translateComponent).appendSibling(copyComponent);
             mc.ingameGUI.getChatGUI().printChatMessage(chatComponent);
         } else if (ChatTranslateMod.getInstance().isToggled() && !ChatCopyMod.getInstance().isToggled()) {
-            IChatComponent translateComponent = new ChatComponentText(" [" + String.valueOf('\u270E') + "]")
+            IChatComponent translateComponent = new ChatComponentText(" [Translate]")
                     .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)
                             .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ".soarcmd translate " + chatMessage))
                             .setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(TranslateText.CLICK_TO_TRANSLATE.getText()))));
             chatComponent.appendSibling(translateComponent);
             mc.ingameGUI.getChatGUI().printChatMessage(chatComponent);
         } else {
-            IChatComponent copyComponent = new ChatComponentText(" [" + String.valueOf('\u262D') + "]")
+            IChatComponent copyComponent = new ChatComponentText(" [Copy]")
                     .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)
-                            .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ".soarcmd copy " + chatMessage))
+                            .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, ".soarcmd copy " + cleanMessage))
                             .setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(TranslateText.CLICK_TO_COPY.getText()))));
             chatComponent.appendSibling(copyComponent);
             mc.ingameGUI.getChatGUI().printChatMessage(chatComponent);

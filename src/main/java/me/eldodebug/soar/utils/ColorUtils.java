@@ -1,8 +1,8 @@
 package me.eldodebug.soar.utils;
 
-import java.awt.Color;
-
 import net.minecraft.client.renderer.GlStateManager;
+
+import java.awt.*;
 
 public class ColorUtils {
 
@@ -56,14 +56,10 @@ public class ColorUtils {
 	}
 	
 	public static String removeColorCode(String text) {
-		return text.replaceAll("\\u00a7" + "1", "").replaceAll("\\u00a7" + "2", "").replaceAll("\\u00a7" + "3", "")
-				.replaceAll("\\u00a7" + "4", "").replaceAll("\\u00a7" + "5", "").replaceAll("\\u00a7" + "6", "")
-				.replaceAll("\\u00a7" + "7", "").replaceAll("\\u00a7" + "8", "").replaceAll("\\u00a7" + "9", "")
-				.replaceAll("\\u00a7" + "a", "").replaceAll("\\u00a7" + "b", "").replaceAll("\\u00a7" + "c", "")
-				.replaceAll("\\u00a7" + "d", "").replaceAll("\\u00a7" + "e", "").replaceAll("\\u00a7" + "f", "")
-				.replaceAll("\\u00a7" + "g", "").replaceAll("\\u00a7" + "k", "").replaceAll("\\u00a7" + "l", "")
-				.replaceAll("\\u00a7" + "m", "").replaceAll("\\u00a7" + "n", "").replaceAll("\\u00a7" + "o", "")
-				.replaceAll("\\u00a7" + "r", "");
+		if(text == null) {
+			return "";
+		}
+		return text.replaceAll("(?i)[\\u00A7\\u6402][0-9A-FK-OR]", "");
 	}
 	
 	public static void setColor(int color, float alpha) {

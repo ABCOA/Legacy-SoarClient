@@ -24,27 +24,12 @@ buildscript {
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.tweaker-client'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'java'
-
-version = "Release"
-group= "me.eldodebug"
-archivesBaseName = "SoarClient"
-
-sourceCompatibility = targetCompatibility = 1.8
-compileJava.options.encoding = 'UTF-8'
-
-minecraft {
-    version = "1.8.9"
-    tweakClass = "me.eldodebug.soar.injection.mixin.SoarTweaker"
-    runDir = "run"
-    mappings = "stable_22"
-    clientJvmArgs = ["-XX:-DisableExplicitGC"]
-    makeObfSourceJar = false
-}
-
 repositories {
+    mavenCentral()
+    maven {
+        name = "aliyun"
+        url = "https://maven.aliyun.com/repository/public/"
+    }
     maven {
         name "jitpack"
         url "https://jitpack.io"
@@ -60,7 +45,28 @@ repositories {
         url "https://jogamp.org/deployment/maven/"
     }
     jcenter()
-    mavenCentral()
+}
+
+apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
+
+version = "Release"
+group= "me.eldodebug"
+archivesBaseName = "SoarClient"
+
+sourceCompatibility = targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+compileJava.options.fork = true
+compileJava.options.forkOptions.memoryMaximumSize = '2g'
+
+minecraft {
+    version = "1.8.9"
+    tweakClass = "me.eldodebug.soar.injection.mixin.SoarTweaker"
+    runDir = "run"
+    mappings = "stable_22"
+    clientJvmArgs = ["-XX:-DisableExplicitGC"]
+    makeObfSourceJar = false
 }
 
 configurations {

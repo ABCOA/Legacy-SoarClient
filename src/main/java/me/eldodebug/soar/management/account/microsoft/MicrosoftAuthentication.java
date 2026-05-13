@@ -37,7 +37,7 @@ public class MicrosoftAuthentication {
 		skinDownloader = new SkinDownloader();
 	}
 	
-	public void loginWithRefreshToken(String refreshToken) {
+    public void loginWithRefreshToken(String refreshToken) {
         Map<String, String> params = new HashMap<>();
         params.put("client_id", "3ab948ab-bfab-4ab9-88c3-132e3d385e09");
         params.put("grant_type", "refresh_token");
@@ -52,9 +52,12 @@ public class MicrosoftAuthentication {
 
         if (response != null && response.has("access_token")) {
             String accessToken = response.get("access_token").getAsString();
-            getXboxLiveToken(accessToken, refreshToken);
+            String nextRefreshToken = response.has("refresh_token")
+                    ? response.get("refresh_token").getAsString()
+                    : refreshToken;
+            getXboxLiveToken(accessToken, nextRefreshToken);
         } else {
-            System.out.println("Failed to obtain access token");
+            SoarLogger.error("Failed to obtain access token via refresh: " + response);
         }
 
 	}
@@ -88,8 +91,9 @@ public class MicrosoftAuthentication {
             e.printStackTrace();
         }
 
-        String accessToken = Http.gson().fromJson(oauth, JsonObject.class).get("access_token").getAsString();
-        String refreshToken = Http.gson().fromJson(oauth, JsonObject.class).get("refresh_token").getAsString();
+        JsonObject oauthJson = Http.gson().fromJson(oauth, JsonObject.class);
+        String accessToken = oauthJson.get("access_token").getAsString();
+        String refreshToken = oauthJson.get("refresh_token").getAsString();
         getXboxLiveToken(accessToken, refreshToken);
     }
     
@@ -105,12 +109,14 @@ public class MicrosoftAuthentication {
         xblParams.put("TokenType", "JWT");
         try {
             xbl = Http.gson().fromJson(Http.postJSON("https://user.auth.xboxlive.com/user/authenticate", xblParams), JsonObject.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException e) {
+            SoarLogger.error("Failed to obtain Xbox Live token", e);
+            return;
         }
-        //        JsonObject response = HttpUtils.postJson("https://user.auth.xboxlive.com/user/authenticate", request);
+        if (xbl == null || !xbl.has("Token")) {
+            SoarLogger.error("Xbox Live authentication returned no token: " + xbl);
+            return;
+        }
         String xbl_token = xbl.get("Token").getAsString();
 
         getXSTS(xbl_token, refreshToken);
@@ -128,14 +134,15 @@ public class MicrosoftAuthentication {
         xstsParams.put("TokenType", "JWT");
         try {
             xsts = Http.gson().fromJson(Http.postJSON("https://xsts.auth.xboxlive.com/xsts/authorize", xstsParams), JsonObject.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException e) {
+            SoarLogger.error("Failed to obtain XSTS token", e);
+            return;
         }
 
-        String xstsToken = xsts.get("Token").getAsString();
-        String xstsUhs = xsts.get("DisplayClaims").getAsJsonObject().get("xui").getAsJsonArray().get(0).getAsJsonObject().get("uhs").getAsString();
+        if (xsts == null) {
+            SoarLogger.error("XSTS response was empty");
+            return;
+        }
         if (xsts.has("XErr")) {
             switch (xsts.get("XErr").getAsString()) {
                 case "2148916233":
@@ -149,6 +156,8 @@ public class MicrosoftAuthentication {
                     break;
             }
         } else {
+            String xstsToken = xsts.get("Token").getAsString();
+            String xstsUhs = xsts.get("DisplayClaims").getAsJsonObject().get("xui").getAsJsonArray().get(0).getAsJsonObject().get("uhs").getAsString();
 
             getMinecraftToken(xstsUhs, xstsToken, refreshToken);
         }
@@ -160,10 +169,13 @@ public class MicrosoftAuthentication {
         loginParams.put("identityToken", String.format("XBL3.0 x=%s;%s", xstsUhs, xstsToken));
         try {
             mcJson = Http.gson().fromJson(Http.postJSON("https://api.minecraftservices.com/authentication/login_with_xbox", loginParams), JsonObject.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException e) {
+            SoarLogger.error("Failed to obtain Minecraft token", e);
+            return;
+        }
+        if (mcJson == null || !mcJson.has("access_token")) {
+            SoarLogger.error("Minecraft authentication returned no access token: " + mcJson);
+            return;
         }
         String mcToken = mcJson.get("access_token").getAsString();
 
@@ -179,7 +191,8 @@ public class MicrosoftAuthentication {
         try {
             response = Http.gson().fromJson(Http.get("https://api.minecraftservices.com/entitlements/mcstore", headers), JsonObject.class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            SoarLogger.error("Failed to check Minecraft ownership", e);
+            return;
         }
         if (response != null && response.has("items")) {
             for (JsonElement item : response.getAsJsonArray("items")) {
@@ -211,7 +224,12 @@ public class MicrosoftAuthentication {
         try {
             response = Http.gson().fromJson(Http.get("https://api.minecraftservices.com/minecraft/profile", headers), JsonObject.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            SoarLogger.error("Failed to obtain Minecraft profile", e);
+            return;
+        }
+        if (response == null || !response.has("name") || !response.has("id")) {
+            SoarLogger.error("Minecraft profile response was invalid: " + response);
+            return;
         }
         String name = response.get("name").getAsString();
         String uuid = response.get("id").getAsString();
@@ -230,6 +248,7 @@ public class MicrosoftAuthentication {
         }
         accountManager.getAccounts().add(account);
         accountManager.setCurrentAccount(account);
+        accountManager.save();
 
         check();
     }

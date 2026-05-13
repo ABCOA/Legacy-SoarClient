@@ -3,6 +3,7 @@ package me.eldodebug.soar.management.command.impl;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.command.Command;
 import me.eldodebug.soar.management.language.TranslateText;
+import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.Multithreading;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -20,7 +21,7 @@ public class CopyCommand extends Command {
     @Override
     public void onCommand(String message) {
 
-        String text = message;
+        String text = ColorUtils.removeColorCode(message);
 
         StringSelection stringSelection = new StringSelection(text);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

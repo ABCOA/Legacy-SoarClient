@@ -1,5 +1,6 @@
 {
     "package": "me.eldodebug.soar.injection.mixin.mixins",
+    "minVersion": "0.7.11",
     "refmap": "mixins.soar.refmap.json",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
