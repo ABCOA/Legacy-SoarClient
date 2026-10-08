@@ -1,22 +1,9 @@
 package me.eldodebug.soar.gui.modmenu;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.GuiEditHUD;
 import me.eldodebug.soar.gui.modmenu.category.Category;
-import me.eldodebug.soar.gui.modmenu.category.impl.CosmeticsCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.HomeCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.ModuleCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.MusicCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.ProfileCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.ScreenshotCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.SettingCategory;
+import me.eldodebug.soar.gui.modmenu.category.impl.*;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
@@ -32,12 +19,19 @@ import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.easing.EaseBackIn;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import me.eldodebug.soar.utils.buffer.ScreenAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.mouse.Scroll;
 import me.eldodebug.soar.utils.render.BlurUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class GuiModMenu extends GuiScreen {
 
@@ -99,6 +93,7 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.beginFrame();
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -113,6 +108,7 @@ public class GuiModMenu extends GuiScreen {
 		new EventRenderNotification().call();
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		MouseCursor.endFrame();
 	}
 	
 	private void drawNanoVG(int mouseX, int mouseY, float partialTicks) {
@@ -157,6 +153,9 @@ public class GuiModMenu extends GuiScreen {
 			c.getTextAnimation().setAnimation(c.equals(currentCategory) ? 1.0F : 0.0F, 14);
 			
 			nvg.drawText(c.getIcon(), x + 9F, y + 42 + offsetY, textColor, 14, Fonts.ICON);
+			if(MouseUtils.isInside(mouseX, mouseY, x, y + 30, 32, height - 100)) {
+				MouseCursor.pointer(mouseX, mouseY, x + 5.5F, y + 38.5F + offsetY + categoryScroll.getValue(), 21, 21);
+			}
 			
 			offsetY+=30;
 		}
@@ -173,6 +172,7 @@ public class GuiModMenu extends GuiScreen {
 		
 		nvg.drawGradientRoundedRect(x + 5.5F, y + height - 60, 21, 21, 4, currentColor.getColor1(), currentColor.getColor2());
 		nvg.drawText(Icon.LAYOUT, x + 9, y + height - 56.5F, Color.WHITE, 14, Fonts.ICON);
+		MouseCursor.pointer(mouseX, mouseY, x + 5.5F, y + height - 60, 21, 21);
 		
 		for(Category c : categories) {
 			
@@ -197,7 +197,9 @@ public class GuiModMenu extends GuiScreen {
 				nvg.scissor(x + 32, y + 31, width - 32, height - 31);
 				nvg.translate(0, 50 - (c.getCategoryAnimation().getValue() * 50));
 				
+				MouseCursor.setInteractive(MouseUtils.isInside(mouseX, mouseY, x + 32, y + 31, width - 32, height - 31));
 				c.drawScreen(mouseX, mouseY, partialTicks);
+				MouseCursor.setInteractive(true);
 				
 				nvg.restore();
 				
@@ -294,6 +296,8 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void onGuiClosed() {
+		MouseCursor.reset();
+		currentCategory.mouseReleased(0, 0, 0);
 		Soar.getInstance().getProfileManager().save();
 	}
 

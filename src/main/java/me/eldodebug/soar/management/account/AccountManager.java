@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.UUID;
 
 public class AccountManager {
 
@@ -229,7 +230,21 @@ public class AccountManager {
             return "0";
         }
 
-        return uuid.replace("-", "");
+        String normalizedUuid = uuid.replace("-", "");
+
+        if(normalizedUuid.length() != 32) {
+            return "0";
+        }
+
+        try {
+            UUID.fromString(normalizedUuid.replaceFirst(
+                    "([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{12})",
+                    "$1-$2-$3-$4-$5"));
+        } catch(IllegalArgumentException e) {
+            return "0";
+        }
+
+        return normalizedUuid;
     }
 	
 	public ArrayList<Account> getAccounts() {

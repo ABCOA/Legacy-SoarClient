@@ -3,6 +3,7 @@ package me.eldodebug.soar;
 import me.eldodebug.soar.injection.mixin.SoarTweaker;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.account.AccountManager;
+import me.eldodebug.soar.management.badge.BadgeManager;
 import me.eldodebug.soar.management.cape.CapeManager;
 import me.eldodebug.soar.management.changelog.ChangelogManager;
 import me.eldodebug.soar.management.color.ColorManager;
@@ -46,6 +47,7 @@ public class Soar {
 	private AccountManager accountManager;
 	private EventManager eventManager;
 	private ModManager modManager;
+	private BadgeManager badgeManager;
 	private CapeManager capeManager;
 	private ColorManager colorManager;
 	private ProfileManager profileManager;
@@ -60,7 +62,7 @@ public class Soar {
 	
 	public Soar() {
 		name = "Soar";
-		version = "7.3.02";
+		version = "7.3.05";
 	}
 	
 	public void start() {
@@ -77,6 +79,7 @@ public class Soar {
 		
 		modManager.init();
 		
+		badgeManager = new BadgeManager();
 		capeManager = new CapeManager();
 		colorManager = new ColorManager();
 		profileManager = new ProfileManager();
@@ -192,6 +195,10 @@ public class Soar {
 
 	public CapeManager getCapeManager() {
 		return capeManager;
+	}
+
+	public BadgeManager getBadgeManager() {
+		return badgeManager;
 	}
 
 	public CommandManager getCommandManager() {

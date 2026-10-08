@@ -1,9 +1,11 @@
 package me.eldodebug.soar.injection.mixin.mixins.lwjgl;
 
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(targets = "org.lwjgl.opengl.WindowsDisplay")
@@ -15,6 +17,11 @@ public abstract class MixinWindowsDisplay {
     @Inject(method = "doHandleMessage", at = @At("HEAD"), cancellable = true, remap = false)
     private void doHandleMessage(long hwnd, int msg, long wParam, long lParam, long millis,
             CallbackInfoReturnable<Long> cir) {
+        // WM_SETCURSOR / HTCLIENT: use the native Windows hand over clickable UI.
+        if (msg == 0x0020 && (lParam & 0xFFFF) == 1 && MouseCursor.applySystemPointer()) {
+            cir.setReturnValue(1L);
+            return;
+        }
         if (msg == 0x020B) {
             if ((wParam >> 16) == 1L) {
                 handleMouseButton(3, 1, millis);
@@ -23,5 +30,10 @@ public abstract class MixinWindowsDisplay {
             }
             cir.setReturnValue(1L);
         }
+    }
+
+    @Inject(method = "updateCursor", at = @At("RETURN"), remap = false)
+    private void updateMenuCursor(CallbackInfo ci) {
+        MouseCursor.applySystemPointer();
     }
 }

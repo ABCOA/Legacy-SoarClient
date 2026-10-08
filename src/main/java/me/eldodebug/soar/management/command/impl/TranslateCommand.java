@@ -39,7 +39,7 @@ public class TranslateCommand extends Command {
 		
 		Multithreading.runAsync(()-> {
 			try {
-				mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "[Translate] " + EnumChatFormatting.WHITE + Translator.translate(text, Translator.AUTO_DETECT, to)));
+				mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "[\u21c4] " + EnumChatFormatting.WHITE + Translator.translate(text, Translator.AUTO_DETECT, to)));
 			} catch (Exception e) {
 				SoarLogger.error("Failed translate", e);
 			}

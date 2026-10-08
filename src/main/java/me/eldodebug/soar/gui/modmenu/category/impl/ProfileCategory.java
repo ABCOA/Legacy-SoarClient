@@ -23,6 +23,7 @@ import me.eldodebug.soar.utils.SearchUtils;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import org.lwjgl.input.Keyboard;
 
@@ -63,6 +64,7 @@ public class ProfileCategory extends Category {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		boolean interactive = MouseCursor.isInteractive();
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -84,6 +86,7 @@ public class ProfileCategory extends Category {
 		}
 		
 		// Draw profile scene
+		MouseCursor.setInteractive(interactive && !openProfile && profileAnimation.isDone(Direction.FORWARDS));
 		nvg.save();
 		nvg.translate((float) -(600 - (profileAnimation.getValue() * 600)), 0);
 		
@@ -91,6 +94,7 @@ public class ProfileCategory extends Category {
 			
 			float textWidth = nvg.getTextWidth(t.getName(), 9, Fonts.MEDIUM);
 			boolean isCurrentCategory = t.equals(currentType);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16);
 			
 			t.getBackgroundAnimation().setAnimation(isCurrentCategory ? 1.0F : 0.0F, 16);
 			
@@ -117,6 +121,7 @@ public class ProfileCategory extends Category {
 			}
 			
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY, 123, 46, 6, palette.getBackgroundColor(ColorType.DARK));
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY, 123, 46);
 			
 			if(p.getIcon() != null) {
 				nvg.drawRoundedImage(p.getIcon().getIcon(), this.getX() + 15 + offsetX + 6, this.getY() + offsetY + 6, 34, 34, 6);
@@ -151,6 +156,9 @@ public class ProfileCategory extends Category {
 		nvg.restore();
 		
 		// Draw profile add scene
+		MouseCursor.setInteractive(interactive && openProfile && profileAnimation.isDone(Direction.BACKWARDS));
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 231, 100, 21);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 44, 100, 21);
 		
 		nvg.save();
 		nvg.translate((float) (profileAnimation.getValue() * 600), 0);
@@ -168,6 +176,7 @@ public class ProfileCategory extends Category {
 		nvg.drawText(TranslateText.ICON.getText(), this.getX() + 30, this.getY() + offsetY + 35, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 		
 		for(ProfileIcon icon : ProfileIcon.values()) {
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 32 + offsetX, this.getY() + offsetY + 53, 32, 32);
 			
 			int alpha = (int) (icon.getAnimation().getValue() * 255);
 			
@@ -198,6 +207,7 @@ public class ProfileCategory extends Category {
 				palette.getFontColor(ColorType.DARK), 10, Fonts.REGULAR);
 		
 		nvg.restore();
+		MouseCursor.setInteractive(interactive);
 	}
 	
 	@Override

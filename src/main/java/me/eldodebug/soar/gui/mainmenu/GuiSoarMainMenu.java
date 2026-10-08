@@ -221,16 +221,17 @@ public class GuiSoarMainMenu extends GuiScreen {
 		AccountManager accountManager = instance.getAccountManager();
 		
 		if(accountManager.getCurrentAccount() != null) {
+			ArrayList<Account> accounts = new ArrayList<Account>(accountManager.getAccounts());
 			File headFile = new File(instance.getFileManager().getCacheDir(), "head/" + accountManager.getCurrentAccount().getName() + ".png");
 			String name = currentAccount.getName();
 			ColorPalette palette = instance.getColorManager().getPalette();
 			
 			float maxUserWidth = nvg.getTextWidth(name, 9.5F, Fonts.REGULAR);
 			float progress = accountAnimation.getValue();
-			int size = accountManager.getAccounts().size() - 1;
+			int size = accounts.size() - 1;
 			int offsetY = 20;
 			
-			for(Account acc : accountManager.getAccounts()) {
+			for(Account acc : accounts) {
 				
 				float tWidth = nvg.getTextWidth(acc.getName(), 9.5F, Fonts.REGULAR);
 				
@@ -267,7 +268,7 @@ public class GuiSoarMainMenu extends GuiScreen {
 			nvg.drawText(Icon.PLUS, maxUserWidth + 29, 10F, new Color(255, 255, 255, (int) (progress * 255)), 13F, Fonts.ICON);
 			nvg.restore();
 			
-			for(Account acc : accountManager.getAccounts()) {
+			for(Account acc : accounts) {
 				
 				if(!acc.equals(currentAccount)) {
 					
@@ -346,10 +347,11 @@ public class GuiSoarMainMenu extends GuiScreen {
 			if(openAccount) {
 				
 				Account currentAccount = accountManager.getCurrentAccount();
+				ArrayList<Account> accounts = new ArrayList<Account>(accountManager.getAccounts());
 				float maxUserWidth = nvg.getTextWidth(currentAccount.getName(), 9.5F, Fonts.REGULAR);
 				int offsetY = 20;
 				
-				for(Account acc : accountManager.getAccounts()) {
+				for(Account acc : accounts) {
 					
 					float tWidth = nvg.getTextWidth(acc.getName(), 9.5F, Fonts.REGULAR);
 					
@@ -362,7 +364,7 @@ public class GuiSoarMainMenu extends GuiScreen {
 					currentScene = getSceneByClass(AccountScene.class);
 				}
 				
-				for(Account acc : accountManager.getAccounts()) {
+				for(Account acc : accounts) {
 					
 					if(!acc.equals(currentAccount)) {
 						

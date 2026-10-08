@@ -1,9 +1,5 @@
 package me.eldodebug.soar.ui.comp.impl;
 
-import java.awt.Color;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
@@ -11,7 +7,11 @@ import me.eldodebug.soar.management.mods.settings.impl.KeybindSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.ui.comp.Comp;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+import org.lwjgl.input.Keyboard;
+
+import java.awt.*;
 
 public class CompKeybind extends Comp {
 
@@ -33,6 +33,7 @@ public class CompKeybind extends Comp {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY(), width, 16);
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -71,5 +72,9 @@ public class CompKeybind extends Comp {
 
 	public boolean isBinding() {
 		return binding;
+	}
+
+	public void setBinding(boolean binding) {
+		this.binding = binding;
 	}
 }

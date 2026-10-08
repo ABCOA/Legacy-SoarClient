@@ -1,8 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Desktop;
-import java.io.IOException;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -18,7 +15,11 @@ import me.eldodebug.soar.management.screenshot.Screenshot;
 import me.eldodebug.soar.management.screenshot.ScreenshotManager;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+
+import java.awt.*;
+import java.io.IOException;
 
 public class ScreenshotCategory extends Category {
 
@@ -72,6 +73,9 @@ public class ScreenshotCategory extends Category {
 		rightAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, this.getX() + this.getWidth() - 42, this.getY(), 42, this.getHeight()) ? 1.0F : 0.0F, 16);
 		
 		if(currentScreenshot != null) {
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + addX, this.getY() + addY, this.getWidth() - addX * 2, this.getHeight() - addY * 2 - 38);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 20, this.getY() + this.getHeight() / 2 - 30.5F, 12, 24);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 32, this.getY() + this.getHeight() / 2 - 30.5F, 12, 24);
 			
 			trashAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, this.getX() + addX, this.getY() + addY, this.getWidth() - (addX * 2), this.getHeight() - (addY * 2) - 38) ? 1.0F : 0.0F, 16);
 			
@@ -90,6 +94,9 @@ public class ScreenshotCategory extends Category {
 				int alpha = (int) (s.getSelectAnimation().getValue() * 255);
 				
 				if(offsetX + scroll.getValue() + 30 > 0 && offsetX + scroll.getValue() < this.getWidth() - 100) {
+					if(MouseUtils.isInside(mouseX, mouseY, this.getX() + addX, this.getY() + this.getHeight() - 40, this.getWidth() - addX * 2, 30)) {
+						MouseCursor.pointer(mouseX, mouseY, this.getX() + offsetX + 62 + scroll.getValue(), this.getY() + this.getHeight() - 36, 23, 23);
+					}
 					
 					nvg.drawRoundedRect(this.getX() + offsetX + 62, this.getY() + this.getHeight() - 36, 23, 23, 5, palette.getBackgroundColor(ColorType.NORMAL));
 					

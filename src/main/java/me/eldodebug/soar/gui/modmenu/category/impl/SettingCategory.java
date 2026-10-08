@@ -1,9 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -19,7 +15,11 @@ import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
 
 public class SettingCategory extends Category {
 	
@@ -54,6 +54,7 @@ public class SettingCategory extends Category {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		boolean interactive = MouseCursor.isInteractive();
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -72,6 +73,9 @@ public class SettingCategory extends Category {
 		for(SettingScene scene : scenes) {
 			
 			nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40, 8, palette.getBackgroundColor(ColorType.DARK));
+			if(currentScene == null && sceneAnimation.isDone(Direction.FORWARDS)) {
+				MouseCursor.pointer(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40);
+			}
 			nvg.drawText(scene.getName(), this.getX() + 52, this.getY() + offsetY + 15F, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 			nvg.drawText(scene.getIcon(), this.getX() + 26, this.getY() + offsetY + 14, palette.getFontColor(ColorType.DARK), 14, Fonts.ICON);
 			nvg.drawText(scene.getDescription(), this.getX() + (nvg.getTextWidth(scene.getName(), 14, Fonts.MEDIUM)) + 56, this.getY() + offsetY + 17, palette.getFontColor(ColorType.NORMAL), 9, Fonts.REGULAR);
@@ -86,8 +90,10 @@ public class SettingCategory extends Category {
 		nvg.translate((float) (sceneAnimation.getValue() * 600), 0);
 		
 		if(currentScene != null) {
+			MouseCursor.setInteractive(interactive && sceneAnimation.isDone(Direction.BACKWARDS));
 			currentScene.drawScreen(mouseX, mouseY, partialTicks);
 		}
+		MouseCursor.setInteractive(interactive);
 		
 		nvg.restore();
 	}

@@ -1,7 +1,5 @@
 package me.eldodebug.soar.ui.comp.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
@@ -13,7 +11,10 @@ import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.animation.ColorAnimation;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+
+import java.awt.*;
 
 public class CompToggleButton extends Comp {
 
@@ -62,6 +63,7 @@ public class CompToggleButton extends Comp {
 		float height = 16 * scale;
 		float circle = 11 * scale;
 		boolean toggled = setting.isToggled();
+		MouseCursor.pointer(mouseX, mouseY, x, y, width, height);
 		
 		opacityAnimation.setAnimation(toggled ? 1.0F : 0.0F, 14);
 		toggleAnimation.setAnimation(toggled ? 20.5F : 2.5F, 14);

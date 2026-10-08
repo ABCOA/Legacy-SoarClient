@@ -11,6 +11,7 @@ import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.MathUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 
 public class CompSlider extends Comp {
@@ -71,6 +72,7 @@ public class CompSlider extends Comp {
 		}
 		
 		animation.setAnimation((float) valueWidth, 16);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() - 6, this.getY() - 3, baseWidth + 12, height * height);
 		draggingAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, this.getX() - 6, this.getY() - 3, baseWidth + 12, height * height) ? 1.0F : 0.0F, 16);
 		
 		nvg.drawRoundedRect(this.getX(), this.getY(), (float) baseWidth, (float) height, 2F, palette.getBackgroundColor(ColorType.NORMAL));

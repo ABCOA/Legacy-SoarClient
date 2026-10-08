@@ -1,7 +1,5 @@
 package me.eldodebug.soar.ui.comp.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
@@ -11,7 +9,10 @@ import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.MathUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+
+import java.awt.*;
 
 public class CompComboBox extends Comp {
 
@@ -38,6 +39,8 @@ public class CompComboBox extends Comp {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY(), 16, 16);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + width - 16, this.getY(), 16, 16);
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();

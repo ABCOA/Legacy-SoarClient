@@ -1,15 +1,16 @@
 package me.eldodebug.soar.ui.comp.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.mods.settings.impl.ColorSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.MathUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import net.minecraft.util.ResourceLocation;
+
+import java.awt.*;
 
 public class CompColorPicker extends Comp {
 
@@ -42,6 +43,14 @@ public class CompColorPicker extends Comp {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + 106 * scale, this.getY(), 16 * scale, 16 * scale);
+		if(open) {
+			MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY() + 26 * scale, 100 * scale, 100 * scale);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 106 * scale, this.getY() + 26 * scale, 12 * scale, 100 * scale);
+			if(colorSetting.isShowAlpha()) {
+				MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY() + 132 * scale, 118 * scale, 12 * scale);
+			}
+		}
 		
 		NanoVGManager nvg = Soar.getInstance().getNanoVGManager();
 		

@@ -1,7 +1,5 @@
 package me.eldodebug.soar.ui.comp.impl.field;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.color.ColorManager;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
@@ -10,6 +8,9 @@ import me.eldodebug.soar.management.mods.settings.impl.TextSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.utils.TimerUtils;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
+
+import java.awt.*;
 
 public class CompModTextBox extends CompTextBoxBase {
 
@@ -30,6 +31,7 @@ public class CompModTextBox extends CompTextBoxBase {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY(), this.getWidth(), this.getHeight());
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();

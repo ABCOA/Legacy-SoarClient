@@ -23,12 +23,12 @@ public class DownloadManager {
 		
 		downloaded = false;
 		
-		downloadFiles.add(new DownloadFile("https://file.abcoc.uk/ytdlp.exe",
+		downloadFiles.add(new DownloadFile("https://files.abcoc.uk/dependency/ytdlp.exe",
 				"ytdlp.exe", new File(fileManager.getExternalDir(), "ytdlp"), 13947126));
-		downloadFiles.add(new DownloadZipFile("https://file.abcoc.uk/ffmpeg.zip",
-				"ffmpeg.zip", new File(fileManager.getExternalDir(), "ffmpeg"), 51986763, 147600195));
-		downloadFiles.add(new DownloadZipFile("https://file.abcoc.uk/cef.zip",
-				"cef.zip", new File(fileManager.getExternalDir(), "cef"), 115822583, 265676507));
+		downloadFiles.add(new DownloadZipFile("https://files.abcoc.uk/dependency/ffmpeg.zip",
+				"ffmpeg.zip", new File(fileManager.getExternalDir(), "ffmpeg"), 53630509, 147600195));
+		downloadFiles.add(new DownloadZipFile("https://files.abcoc.uk/dependency/cef.zip",
+				"cef.zip", new File(fileManager.getExternalDir(), "cef"), 118812300, 265676507));
 		
 		Multithreading.runAsync(() -> startDownloads());
 	}

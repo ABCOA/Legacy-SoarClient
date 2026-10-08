@@ -1,20 +1,13 @@
 package me.eldodebug.soar.injection.mixin.mixins.render;
 
-import org.lwjgl.opengl.GL11;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.injection.interfaces.IMixinRenderPlayer;
+import me.eldodebug.soar.management.badge.Badge;
 import me.eldodebug.soar.management.event.impl.EventHitOverlay;
 import me.eldodebug.soar.management.event.impl.EventRendererLivingEntity;
 import me.eldodebug.soar.management.mods.impl.NametagMod;
 import me.eldodebug.soar.management.mods.impl.Skin3DMod;
+import me.eldodebug.soar.utils.render.IconFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
@@ -27,6 +20,12 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import org.lwjgl.opengl.GL11;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RendererLivingEntity.class)
 public abstract class MixinRendererLivingEntity <T extends EntityLivingBase> extends Render<T> {
@@ -52,6 +51,7 @@ public abstract class MixinRendererLivingEntity <T extends EntityLivingBase> ext
 
 			if (d0 < (double)(f * f)) {
 				String s = entity.getDisplayName().getFormattedText();
+				Badge badge = getBadge(entity);
 				GlStateManager.alphaFunc(516, 0.1F);
 
 				if (entity.isSneaking()) {
@@ -68,7 +68,9 @@ public abstract class MixinRendererLivingEntity <T extends EntityLivingBase> ext
 					GlStateManager.enableBlend();
 					GlStateManager.disableTexture2D();
 					GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-					int i = fontrenderer.getStringWidth(s) / 2;
+					int badgeOffset = getBadgeOffset(fontrenderer, badge);
+					int textWidth = fontrenderer.getStringWidth(s);
+					int i = (textWidth + badgeOffset) / 2;
 					Tessellator tessellator = Tessellator.getInstance();
 					WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 					worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
@@ -80,13 +82,18 @@ public abstract class MixinRendererLivingEntity <T extends EntityLivingBase> ext
 					GlStateManager.enableTexture2D();
 					GlStateManager.depthMask(true);
 
-					fontrenderer.drawString(s, -fontrenderer.getStringWidth(s) / 2 + 0, 0, 553648127);
+					renderBadgeIcon(fontrenderer, badge, -i, 0, true);
+					fontrenderer.drawString(s, -i + badgeOffset, 0, 553648127);
 					GlStateManager.enableLighting();
 					GlStateManager.disableBlend();
 					GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 					GlStateManager.popMatrix();
 				} else {
-					renderOffsetLivingLabel(entity, x, y - (entity.isChild() ? (double)(entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
+					if(badge == null) {
+						renderOffsetLivingLabel(entity, x, y - (entity.isChild() ? (double)(entity.height / 2.0F) : 0.0D), z, s, 0.02666667F, d0);
+					} else {
+						renderBadgeLivingLabel(entity, x, y - (entity.isChild() ? (double)(entity.height / 2.0F) : 0.0D), z, s, badge);
+					}
 				}
 			}
 		}
@@ -186,5 +193,71 @@ public abstract class MixinRendererLivingEntity <T extends EntityLivingBase> ext
 	@ModifyConstant(method = "setBrightness", constant = @Constant(floatValue = 0.3F, ordinal = 0))
 	public float setBrightnessAlpha(float original) {
 		return alpha;
+	}
+
+	private void renderBadgeLivingLabel(T entity, double x, double y, double z, String text, Badge badge) {
+		FontRenderer fontrenderer = this.getFontRendererFromRenderManager();
+		float scale = 0.016666668F * 1.6F;
+		int verticalOffset = text.equals("deadmau5") ? -10 : 0;
+		int badgeOffset = getBadgeOffset(fontrenderer, badge);
+		int textWidth = fontrenderer.getStringWidth(text);
+		int halfWidth = (textWidth + badgeOffset) / 2;
+
+		GlStateManager.pushMatrix();
+		GlStateManager.translate((float)x, (float)y + entity.height + 0.5F, (float)z);
+		GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+		GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
+		GlStateManager.scale(-scale, -scale, scale);
+		GlStateManager.disableLighting();
+		GlStateManager.depthMask(false);
+		GlStateManager.disableDepth();
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+		GlStateManager.disableTexture2D();
+
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+		worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		worldrenderer.pos((double)(-halfWidth - 1), (double)(-1 + verticalOffset), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+		worldrenderer.pos((double)(-halfWidth - 1), (double)(8 + verticalOffset), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+		worldrenderer.pos((double)(halfWidth + 1), (double)(8 + verticalOffset), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+		worldrenderer.pos((double)(halfWidth + 1), (double)(-1 + verticalOffset), 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
+		tessellator.draw();
+
+		GlStateManager.enableTexture2D();
+		renderBadgeIcon(fontrenderer, badge, -halfWidth, verticalOffset, true);
+		fontrenderer.drawString(text, -halfWidth + badgeOffset, verticalOffset, 553648127);
+		GlStateManager.enableDepth();
+		GlStateManager.depthMask(true);
+		renderBadgeIcon(fontrenderer, badge, -halfWidth, verticalOffset, false);
+		fontrenderer.drawString(text, -halfWidth + badgeOffset, verticalOffset, -1);
+		GlStateManager.enableLighting();
+		GlStateManager.disableBlend();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.popMatrix();
+	}
+
+	private void renderBadgeIcon(FontRenderer fontRenderer, Badge badge, int x, int y, boolean shadowLayer) {
+		if(badge == null) {
+			return;
+		}
+
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.enableTexture2D();
+		GlStateManager.enableBlend();
+		IconFontRenderer.drawIcon(badge.getIcon(), x, y, 8.0F, shadowLayer ? 553648127 : badge.getColor());
+	}
+
+	private int getBadgeOffset(FontRenderer fontRenderer, Badge badge) {
+		return badge == null ? 0 : IconFontRenderer.getIconWidth(8.0F) + 3;
+	}
+
+	private Badge getBadge(T entity) {
+		if(!(entity instanceof EntityPlayer) || Soar.getInstance().getBadgeManager() == null) {
+			return null;
+		}
+
+		return Soar.getInstance().getBadgeManager().getBadge(((EntityPlayer) entity).getGameProfile());
 	}
 }

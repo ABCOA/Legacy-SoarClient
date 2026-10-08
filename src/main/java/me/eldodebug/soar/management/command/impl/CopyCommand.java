@@ -29,7 +29,7 @@ public class CopyCommand extends Command {
         Multithreading.runAsync(()-> {
             try {
                 clipboard.setContents(stringSelection, null);
-                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "[Copy] " + EnumChatFormatting.WHITE + TranslateText.AFTER_COPY.getText()));
+                mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "[\u29c9] " + EnumChatFormatting.WHITE + TranslateText.AFTER_COPY.getText()));
             } catch (Exception e) {
                 SoarLogger.error("Failed to copy", e);
             }
