@@ -1,7 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl.setting.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.category.impl.SettingCategory;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.SettingScene;
@@ -17,8 +15,11 @@ import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.ui.comp.impl.CompComboBox;
 import me.eldodebug.soar.utils.ColorUtils;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.mouse.Scroll;
+
+import java.awt.*;
 
 public class AppearanceScene extends SettingScene {
 
@@ -50,6 +51,7 @@ public class AppearanceScene extends SettingScene {
 		nvg.drawText(TranslateText.THEME.getText(), this.getX() + 8, this.getY() + 8, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 		
 		for(Theme t : Theme.values()) {
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + offsetX + 12, this.getY() + 28, 36, 36);
 			
 			int alpha = (int) (t.getAnimation().getValue() * 255);
 			
@@ -77,6 +79,9 @@ public class AppearanceScene extends SettingScene {
 		}
 		
 		for(AccentColor c : colorManager.getColors()) {
+			if(MouseUtils.isInside(mouseX, mouseY, this.getX(), this.getY() + 91, this.getWidth(), 72)) {
+				MouseCursor.pointer(mouseX, mouseY, this.getX() + offsetX + 12 + scroll.getValue(), this.getY() + 119, 32, 32);
+			}
 			
 			nvg.drawGradientRoundedRect(this.getX() + offsetX + 12, this.getY() + 28 + 91, 32, 32, 6, c.getColor1(), c.getColor2());
 			

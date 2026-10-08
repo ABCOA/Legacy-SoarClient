@@ -1,7 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.SoarAPI;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
@@ -22,7 +20,10 @@ import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.management.notification.NotificationType;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.SearchUtils;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+
+import java.awt.*;
 
 public class CosmeticsCategory extends Category {
 
@@ -64,6 +65,7 @@ public class CosmeticsCategory extends Category {
 			
 			float textWidth = nvg.getTextWidth(c.getName(), 9, Fonts.MEDIUM);
 			boolean isCurrentCategory = c.equals(currentCategory);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scroll.getValue(), textWidth + 20, 16);
 			
 			c.getBackgroundAnimation().setAnimation(isCurrentCategory ? 1.0F : 0.0F, 16);
 			
@@ -90,6 +92,7 @@ public class CosmeticsCategory extends Category {
 			}
 			
 			cp.getAnimation().setAnimation(cp.equals(capeManager.getCurrentCape()) ? 1.0F : 0.0F, 16);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY + scroll.getValue(), 88, 135);
 			
 			nvg.drawGradientRoundedRect(this.getX() + 15 + offsetX - 2, this.getY() + offsetY - 2, 88 + 4, 135 + 4, 8.5F, ColorUtils.applyAlpha(accentColor.getColor1(), (int) (cp.getAnimation().getValue() * 255)), ColorUtils.applyAlpha(accentColor.getColor2(), (int) (cp.getAnimation().getValue() * 255)));
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY, 88, 135, 8, palette.getBackgroundColor(ColorType.DARK));

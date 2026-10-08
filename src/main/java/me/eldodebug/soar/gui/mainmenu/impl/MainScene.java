@@ -86,7 +86,7 @@ public class MainScene extends MainMenuScene {
 
 			if (MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() / 2 - 27, sr.getScaledHeight() / 2 - 87, 54, 54)) {
 				try {
-					Desktop.getDesktop().browse(new URI("https://www.soarclient.org"));
+					Desktop.getDesktop().browse(new URI("https://www.soarclient.net"));
 				} catch (IOException | URISyntaxException e) {
 					e.printStackTrace();
 				}

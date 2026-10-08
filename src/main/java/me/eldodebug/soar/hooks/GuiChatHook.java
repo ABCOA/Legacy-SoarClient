@@ -1,7 +1,5 @@
 package me.eldodebug.soar.hooks;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.render.RenderUtils;
@@ -10,6 +8,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.EnumChatFormatting;
+
+import java.awt.*;
 
 public class GuiChatHook {
 
@@ -22,7 +22,7 @@ public class GuiChatHook {
 		ScaledResolution sr = new ScaledResolution(mc);
 		FontRenderer fr = mc.fontRendererObj;
 		String isOn = toggled ? EnumChatFormatting.GREEN + "On" : EnumChatFormatting.RED + "Off";
-		String translateText = "Translate: " + isOn;
+		String translateText = "\u21c4: " + isOn;
 		String toText = "To: " + translateTo;
 		
 		RenderUtils.drawRect(2, sr.getScaledHeight() - 30, fr.getStringWidth(translateText) + 5, 14, ColorUtils.getColorByInt(Integer.MIN_VALUE));
@@ -37,7 +37,7 @@ public class GuiChatHook {
 		ScaledResolution sr = new ScaledResolution(mc);
 		FontRenderer fr = mc.fontRendererObj;
 		String isOn = toggled ? EnumChatFormatting.GREEN + "On" : EnumChatFormatting.RED + "Off";
-		String translateText = "Translate: " + isOn;
+		String translateText = "\u21c4: " + isOn;
 		String toText = "To: " + translateTo;
 		
 		if(MouseUtils.isInside(mouseX, mouseY, 2, sr.getScaledHeight() - 30, fr.getStringWidth(translateText) + 5, 14) && mouseButton == 0) {

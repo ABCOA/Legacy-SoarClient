@@ -1,10 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -17,25 +12,12 @@ import me.eldodebug.soar.management.mods.Mod;
 import me.eldodebug.soar.management.mods.ModCategory;
 import me.eldodebug.soar.management.mods.ModManager;
 import me.eldodebug.soar.management.mods.settings.Setting;
-import me.eldodebug.soar.management.mods.settings.impl.BooleanSetting;
-import me.eldodebug.soar.management.mods.settings.impl.ColorSetting;
-import me.eldodebug.soar.management.mods.settings.impl.ComboSetting;
-import me.eldodebug.soar.management.mods.settings.impl.ImageSetting;
-import me.eldodebug.soar.management.mods.settings.impl.KeybindSetting;
-import me.eldodebug.soar.management.mods.settings.impl.NumberSetting;
-import me.eldodebug.soar.management.mods.settings.impl.SoundSetting;
-import me.eldodebug.soar.management.mods.settings.impl.TextSetting;
+import me.eldodebug.soar.management.mods.settings.impl.*;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.ui.comp.Comp;
-import me.eldodebug.soar.ui.comp.impl.CompColorPicker;
-import me.eldodebug.soar.ui.comp.impl.CompComboBox;
-import me.eldodebug.soar.ui.comp.impl.CompImageSelect;
-import me.eldodebug.soar.ui.comp.impl.CompKeybind;
-import me.eldodebug.soar.ui.comp.impl.CompSlider;
-import me.eldodebug.soar.ui.comp.impl.CompSoundSelect;
-import me.eldodebug.soar.ui.comp.impl.CompToggleButton;
+import me.eldodebug.soar.ui.comp.impl.*;
 import me.eldodebug.soar.ui.comp.impl.field.CompModTextBox;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.MathUtils;
@@ -44,8 +26,13 @@ import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.mouse.Scroll;
+import org.lwjgl.input.Keyboard;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class ModuleCategory extends Category {
 
@@ -64,6 +51,9 @@ public class ModuleCategory extends Category {
 	
 	@Override
 	public void initGui() {
+		closeSettings();
+		currentMod = null;
+		comps.clear();
 		currentCategory = ModCategory.ALL;
 		openSetting = false;
 		settingAnimation = new SmoothStepAnimation(260, 1.0);
@@ -72,6 +62,9 @@ public class ModuleCategory extends Category {
 
 	@Override
 	public void initCategory() {
+		closeSettings();
+		currentMod = null;
+		comps.clear();
 		scroll.resetAll();
 		openSetting = false;
 		settingAnimation = new SmoothStepAnimation(260, 1.0);
@@ -80,6 +73,7 @@ public class ModuleCategory extends Category {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		boolean interactive = MouseCursor.isInteractive();
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -104,6 +98,7 @@ public class ModuleCategory extends Category {
 		nvg.translate((float) -(600 - (settingAnimation.getValue() * 600)), 0);
 		
 		//Draw mod scene
+		MouseCursor.setInteractive(interactive && !openSetting && settingAnimation.isDone(Direction.FORWARDS));
 		
 		nvg.save();
 		nvg.translate(0, scrollValue);
@@ -112,6 +107,7 @@ public class ModuleCategory extends Category {
 			
 			float textWidth = nvg.getTextWidth(c.getName(), 9, Fonts.MEDIUM);
 			boolean isCurrentCategory = c.equals(currentCategory);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scrollValue, textWidth + 20, 16);
 			
 			c.getBackgroundAnimation().setAnimation(isCurrentCategory ? 1.0F : 0.0F, 16);
 			
@@ -137,6 +133,7 @@ public class ModuleCategory extends Category {
 			}
 			
 			if(offsetY + scrollValue + 45 > 0 && offsetY + scrollValue < this.getHeight()) {
+				MouseCursor.pointer(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY + scrollValue, this.getWidth() - 60, 40);
 				
 				nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40, 8, palette.getBackgroundColor(ColorType.DARK));
 				nvg.drawRoundedRect(this.getX() + 21, this.getY() + offsetY + 6, 28, 28, 6, palette.getBackgroundColor(ColorType.NORMAL));
@@ -153,6 +150,7 @@ public class ModuleCategory extends Category {
 				nvg.restore();
 				
 				if(modManager.getSettingsByMod(m) != null) {
+					MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 44, this.getY() + offsetY + 9 + scrollValue, 22, 22);
 					nvg.drawText(Icon.SETTINGS, this.getX() + this.getWidth() - 39, this.getY() + offsetY + 13.5F, palette.getFontColor(ColorType.NORMAL), 13, Fonts.ICON);
 				}
 			}
@@ -165,6 +163,7 @@ public class ModuleCategory extends Category {
 		nvg.restore();
 		
 		//Draw mod setting scene
+		MouseCursor.setInteractive(interactive && openSetting && settingAnimation.isDone(Direction.BACKWARDS));
 		
 		nvg.save();
 		nvg.translate((float) (settingAnimation.getValue() * 600), 0);
@@ -185,13 +184,21 @@ public class ModuleCategory extends Category {
 			
 			nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, this.getHeight() - 30, 10, palette.getBackgroundColor(ColorType.DARK));
 			nvg.drawRect(this.getX() + 15, this.getY() + offsetY + 27, this.getWidth() - 30, 1, palette.getBackgroundColor(ColorType.NORMAL));
-			nvg.drawText(currentMod.getName(), this.getX() + 26, this.getY() + offsetY + 9, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
+			boolean backHovered = MouseCursor.isInteractive() && isBackHovered(mouseX, mouseY);
+			boolean resetHovered = MouseCursor.isInteractive() && isResetHovered(mouseX, mouseY);
+			nvg.drawRoundedRect(this.getX() + 21, this.getY() + 18, 22, 22, 5, palette.getBackgroundColor(backHovered ? ColorType.NORMAL : ColorType.DARK));
+			nvg.drawText(Icon.BACK, this.getX() + 25.5F, this.getY() + 22.5F, palette.getFontColor(ColorType.DARK), 13, Fonts.ICON);
+			nvg.drawText(nvg.getLimitText(currentMod.getName(), 13, Fonts.MEDIUM, this.getWidth() - 102), this.getX() + 50, this.getY() + offsetY + 9, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
+			nvg.drawRoundedRect(this.getX() + this.getWidth() - 45, this.getY() + 18, 22, 22, 5, palette.getBackgroundColor(resetHovered ? ColorType.NORMAL : ColorType.DARK));
 			nvg.drawText(Icon.REFRESH, this.getX() + this.getWidth() - 39, this.getY() + offsetY + 7.5F, palette.getFontColor(ColorType.DARK), 13, Fonts.ICON);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 21, this.getY() + 18, 22, 22);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 45, this.getY() + 18, 22, 22);
 			
 			offsetY = 44;
 			
 			nvg.scissor(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, this.getHeight() - 59);
 			nvg.translate(0, settingScroll.getValue());
+			MouseCursor.setInteractive(MouseCursor.isInteractive() && isSettingContentHovered(mouseX, mouseY));
 			
 			for(ModuleSetting s : comps) {
 				
@@ -287,10 +294,23 @@ public class ModuleCategory extends Category {
 		nvg.restore();
 		
 		scroll.setMaxScroll((index - (index > 5 ? 5.18F : index)) * 50);
+		MouseCursor.setInteractive(interactive);
 	}
 	
 	@Override
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if(openSetting && settingAnimation.isDone(Direction.BACKWARDS) && mouseButton == 0) {
+			if(isBackHovered(mouseX, mouseY)) {
+				closeSettings();
+				return;
+			}
+			if(isResetHovered(mouseX, mouseY)) {
+				for(ModuleSetting s : comps) {
+					s.setting.reset();
+				}
+				return;
+			}
+		}
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -299,7 +319,7 @@ public class ModuleCategory extends Category {
 		int offsetX = 0;
 		float offsetY = 13 + scroll.getValue();
 		
-		if(!openSetting) {
+		if(!openSetting && settingAnimation.isDone(Direction.FORWARDS)) {
 			for(ModCategory c : ModCategory.values()) {
 				
 				float textWidth = nvg.getTextWidth(c.getName(), 9, Fonts.MEDIUM);
@@ -448,6 +468,7 @@ public class ModuleCategory extends Category {
 							currentMod = m;
 							openSetting = true;
 							this.setCanClose(false);
+							return;
 						}
 					}
 				}
@@ -460,7 +481,7 @@ public class ModuleCategory extends Category {
 			
 			for(ModuleSetting s: comps) {
 				
-				if(MouseUtils.isInside(mouseX, mouseY, this.getX(), this.getY(), this.getWidth(), this.getHeight()) && mouseButton == 0) {
+				if(isSettingContentHovered(mouseX, mouseY) && mouseButton == 0) {
 					
 					s.comp.mouseClicked(mouseX, (int) (mouseY - settingScroll.getValue()), mouseButton);
 					
@@ -488,17 +509,10 @@ public class ModuleCategory extends Category {
 					}
 				}
 			}
-			
-			if(MouseUtils.isInside(mouseX, mouseY, this.getX() + this.getWidth() - 41, this.getY() + 15 + 6F, 16, 16) && mouseButton == 0) {
-				
-				for(ModuleSetting s : comps) {
-					s.setting.reset();
-				}
-			}
 		}
 		
 		if(openSetting && mouseButton == 3) {
-			openSetting = false;
+			closeSettings();
 		}
 	}
 	
@@ -507,14 +521,15 @@ public class ModuleCategory extends Category {
 		
 		for(ModuleSetting s : comps) {
 			
-			if(MouseUtils.isInside(mouseX, mouseY, this.getX(), this.getY(), this.getWidth(), this.getHeight()) && mouseButton == 0) {
-				s.comp.mouseReleased(mouseX, mouseY, mouseButton);
-			}
+			s.comp.mouseReleased(mouseX, (int) (mouseY - settingScroll.getValue()), mouseButton);
 		}
 	}
 	
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
+		if(!openSetting) {
+			return;
+		}
 		
 		boolean binding = false;
 		
@@ -537,7 +552,32 @@ public class ModuleCategory extends Category {
 		}
 		
 		if(openSetting && keyCode == Keyboard.KEY_ESCAPE && !binding) {
-			openSetting = false;
+			closeSettings();
+		}
+	}
+
+	private boolean isBackHovered(int mouseX, int mouseY) {
+		return MouseUtils.isInside(mouseX, mouseY, this.getX() + 21, this.getY() + 18, 22, 22);
+	}
+
+	private boolean isResetHovered(int mouseX, int mouseY) {
+		return MouseUtils.isInside(mouseX, mouseY, this.getX() + this.getWidth() - 45, this.getY() + 18, 22, 22);
+	}
+
+	private boolean isSettingContentHovered(int mouseX, int mouseY) {
+		return MouseUtils.isInside(mouseX, mouseY, this.getX() + 15, this.getY() + 44, this.getWidth() - 30, this.getHeight() - 59);
+	}
+
+	private void closeSettings() {
+		openSetting = false;
+		for(ModuleSetting s : comps) {
+			s.comp.mouseReleased(0, 0, 0);
+			if(s.comp instanceof CompModTextBox) {
+				((CompModTextBox) s.comp).setFocused(false);
+			}
+			if(s.comp instanceof CompKeybind) {
+				((CompKeybind) s.comp).setBinding(false);
+			}
 		}
 	}
 	
