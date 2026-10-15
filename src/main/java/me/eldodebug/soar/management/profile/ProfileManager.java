@@ -274,7 +274,7 @@ public class ProfileManager {
 									
 									BooleanSetting bSetting = (BooleanSetting) s;
 									
-									bSetting.setToggled(JsonUtils.getBooleanProperty(sJsonObject, s.getNameKey(), false));
+									bSetting.setToggled(JsonUtils.getBooleanProperty(sJsonObject, s.getNameKey(), bSetting.isDefaultValue()));
 								}
 								
 								if(s instanceof ComboSetting) {

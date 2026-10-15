@@ -11,9 +11,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-/**
- * Http class for JDK 1.8
- */
 public class Http {
 
     public static Gson gson() {

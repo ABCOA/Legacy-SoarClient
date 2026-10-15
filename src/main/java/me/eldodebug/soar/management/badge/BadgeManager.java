@@ -1,5 +1,18 @@
 package me.eldodebug.soar.management.badge;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.authlib.GameProfile;
+import me.eldodebug.soar.Soar;
+import me.eldodebug.soar.logger.SoarLogger;
+import me.eldodebug.soar.management.file.FileManager;
+import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.utils.JsonUtils;
+import me.eldodebug.soar.utils.Multithreading;
+import me.eldodebug.soar.utils.network.HttpUtils;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -9,20 +22,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mojang.authlib.GameProfile;
-
-import me.eldodebug.soar.Soar;
-import me.eldodebug.soar.logger.SoarLogger;
-import me.eldodebug.soar.management.file.FileManager;
-import me.eldodebug.soar.management.nanovg.font.Icon;
-import me.eldodebug.soar.utils.JsonUtils;
-import me.eldodebug.soar.utils.Multithreading;
-import me.eldodebug.soar.utils.network.HttpUtils;
 
 public class BadgeManager {
 
@@ -187,5 +186,12 @@ public class BadgeManager {
 		}
 
 		return playerNameBadges.get(profile.getName().toLowerCase(Locale.ENGLISH));
+	}
+
+	public Badge getOnlineBadge(GameProfile profile) {
+		me.eldodebug.soar.management.online.PresenceManager online = me.eldodebug.soar.management.online.PresenceManager.getInstance();
+		return profile != null && profile.getId() != null
+				&& online != null && online.isOnline(profile.getId())
+				? badges.get("soar") : null;
 	}
 }

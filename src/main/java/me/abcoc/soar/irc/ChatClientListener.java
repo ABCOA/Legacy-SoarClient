@@ -1,72 +1,34 @@
 package me.abcoc.soar.irc;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import me.eldodebug.soar.logger.SoarLogger;
-
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.BufferOverflowException;
-import java.nio.charset.StandardCharsets;
+import java.net.Socket;
+import java.util.function.Consumer;
 
 public class ChatClientListener extends CSCommunicator {
-    public static final ClientReceiveHandler handler = new ClientReceiveHandler();
-    @Override
-    public void run() {
+    private final ChatClient owner;
+    private final Consumer<ChatPacket> handler;
+    public ChatClientListener(ChatClient owner, Socket socket, Consumer<ChatPacket> handler) {
+        this.owner = owner;
+        this.socket = socket;
+        this.handler = handler;
+        setName("IRC Listener");
+        setDaemon(true);
+    }
+    @Override public void run() {
         try {
-            InputStream is = socket.getInputStream();
-            int i;
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            ByteArrayOutputStream data = new ByteArrayOutputStream();
-            boolean startRecordFlag = false;
-
-            while((i = is.read()) != -1) {
-
-                try {
-                    buffer.write(i);
-                    byte[] bytes = buffer.toByteArray();
-                    for(int j = 0; j < Math.min(4, bytes.length); j++) {
-                        if((startRecordFlag ? END : HEADER)[j] != bytes[j]) {
-                            data.write(bytes);
-                            buffer.reset();
-                            break;
-                        }
-                    }
-                    if(bytes.length == (startRecordFlag ? END : HEADER).length) {
-                        if(startRecordFlag) {
-                            try {
-                                ChatPacket packet = new ChatPacket();
-                                String s = new String(data.toByteArray(), StandardCharsets.UTF_8);
-                                s = s.substring(s.indexOf('{'));
-                                JsonObject jo = new JsonParser().parse(s).getAsJsonObject();
-                                packet.raw = jo;
-                                packet.setFromJson(jo);
-                                if(!packet.packetType.equals("heartbeat")) {
-                                    SoarLogger.info("Received packet: " + packet.getJson());
-                                }
-                                handler.handle(packet, this);
-                            } catch (Exception e) {
-                                buffer.reset();
-                                data.reset();
-                                continue;
-                            }
-                        } else {
-                        }
-                        startRecordFlag = !startRecordFlag;
-                        buffer.reset();
-                        data.reset();
-                    }
-                } catch (BufferOverflowException e) {
-                    buffer.reset();
-                    data.reset();
-                    startRecordFlag = false;
-                }
-
+            InputStream input = new BufferedInputStream(socket.getInputStream(), 8192);
+            ChatPacket packet;
+            while (!isInterrupted() && (packet = IrcFraming.read(input)) != null) {
+                owner.received(packet);
+                if (!"heartbeat".equals(packet.packetType)) handler.accept(packet);
             }
-            SoarLogger.getLogger().info("关闭连接");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (!isInterrupted()) owner.peerClosed();
+        } catch (IOException | RuntimeException e) {
+            owner.connectionFailed(e);
+        } finally {
+            owner.closeSocket();
         }
     }
 }

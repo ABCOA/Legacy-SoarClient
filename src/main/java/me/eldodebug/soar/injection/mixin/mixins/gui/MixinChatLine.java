@@ -1,28 +1,29 @@
 package me.eldodebug.soar.injection.mixin.mixins.gui;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import me.eldodebug.soar.injection.interfaces.IMixinChatLine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ChatLine;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(ChatLine.class)
 public class MixinChatLine implements IMixinChatLine {
 	
     private NetworkPlayerInfo playerInfo;
+    private me.eldodebug.soar.hooks.OnlineChatMetadata.Sender onlineSender;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(int i, IChatComponent iChatComponent, int j, CallbackInfo ci) {
+        onlineSender = me.eldodebug.soar.hooks.OnlineChatMetadata.get(iChatComponent);
     	
         chatLines.add(new WeakReference<>((ChatLine) (Object) this));
         NetHandlerPlayClient netHandler = Minecraft.getMinecraft().getNetHandler();
@@ -79,4 +80,6 @@ public class MixinChatLine implements IMixinChatLine {
     public NetworkPlayerInfo getPlayerInfo() {
         return playerInfo;
     }
+
+    @Override public me.eldodebug.soar.hooks.OnlineChatMetadata.Sender getOnlineSender() { return onlineSender; }
 }

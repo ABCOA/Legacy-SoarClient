@@ -6,6 +6,7 @@ import me.eldodebug.soar.gui.modmenu.category.Category;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.SettingScene;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.impl.AppearanceScene;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.impl.LanguageScene;
+import me.eldodebug.soar.gui.modmenu.category.impl.setting.impl.OnlineScene;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.color.palette.ColorType;
 import me.eldodebug.soar.management.language.TranslateText;
@@ -33,10 +34,12 @@ public class SettingCategory extends Category {
 		
 		scenes.add(new AppearanceScene(this));
 		scenes.add(new LanguageScene(this));
+		scenes.add(new OnlineScene(this));
 	}
 	
 	@Override
 	public void initGui() {
+		onClosed();
 		sceneAnimation = new SmoothStepAnimation(260, 1.0);
 		sceneAnimation.setValue(1.0);
 		
@@ -47,6 +50,7 @@ public class SettingCategory extends Category {
 
 	@Override
 	public void initCategory() {
+		onClosed();
 		scroll.resetAll();
 		sceneAnimation = new SmoothStepAnimation(260, 1.0);
 		sceneAnimation.setValue(1.0);
@@ -107,6 +111,8 @@ public class SettingCategory extends Category {
 			
 			if(MouseUtils.isInside(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40) && mouseButton == 0 && currentScene == null) {
 				currentScene = scene;
+				scene.initGui();
+				getSearchBox().setFocused(false);
 				this.setCanClose(false);
 				sceneAnimation.setDirection(Direction.BACKWARDS);
 			}
@@ -119,6 +125,7 @@ public class SettingCategory extends Category {
 		}
 		
 		if(currentScene != null && mouseButton == 3) {
+			currentScene.onClosed();
 			sceneAnimation.setDirection(Direction.FORWARDS);
 		}
 	}
@@ -135,8 +142,17 @@ public class SettingCategory extends Category {
 	public void keyTyped(char typedChar, int keyCode) {
 		
 		if(currentScene != null && keyCode == Keyboard.KEY_ESCAPE) {
+			currentScene.onClosed();
 			sceneAnimation.setDirection(Direction.FORWARDS);
+		} else if(currentScene != null && sceneAnimation.isDone(Direction.BACKWARDS)) {
+			currentScene.keyTyped(typedChar, keyCode);
 		}
+	}
+
+	@Override
+	public void onClosed() {
+		if(currentScene != null) currentScene.onClosed();
+		currentScene = null;
 	}
 	
 	public int getSceneX() {

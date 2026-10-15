@@ -1,76 +1,36 @@
 package me.abcoc.soar.irc;
 
-import me.eldodebug.soar.Soar;
-import me.eldodebug.soar.logger.SoarLogger;
-import me.eldodebug.soar.management.language.TranslateText;
-import me.eldodebug.soar.management.mods.impl.IRCMod;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ChatClientSender extends CSCommunicator {
-    IRCMod ircMod = (IRCMod) Soar.getInstance().getModManager().getModByTranslateKey(TranslateText.IRC.getKey());
-    private static final Queue<ChatPacket> packetQueue = new ConcurrentLinkedDeque<>();
-    @Override
-    public void run() {
+    private final ChatClient owner;
+    private final LinkedBlockingQueue<ChatPacket> packets = new LinkedBlockingQueue<ChatPacket>(128);
+    public ChatClientSender(ChatClient owner, Socket socket) {
+        this.owner = owner;
+        this.socket = socket;
+        setName("IRC Sender");
+        setDaemon(true);
+    }
+    @Override public void run() {
         try {
-            while(true) {
-                try {
-                    Thread.sleep(350);
-                } catch (InterruptedException e) {
-                }
-                while(!packetQueue.isEmpty()) {
-                    ChatPacket packet = packetQueue.poll();
-                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                    buffer.write(HEADER);
-                    buffer.write(packet.getBuffer());
-                    buffer.write(END);
-
-                    socket.getOutputStream().write(buffer.toByteArray());
-
-                    if(!packet.packetType.equals("heartbeat")) {
-                        SoarLogger.info("Send packet: " + packet.getJson());
-                    }
-                }
-            }
+            while (!isInterrupted() && !socket.isClosed()) IrcFraming.write(socket.getOutputStream(), packets.take());
+        } catch (InterruptedException e) {
+            interrupt();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            owner.connectionFailed(e);
         }
     }
-
     public void send(ChatPacket packet) {
-        packetQueue.add(packet);
+        if (isInterrupted() || socket.isClosed()) throw new IllegalStateException("IRC is disconnected");
+        packet.sender = owner.getPlayerName();
+        packet.senderUUID = owner.getPlayerUuid();
+        if (!packets.offer(packet)) throw new IllegalStateException("IRC send queue is full");
     }
-
-    public void sendMessage(String msg) {
-        ChatPacket packet = new ChatPacket();
-        packet.message = msg;
-        packet.packetType = "chat";
-        packet.senderUUID = Soar.getInstance().getAccountManager().getCurrentAccount().getUuid();
-        packet.sender = Soar.getInstance().getAccountManager().getCurrentAccount().getName();
-        send(packet);
-    }
-
-    public void senQueryAllUsersCommand() {
-        ChatPacket packet = new ChatPacket();
-        packet.packetType = "query_all_users";
-        send(packet);
-    }
-
-    public void sendHeartbeat() {
-        ChatPacket packet = new ChatPacket();
-        packet.packetType = "heartbeat";
-        send(packet);
-    }
-
-    public void sendAFK(boolean isAFK) {
-        ChatPacket packet = new ChatPacket();
-        packet.packetType = "afk";
-        packet.message = String.valueOf(isAFK);
-        packet.initSender();
-        send(packet);
-    }
-
+    public void sendMessage(String message) { send(new ChatPacket("chat", message)); }
+    public void senQueryAllUsersCommand() { send(new ChatPacket("query_all_users", "")); }
+    public void sendHeartbeat() { send(new ChatPacket("heartbeat", "")); }
+    public void sendAFK(boolean afk) { send(new ChatPacket("afk", Boolean.toString(afk))); }
+    public void sendPayload(String type, String message) { send(new ChatPacket(type, message)); }
 }

@@ -1,14 +1,15 @@
 package me.eldodebug.soar.injection.mixin.mixins.util;
 
+import me.abcoc.soar.irc.IrcAfk;
+import me.eldodebug.soar.management.mods.impl.RawInputMod;
+import net.minecraft.util.MouseHelper;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import me.eldodebug.soar.management.mods.impl.RawInputMod;
-import net.minecraft.util.MouseHelper;
 
 @Mixin(MouseHelper.class)
 public class MixinMouseHelper {
@@ -28,6 +29,7 @@ public class MixinMouseHelper {
         	ci.cancel();
         	deltaX = (int) mod.getDx();
         	deltaY = (int) -mod.getDy();
+            if ((deltaX != 0 || deltaY != 0) && Display.isActive()) IrcAfk.onInput();
         	mod.getThread().reset();
     	}
     }

@@ -1,5 +1,6 @@
 package me.eldodebug.soar.injection.mixin.mixins.gui;
 
+import me.abcoc.soar.irc.IrcAfk;
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.mods.impl.ClickEffectMod;
 import net.minecraft.client.Minecraft;
@@ -14,11 +15,14 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.IOException;
@@ -31,6 +35,21 @@ public abstract class MixinGuiScreen extends Gui {
     private ResourceLocation SOAR_BG = Soar.getInstance().getProfileManager().getBackgroundManager().getBackgroundLocation(Soar.getInstance().getProfileManager().getBackgroundManager().getCurrentBackground());
 
     @Shadow protected abstract void keyTyped(char typedChar, int keyCode);
+
+    @Redirect(method = "handleInput", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Mouse;next()Z"))
+    private boolean soar$afkMouseInput() {
+        boolean next = Mouse.next();
+        if (next && Display.isActive() && (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0
+                || Mouse.getEventDWheel() != 0 || Mouse.getEventButtonState())) IrcAfk.onInput();
+        return next;
+    }
+
+    @Redirect(method = "handleInput", at = @At(value = "INVOKE", target = "Lorg/lwjgl/input/Keyboard;next()Z"))
+    private boolean soar$afkKeyboardInput() {
+        boolean next = Keyboard.next();
+        if (next && Keyboard.getEventKeyState() && Display.isActive()) IrcAfk.onInput();
+        return next;
+    }
 
     private boolean shouldReplace() {
         return !((Object) this instanceof GuiIngameMenu);

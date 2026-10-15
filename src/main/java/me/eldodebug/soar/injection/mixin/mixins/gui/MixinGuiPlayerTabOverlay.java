@@ -118,6 +118,7 @@ public abstract class MixinGuiPlayerTabOverlay {
 			return null;
 		}
 
-		return Soar.getInstance().getBadgeManager().getBadge(networkPlayerInfo.getGameProfile());
+		if(networkPlayerInfo.getDisplayName() != null && networkPlayerInfo.getDisplayName().getFormattedText().matches("(?s).*\u00a7[kK].*")) return null;
+		return Soar.getInstance().getBadgeManager().getOnlineBadge(networkPlayerInfo.getGameProfile());
 	}
 }

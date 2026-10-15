@@ -17,6 +17,7 @@ import me.eldodebug.soar.management.mods.impl.GlobalSettingsMod;
 import me.eldodebug.soar.management.music.MusicManager;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.notification.NotificationManager;
+import me.eldodebug.soar.management.online.PresenceManager;
 import me.eldodebug.soar.management.profile.ProfileManager;
 import me.eldodebug.soar.management.quickplay.QuickPlayManager;
 import me.eldodebug.soar.management.screenshot.ScreenshotManager;
@@ -59,10 +60,11 @@ public class Soar {
 	private QuickPlayManager quickPlayManager;
 	private ChangelogManager changelogManager;
 	private WaypointManager waypointManager;
+	private PresenceManager onlineManager;
 	
 	public Soar() {
 		name = "Soar";
-		version = "7.3.05";
+		version = "7.3.07";
 	}
 	
 	public void start() {
@@ -95,6 +97,7 @@ public class Soar {
 		quickPlayManager = new QuickPlayManager();
 		changelogManager = new ChangelogManager();
 		waypointManager = new WaypointManager();
+		onlineManager = new PresenceManager(fileManager.getSoarDir());
 		
 		eventManager.register(new SoarHandler());
 		
@@ -105,6 +108,9 @@ public class Soar {
 	}
 	
 	public void stop() {
+		if (capeManager != null) capeManager.shutdown();
+		if (onlineManager != null) onlineManager.shutdown();
+		me.abcoc.soar.irc.ChatClientManager.shutdown();
 		profileManager.save();
 		accountManager.save();
 	}
@@ -232,4 +238,6 @@ public class Soar {
 	public WaypointManager getWaypointManager() {
 		return waypointManager;
 	}
+
+	public PresenceManager getOnlineManager() { return onlineManager; }
 }

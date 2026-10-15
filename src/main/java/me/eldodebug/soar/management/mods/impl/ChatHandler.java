@@ -1,8 +1,10 @@
 package me.eldodebug.soar.management.mods.impl;
 
+import me.eldodebug.soar.hooks.OnlineChatMetadata;
 import me.eldodebug.soar.management.language.TranslateText;
 import me.eldodebug.soar.utils.ColorUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.network.play.server.S02PacketChat;
@@ -17,7 +19,14 @@ public class ChatHandler {
 
     public static void handleChat(S02PacketChat chatPacket) {
         Minecraft mc = Minecraft.getMinecraft();
+        if (!mc.isCallingFromMinecraftThread()) {
+            final NetHandlerPlayClient source = mc.getNetHandler();
+            mc.addScheduledTask(() -> { if (source != null && source == mc.getNetHandler()) handleChat(chatPacket); });
+            return;
+        }
         IChatComponent chatComponent = chatPacket.getChatComponent();
+        OnlineChatMetadata.Sender metadata = OnlineChatMetadata.get(chatComponent);
+        if (metadata != null && metadata.isSuppressed()) return;
         String chatMessage = chatComponent.getUnformattedText();
         String cleanMessage = ColorUtils.removeColorCode(chatMessage);
 

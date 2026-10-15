@@ -3,11 +3,12 @@ package me.eldodebug.soar.mobends.client.renderer.entity.layers;
 import me.eldodebug.soar.mobends.client.model.entity.ModelBendsPlayer;
 import me.eldodebug.soar.mobends.client.renderer.BendsCapeRenderer;
 import me.eldodebug.soar.mobends.client.renderer.entity.RenderBendsPlayer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 
 public class LayerBendsCape implements LayerRenderer<AbstractClientPlayer>
 {
@@ -21,13 +22,15 @@ public class LayerBendsCape implements LayerRenderer<AbstractClientPlayer>
 
     public void doRenderLayer(AbstractClientPlayer entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
     	
-        if (entitylivingbaseIn != Minecraft.getMinecraft().thePlayer) {
+        if (!entitylivingbaseIn.hasPlayerInfo() || entitylivingbaseIn.isInvisible()
+                || !entitylivingbaseIn.isWearing(EnumPlayerModelParts.CAPE)) {
             return;
         }
- 
-        if(entitylivingbaseIn.getLocationCape() != null) {
+
+        ResourceLocation cape = entitylivingbaseIn.getLocationCape();
+        if(cape != null) {
         	
-            this.playerRenderer.bindTexture(entitylivingbaseIn.getLocationCape());
+            this.playerRenderer.bindTexture(cape);
             
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.pushMatrix();	

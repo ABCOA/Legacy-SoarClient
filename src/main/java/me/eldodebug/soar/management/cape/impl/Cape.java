@@ -10,15 +10,24 @@ public class Cape {
 	private ResourceLocation cape;
 	private boolean premium;
 	private CapeCategory category;
+	private final String id;
 	
 	private SimpleAnimation animation = new SimpleAnimation();
 	
 	public Cape(String name, ResourceLocation cape, boolean premium, CapeCategory category) {
+		this(name, cape, premium, category, cape == null ? "none" : "builtin:" + cape.getResourcePath());
+	}
+
+	public Cape(String name, ResourceLocation cape, boolean premium, CapeCategory category, String id) {
 		this.name = name;
 		this.premium = premium;
 		this.category = category;
 		this.cape = cape;
+		this.id = id;
 	}
+
+	public String getId() { return id; }
+	protected void setTexture(ResourceLocation texture) { this.cape = texture; }
 
 	public String getName() {
 		return name;

@@ -1,5 +1,6 @@
 package me.eldodebug.soar.hooks;
 
+import me.eldodebug.soar.management.command.CommandManager;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.render.RenderUtils;
@@ -62,7 +63,7 @@ public class GuiChatHook {
     	
     	String lastMessage = message;
     	
-    	if(!lastMessage.startsWith(".soarcmd") || !lastMessage.startsWith("/")) {
+		if(!CommandManager.isClientCommand(lastMessage) && !lastMessage.startsWith("/")) {
     		try {
 				lastMessage = Translator.translate(lastMessage, Translator.AUTO_DETECT, translateTo);
 			} catch (Exception e) {}

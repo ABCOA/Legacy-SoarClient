@@ -17,6 +17,8 @@ public class SettingScene {
 	}
 
 	public void initGui() {}
+
+	public void onClosed() {}
 	
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {}
 	

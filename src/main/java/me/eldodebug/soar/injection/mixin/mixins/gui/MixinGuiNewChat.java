@@ -1,36 +1,22 @@
 package me.eldodebug.soar.injection.mixin.mixins.gui;
 
-import java.util.List;
-
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
 import com.mojang.realmsclient.gui.ChatFormatting;
-
 import me.eldodebug.soar.hooks.GuiNewChatHook;
 import me.eldodebug.soar.management.mods.impl.ChatMod;
 import me.eldodebug.soar.management.mods.impl.ChatTranslateMod;
 import me.eldodebug.soar.utils.MathUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ChatLine;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.List;
 
 @Mixin(GuiNewChat.class)
 public abstract class MixinGuiNewChat extends Gui {
@@ -62,6 +48,41 @@ public abstract class MixinGuiNewChat extends Gui {
     
     @Unique
     private ChatLine drawingChatLine = null;
+    @Unique private IChatComponent soarOriginalChatComponent;
+
+    @Inject(method = "setChatLine", at = @At("HEAD"))
+    private void soarCaptureOriginal(IChatComponent component, int id, int tick, boolean displayOnly, CallbackInfo ci) {
+        soarOriginalChatComponent = component;
+    }
+
+    @ModifyArg(method = "setChatLine", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiUtilRenderComponents;splitText(Lnet/minecraft/util/IChatComponent;ILnet/minecraft/client/gui/FontRenderer;ZZ)Ljava/util/List;"), index = 1)
+    private int soarReserveDecorationWidth(int width) {
+        me.eldodebug.soar.hooks.OnlineChatMetadata.Sender sender = me.eldodebug.soar.hooks.OnlineChatMetadata.get(soarOriginalChatComponent);
+        // Reserve space for the proven sender even while its online response is still arriving.
+        int padding = sender != null && sender.getUuid() != null ? 11 : 0;
+        ChatMod mod = ChatMod.getInstance();
+        if (mod.isToggled() && mod.getHeadSetting().isToggled()) padding += 10;
+        return Math.max(20, width - padding);
+    }
+
+    @Inject(method = "getChatComponent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ChatLine;getChatComponent()Lnet/minecraft/util/IChatComponent;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
+    private void soarDecorationHitTest(int mouseX, int mouseY, CallbackInfoReturnable<IChatComponent> cir,
+            ScaledResolution resolution, int scale, float chatScale, int x, int y, int lines,
+            int selected, ChatLine chatLine, int width) {
+        int prefix = GuiNewChatHook.prefixWidth(chatLine);
+        if (prefix == 0) return;
+        int adjustedX = x - prefix;
+        if (adjustedX < 0) { cir.setReturnValue(null); return; }
+        int textWidth = 0;
+        for (IChatComponent part : chatLine.getChatComponent()) {
+            if (part instanceof ChatComponentText) {
+                textWidth += mc.fontRendererObj.getStringWidth(GuiUtilRenderComponents.func_178909_a(
+                        ((ChatComponentText)part).getChatComponentText_TextValue(), false));
+                if (textWidth > adjustedX) { cir.setReturnValue(part); return; }
+            }
+        }
+        cir.setReturnValue(null);
+    }
     
     private void updatePercentage(long diff) {
         if (percentComplete < 1) {
@@ -90,11 +111,8 @@ public abstract class MixinGuiNewChat extends Gui {
         	lastOpacity = color;
         }
         
-    	if(mod.isToggled() && mod.getHeadSetting().isToggled()) {
-    		return GuiNewChatHook.drawStringWithHead(drawingChatLine, text, x, y, lastOpacity);
-    	}
-    	
-        return instance.drawStringWithShadow(text, x, y, lastOpacity);
+        return GuiNewChatHook.drawDecoratedString(drawingChatLine, text, x, y, lastOpacity,
+                mod.isToggled() && mod.getHeadSetting().isToggled());
     }
     
     @Overwrite
@@ -191,6 +209,7 @@ public abstract class MixinGuiNewChat extends Gui {
     @ModifyVariable(method = "setChatLine", at = @At("STORE"), ordinal = 0)
     private List<IChatComponent> setNewLines(List<IChatComponent> original) {
         newLines = original.size() - 1;
+        me.eldodebug.soar.hooks.OnlineChatMetadata.propagate(soarOriginalChatComponent, original);
         return original;
     }
     

@@ -1,7 +1,10 @@
 package me.eldodebug.soar.gui.mainmenu;
 
 import me.eldodebug.soar.Soar;
-import me.eldodebug.soar.gui.mainmenu.impl.*;
+import me.eldodebug.soar.gui.mainmenu.impl.AccountScene;
+import me.eldodebug.soar.gui.mainmenu.impl.BackgroundScene;
+import me.eldodebug.soar.gui.mainmenu.impl.MainScene;
+import me.eldodebug.soar.gui.mainmenu.impl.MicrosoftLoginScene;
 import me.eldodebug.soar.gui.mainmenu.impl.welcome.*;
 import me.eldodebug.soar.management.account.Account;
 import me.eldodebug.soar.management.account.AccountManager;
@@ -40,7 +43,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 	private MainMenuScene currentScene;
 	
 	private SimpleAnimation closeFocusAnimation = new SimpleAnimation();
-	private SimpleAnimation shopFocusAnimation = new SimpleAnimation();
 	private SimpleAnimation backgroundSelectFocusAnimation = new SimpleAnimation();
 	private SimpleAnimation[] backgroundAnimations = new SimpleAnimation[2];
 	
@@ -64,7 +66,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 		scenes.add(new MainScene(this));
 		scenes.add(new AccountScene(this));
 		scenes.add(new BackgroundScene(this));
-		scenes.add(new ShopScene(this));
 		scenes.add(new WelcomeMessageScene(this));
 		scenes.add(new ThemeSelectScene(this));
 		scenes.add(new AccentColorSelectScene(this));
@@ -115,7 +116,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 //				drawButtons(mouseX, mouseY, sr, nvg);
 				drawButton(nvg, Icon.X, sr.getScaledWidth() - 28, 6, mouseX, mouseY, 22, 22, closeFocusAnimation);
 				drawButton(nvg, Icon.IMAGE, sr.getScaledWidth() - 28 * 2, 6, mouseX, mouseY, 22, 22, backgroundSelectFocusAnimation);
-				drawButton(nvg, Icon.SHOPPING, sr.getScaledWidth() - 28 * 3, 6, mouseX, mouseY, 22, 22, shopFocusAnimation);
 			}
 		});
 		
@@ -203,10 +203,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 		nvg.drawRoundedRect(sr.getScaledWidth() - 28 - 28, 6, 22, 22, 4, this.getBackgroundColor());
 		nvg.drawCenteredText(Icon.IMAGE, sr.getScaledWidth() - 19F - 26.5F, 9.5F, new Color(255 - (int) (backgroundSelectFocusAnimation.getValue() * 200), 255, 255 - (int) (backgroundSelectFocusAnimation.getValue() * 200)), 15, Fonts.ICON);
 
-		shopFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - (28 * 3), 6, 22, 22) ? 1.0F : 0.0F, 16);
-
-		nvg.drawRoundedRect(sr.getScaledWidth() - (28 * 3), 6, 22, 22, 4, this.getBackgroundColor());
-		nvg.drawCenteredText(Icon.SHOPPING, sr.getScaledWidth() - (26 * 3) + 4.5F, 9.5F, new Color(255 - (int) (shopFocusAnimation.getValue() * 200), 255, 255), 15, Fonts.ICON);
 	}
 	
 	private void drawAccount(int mouseX, int mouseY, Soar instance, NanoVGManager nvg) {
@@ -338,10 +334,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 			
 			if(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - 28 - 28, 6, 22, 22)) {
 				this.setCurrentScene(this.getSceneByClass(BackgroundScene.class));
-			}
-			
-			if(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - (28 * 3), 6, 22, 22)) {
-				this.setCurrentScene(this.getSceneByClass(ShopScene.class));
 			}
 			
 			if(openAccount) {

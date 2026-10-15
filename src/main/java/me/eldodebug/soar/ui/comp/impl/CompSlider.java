@@ -47,6 +47,7 @@ public class CompSlider extends Comp {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		updateDrag(mouseX);
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -60,16 +61,6 @@ public class CompSlider extends Comp {
 		
 		baseWidth = width * (maxValue - minValue) / (maxValue - minValue);
 		valueWidth = width * (value - minValue) / (maxValue - minValue);
-		
-		double diff = Math.min(width, Math.max(0, mouseX - (this.getX() - 1.5F)));
-		
-		if(dragging) {
-			if(diff == 0) {
-				setting.setValue(minValue);
-			}else {
-				setting.setValue(MathUtils.roundToPlace(((diff / width) * (maxValue - minValue) + minValue), 2));
-			}
-		}
 		
 		animation.setAnimation((float) valueWidth, 16);
 		MouseCursor.pointer(mouseX, mouseY, this.getX() - 6, this.getY() - 3, baseWidth + 12, height * height);
@@ -95,14 +86,25 @@ public class CompSlider extends Comp {
 	
 	@Override
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		if(MouseUtils.isInside(mouseX, mouseY, this.getX() - 6, this.getY() - 3, baseWidth + 12, height * height) && mouseButton == 0) {
+		if(MouseUtils.isInside(mouseX, mouseY, this.getX() - 6, this.getY() - 3, width + 12, height * height) && mouseButton == 0) {
 			dragging = true;
+			updateDrag(mouseX);
 		}
 	}
 	
 	@Override
 	public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		dragging = false;
+	}
+
+	public boolean isDragging() { return dragging; }
+
+	public void updateDrag(int mouseX) {
+		if(!dragging || width <= 0) return;
+		double diff = Math.min(width, Math.max(0, mouseX - (this.getX() - 1.5F)));
+		double minValue = setting.getMinValue(), maxValue = setting.getMaxValue();
+		double value = (diff / width) * (maxValue - minValue) + minValue;
+		setting.setValue(diff == 0 ? minValue : diff == width ? maxValue : Math.min(maxValue, Math.max(minValue, MathUtils.roundToPlace(value, 2))));
 	}
 	
 	public double getWidth() {

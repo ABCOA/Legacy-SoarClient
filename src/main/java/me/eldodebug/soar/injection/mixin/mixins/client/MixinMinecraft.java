@@ -1,7 +1,10 @@
 package me.eldodebug.soar.injection.mixin.mixins.client;
 
+import me.abcoc.soar.irc.ChatClientManager;
+import me.abcoc.soar.irc.IrcAfk;
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.GuiSplashScreen;
+import me.eldodebug.soar.gui.mainmenu.GuiSoarMainMenu;
 import me.eldodebug.soar.injection.interfaces.IMixinEntityLivingBase;
 import me.eldodebug.soar.injection.interfaces.IMixinMinecraft;
 import me.eldodebug.soar.injection.mixin.SoarTweaker;
@@ -123,6 +126,8 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
 		boolean next = Mouse.next();
 
 		if(next) {
+			if (Display.isActive() && (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0
+					|| Mouse.getEventDWheel() != 0 || Mouse.getEventButtonState())) IrcAfk.onInput();
 			
 			EventClickMouse event = new EventClickMouse(Mouse.getEventButton());
 			event.call();
@@ -154,6 +159,7 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
     
     @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;dispatchKeypresses()V", shift = At.Shift.AFTER))
     private void onKey(CallbackInfo ci) {
+        if (Keyboard.getEventKeyState() && Display.isActive()) IrcAfk.onInput();
         if (Keyboard.getEventKeyState() && Minecraft.getMinecraft().currentScreen == null) {
         	new EventKey(Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()).call();
         }
@@ -191,6 +197,7 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
 	
     @Inject(method = "runTick", at = @At("TAIL"))
     private void onTick(final CallbackInfo ci) {
+        if (Soar.getInstance().getOnlineManager() != null) Soar.getInstance().getOnlineManager().onTick();
     	new EventTick().call();
     }
     
@@ -302,6 +309,10 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
     
     @Inject(method = "displayGuiScreen", at = @At("RETURN"), cancellable = true)
     public void displayGuiScreenInject(GuiScreen guiScreenIn, CallbackInfo ci) {
+        if (guiScreenIn instanceof GuiMainMenu || guiScreenIn instanceof GuiSoarMainMenu) {
+            ChatClientManager.leaveGame();
+            if (Soar.getInstance().getOnlineManager() != null) Soar.getInstance().getOnlineManager().onLeave();
+        }
     	if(guiScreenIn instanceof GuiMainMenu) {
 			displayGuiScreen(Soar.getInstance().getApi().getMainMenu());
     	}
@@ -310,8 +321,16 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
     @Inject(method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at = @At("HEAD"))
     private void clearLoadedMaps(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci) {
         if (worldClientIn != this.theWorld) {
+            ChatClientManager.worldChanging();
+            if (Soar.getInstance().getOnlineManager() != null) Soar.getInstance().getOnlineManager().onWorldChanged(worldClientIn);
             this.entityRenderer.getMapItemRenderer().clearLoadedMaps();
         }
+    }
+
+    @Inject(method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at = @At("RETURN"))
+    private void updateIrcWorld(WorldClient worldClientIn, String loadingMessage, CallbackInfo ci) {
+        if (worldClientIn != null) ChatClientManager.enterWorld();
+        else ChatClientManager.updateConnectionState();
     }
     
     @Redirect(method = "loadWorld(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V", at = @At(value = "INVOKE", target = "Ljava/lang/System;gc()V"))
@@ -389,6 +408,7 @@ public abstract class MixinMinecraft implements IMixinMinecraft {
 
 	@Override
 	public void setSession(Session session) {
+		if (Soar.getInstance().getOnlineManager() != null) Soar.getInstance().getOnlineManager().onLeave();
 		this.session = session;
 	}
 
