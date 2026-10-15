@@ -110,6 +110,7 @@ public class Soar {
 	public void stop() {
 		if (capeManager != null) capeManager.shutdown();
 		if (onlineManager != null) onlineManager.shutdown();
+		me.eldodebug.soar.management.online.CloudSession.shutdown();
 		me.abcoc.soar.irc.ChatClientManager.shutdown();
 		profileManager.save();
 		accountManager.save();

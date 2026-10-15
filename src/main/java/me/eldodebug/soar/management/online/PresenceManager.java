@@ -28,6 +28,7 @@ public final class PresenceManager implements PresenceTransport.Listener {
         void onUploaded(String canonicalHash);
         void onFailure(String reason);
     }
+    static final String DEFAULT_ENDPOINT = "wss://online.soarclient.net/v1/presence";
     private static volatile PresenceManager instance;
     public static PresenceManager getInstance() { return instance; }
     private final Minecraft mc = Minecraft.getMinecraft();
@@ -49,6 +50,7 @@ public final class PresenceManager implements PresenceTransport.Listener {
     private String identity = "", sentNetwork = "", sentServer = "", error = "";
     private boolean authenticated, connecting, stopped;
     private boolean proving;
+    private volatile MojangJoins.Ticket joinTicket;
     private boolean accountLinkAvailable;
     private AccountLinkPending accountLinkPending;
     private AccountLinkPreview accountLinkPreview;
@@ -63,12 +65,12 @@ public final class PresenceManager implements PresenceTransport.Listener {
     public PresenceManager(File directory) {
         instance = this;
         settings = new OnlineSettings(directory);
-        endpoint = endpoint(System.getProperty("soar.online.endpoint", "wss://online.soarclient.net/v1/presence"));
+        endpoint = endpoint(System.getProperty("soar.online.endpoint", DEFAULT_ENDPOINT));
         httpOrigin = ("wss".equals(endpoint.getScheme()) ? "https" : "http") + "://" + endpoint.getRawAuthority();
         transport = new PresenceTransport(this);
         LocationCollector.getInstance().initialize();
     }
-    private static URI endpoint(String value) {
+    static URI endpoint(String value) {
         URI uri = URI.create(value);
         boolean secure = "wss".equals(uri.getScheme());
         boolean loopback = "ws".equals(uri.getScheme()) && ("localhost".equals(uri.getHost())
@@ -132,11 +134,15 @@ public final class PresenceManager implements PresenceTransport.Listener {
         stopped = true; disconnect(false); transport.shutdown(); workers.shutdownNow(); settings.save();
     }
     private void disconnect(boolean keepError) {
-        generation++; connecting = false; authenticated = false; proving = false; transport.close();
+        generation++; connecting = false; authenticated = false; proving = false; releaseJoin(); transport.close();
         accountLinkAvailable = false; accountLinkPending = null; accountLinkPreview = null; accountLinkStatus = null; accountLinkStatusArguments = new String[0];
         clearRoom(); sentNetwork = ""; sentServer = ""; nextVisible = 0;
         if (upload != null) finishUploadFailure(upload, "Online session changed");
         if (!keepError) error = "";
+    }
+    private void releaseJoin() {
+        MojangJoins.Ticket held = joinTicket; joinTicket = null;
+        if (held != null) held.release();
     }
     private void clearRoom() {
         roster = Collections.emptyMap(); visibleMembers.clear(); visibleUuids = Collections.emptySet();
@@ -171,6 +177,10 @@ public final class PresenceManager implements PresenceTransport.Listener {
             proving = true;
             try { workers.execute(() -> {
                 try {
+                    MojangJoins.Ticket ticket = MojangJoins.acquire(10000);
+                    if (ticket == null) { onClosed(expected, "Minecraft authentication is busy"); return; }
+                    joinTicket = ticket;
+                    if (expected != generation) { releaseJoin(); return; }
                     mc.getSessionService().joinServer(profile, token, challenge);
                     mc.addScheduledTask(() -> {
                         if (expected != generation || !gameReady()) return;
@@ -182,7 +192,7 @@ public final class PresenceManager implements PresenceTransport.Listener {
         } else if ("authenticated".equals(type) && connecting) {
             UUID verified = UUID.fromString(string(json, "uuid"));
             if (!verified.equals(mc.getSession().getProfile().getId())) throw new IllegalArgumentException("Account mismatch");
-            connecting = false; authenticated = true; proving = false; retry = 0;
+            connecting = false; authenticated = true; proving = false; retry = 0; releaseJoin();
             accountLinkAvailable = false;
             if (json.has("capabilities") && json.get("capabilities").isJsonArray()) {
                 JsonArray capabilities = json.getAsJsonArray("capabilities");
