@@ -258,6 +258,7 @@ public abstract class MixinRendererLivingEntity <T extends EntityLivingBase> ext
 			return null;
 		}
 
-		return Soar.getInstance().getBadgeManager().getBadge(((EntityPlayer) entity).getGameProfile());
+		if(entity.getDisplayName().getFormattedText().matches("(?s).*\u00a7[kK].*")) return null;
+		return Soar.getInstance().getBadgeManager().getOnlineBadge(((EntityPlayer) entity).getGameProfile());
 	}
 }

@@ -11,6 +11,7 @@ import me.eldodebug.soar.management.language.TranslateText;
 import me.eldodebug.soar.management.mods.Mod;
 import me.eldodebug.soar.management.mods.ModCategory;
 import me.eldodebug.soar.management.mods.ModManager;
+import me.eldodebug.soar.management.mods.impl.FreelookMod;
 import me.eldodebug.soar.management.mods.settings.Setting;
 import me.eldodebug.soar.management.mods.settings.impl.*;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
@@ -484,6 +485,12 @@ public class ModuleCategory extends Category {
 				if(isSettingContentHovered(mouseX, mouseY) && mouseButton == 0) {
 					
 					s.comp.mouseClicked(mouseX, (int) (mouseY - settingScroll.getValue()), mouseButton);
+					if(currentMod instanceof FreelookMod && s.comp instanceof CompSlider
+							&& s.setting == ((FreelookMod) currentMod).getDistanceSetting()
+							&& ((CompSlider) s.comp).isDragging()) {
+						getParent().beginFreelookDistancePreview((FreelookMod) currentMod, (CompSlider) s.comp, settingScroll.getValue());
+						return;
+					}
 					
 					if(s.comp instanceof CompColorPicker) {
 						

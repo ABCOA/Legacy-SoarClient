@@ -1,23 +1,19 @@
 package me.eldodebug.soar.utils.mouse;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
-import java.nio.IntBuffer;
-
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.win32.StdCallLibrary;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.win32.StdCallLibrary;
+import java.awt.*;
+import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.nio.IntBuffer;
 
-/** Collects clickable hit areas during a GUI frame and updates the native cursor once. */
 public final class MouseCursor {
 
     private static Cursor pointer;
@@ -127,7 +123,6 @@ public final class MouseCursor {
         }
     }
 
-    /** Keeps Windows mouse messages from replacing the hand with the class cursor. */
     public static boolean applySystemPointer() {
         if (!applied || unavailable || !Mouse.isCreated() || Mouse.isGrabbed()
                 || LWJGLUtil.getPlatform() != LWJGLUtil.PLATFORM_WINDOWS) {
