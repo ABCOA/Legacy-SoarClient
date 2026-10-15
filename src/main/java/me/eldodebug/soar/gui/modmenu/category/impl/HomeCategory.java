@@ -1,10 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-import java.awt.Desktop;
-import java.io.File;
-import java.net.URL;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -21,8 +16,13 @@ import me.eldodebug.soar.management.music.MusicManager;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import net.minecraft.util.ResourceLocation;
+
+import java.awt.*;
+import java.io.File;
+import java.net.URL;
 
 public class HomeCategory extends Category {
 
@@ -89,6 +89,10 @@ public class HomeCategory extends Category {
 		nvg.drawText(Icon.FORWARD, this.getX() + 68 + (144 / 2) - 10 + 24, this.getY() + 128.5F, palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
 		
 		// Changelog
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + 129, this.getY() + 128.5F, 16, 16);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + 106, this.getY() + 128.5F, 16, 16);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + 154, this.getY() + 128.5F, 16, 16);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + 65, this.getY() + 207, 52, 18);
 		
 		int offsetY = 0;
 		
@@ -139,7 +143,7 @@ public class HomeCategory extends Category {
 			
 			if(MouseUtils.isInside(mouseX, mouseY, this.getX() + 15 + 50, this.getY() + 164 + 43, 52, 18)) {
 				try {
-					Desktop.getDesktop().browse(new URL("https://discord.gg/soar-client-967307105516281917").toURI());
+					Desktop.getDesktop().browse(new URL("https://discord.gg/zFYV4wr84P").toURI());
 				} catch (Exception e) {}
 			}
 		}

@@ -29,6 +29,7 @@ public class BlockInfoMod extends HUDMod {
     private BlockPos pos;
     private IBlockState state;
     private Block block;
+	private ItemStack item;
     
 	public BlockInfoMod() {
 		super(TranslateText.BLOCK_INFO, TranslateText.BLOCK_INFO_DESCRIPTION);
@@ -51,12 +52,12 @@ public class BlockInfoMod extends HUDMod {
 	
 	private void drawBlock() {
 		
-		if(block != null && !block.equals(Blocks.portal) && !block.equals(Blocks.end_portal)) {
+		if(item != null && !block.equals(Blocks.portal) && !block.equals(Blocks.end_portal)) {
 			GlUtils.startScale(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 2F * this.getScale());
 			RenderHelper.enableGUIStandardItemLighting();
 			GlStateManager.enableColorMaterial();
             GlStateManager.colorMask(true, true, true, false);
-			mc.getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(block), this.getX() + (this.getWidth() / 2) - 8, this.getY() + (this.getHeight() / 2) - 8);
+			mc.getRenderItem().renderItemAndEffectIntoGUI(item, this.getX() + (this.getWidth() / 2) - 8, this.getY() + (this.getHeight() / 2) - 8);
 			RenderHelper.disableStandardItemLighting();
             GlStateManager.colorMask(true, true, true, true);
 			GlUtils.stopScale();
@@ -73,6 +74,16 @@ public class BlockInfoMod extends HUDMod {
 				pos = mc.objectMouseOver.getBlockPos();
 				state = mc.theWorld.getBlockState(pos);
 				block = state.getBlock();
+				if (block == Blocks.double_plant && block.getMetaFromState(state) == 10) {
+					block = mc.theWorld.getBlockState(pos.down()).getBlock();
+				}
+                if (block == Blocks.stone || block == Blocks.double_stone_slab || block == Blocks.stone_slab || block == Blocks.dirt || block == Blocks.grass || block == Blocks.double_plant || block == Blocks.tallgrass
+						|| block == Blocks.anvil || block == Blocks.wool || block == Blocks.carpet || block == Blocks.red_flower || block == Blocks.planks || block == Blocks.monster_egg || block == Blocks.stained_glass
+						|| block == Blocks.stained_glass_pane || block == Blocks.stained_hardened_clay) {
+                    item = new ItemStack(block, 1, block.getMetaFromState(state));
+                } else {
+					item = new ItemStack(block);
+				}
 			}
 			
 			introAnimation.setDirection(Direction.FORWARDS);
@@ -83,11 +94,15 @@ public class BlockInfoMod extends HUDMod {
 			}
 		}
 		
-		if(block != null && !block.equals(Blocks.portal) && !block.equals(Blocks.end_portal)) {
+		if(item != null && !block.equals(Blocks.portal) && !block.equals(Blocks.end_portal)) {
 			
 			this.drawBackground(80, 80);
-			
-			this.drawCenteredText(block.getLocalizedName(), 40, 6, 9, Fonts.REGULAR);
-		}
+
+            try {
+                this.drawCenteredText(item.getDisplayName(), 40, 6, 9, Fonts.REGULAR);
+            } catch (Exception e) {
+                this.drawCenteredText(block.getLocalizedName(), 40, 6, 9, Fonts.REGULAR);
+            }
+        }
 	}
 }

@@ -1,18 +1,27 @@
 package me.eldodebug.soar.gui.mainmenu;
 
 import me.eldodebug.soar.Soar;
-import me.eldodebug.soar.gui.mainmenu.impl.*;
+import me.eldodebug.soar.gui.mainmenu.impl.AccountScene;
+import me.eldodebug.soar.gui.mainmenu.impl.BackgroundScene;
+import me.eldodebug.soar.gui.mainmenu.impl.MainScene;
+import me.eldodebug.soar.gui.mainmenu.impl.MicrosoftLoginScene;
 import me.eldodebug.soar.gui.mainmenu.impl.welcome.*;
 import me.eldodebug.soar.management.account.Account;
 import me.eldodebug.soar.management.account.AccountManager;
+import me.eldodebug.soar.management.account.AccountType;
+import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.event.impl.EventRenderNotification;
+import me.eldodebug.soar.management.language.TranslateText;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.management.notification.NotificationManager;
+import me.eldodebug.soar.management.notification.NotificationType;
 import me.eldodebug.soar.management.profile.mainmenu.impl.Background;
 import me.eldodebug.soar.management.profile.mainmenu.impl.CustomBackground;
 import me.eldodebug.soar.management.profile.mainmenu.impl.DefaultBackground;
+import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.DecelerateAnimation;
@@ -34,7 +43,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 	private MainMenuScene currentScene;
 	
 	private SimpleAnimation closeFocusAnimation = new SimpleAnimation();
-	private SimpleAnimation shopFocusAnimation = new SimpleAnimation();
 	private SimpleAnimation backgroundSelectFocusAnimation = new SimpleAnimation();
 	private SimpleAnimation[] backgroundAnimations = new SimpleAnimation[2];
 	
@@ -58,7 +66,6 @@ public class GuiSoarMainMenu extends GuiScreen {
 		scenes.add(new MainScene(this));
 		scenes.add(new AccountScene(this));
 		scenes.add(new BackgroundScene(this));
-		scenes.add(new ShopScene(this));
 		scenes.add(new WelcomeMessageScene(this));
 		scenes.add(new ThemeSelectScene(this));
 		scenes.add(new AccentColorSelectScene(this));
@@ -106,7 +113,9 @@ public class GuiSoarMainMenu extends GuiScreen {
 			drawNanoVG(sr, instance, nvg);
 			
 			if(!isFirstLogin) {
-				drawButtons(mouseX, mouseY, sr, nvg);
+//				drawButtons(mouseX, mouseY, sr, nvg);
+				drawButton(nvg, Icon.X, sr.getScaledWidth() - 28, 6, mouseX, mouseY, 22, 22, closeFocusAnimation);
+				drawButton(nvg, Icon.IMAGE, sr.getScaledWidth() - 28 * 2, 6, mouseX, mouseY, 22, 22, backgroundSelectFocusAnimation);
 			}
 		});
 		
@@ -147,25 +156,53 @@ public class GuiSoarMainMenu extends GuiScreen {
 		}
 
 		nvg.drawText(copyright, sr.getScaledWidth() - (nvg.getTextWidth(copyright, 9, Fonts.REGULAR)) - 4, sr.getScaledHeight() - 12, new Color(255, 255, 255), 9, Fonts.REGULAR);
-		nvg.drawText("Soar Client v" + instance.getVersion(), 4, sr.getScaledHeight() - 12, new Color(255, 255, 255), 9, Fonts.REGULAR);
+		nvg.drawText("SoarClient-ABC v" + instance.getVersion(), 4, sr.getScaledHeight() - 12, new Color(255, 255, 255), 9, Fonts.REGULAR);
+	}
+
+	private void drawButton(NanoVGManager nvg, String text, float x, float y, int mouseX, int mouseY, int width, int height, SimpleAnimation animation) {
+		boolean isHovered = MouseUtils.isInside(mouseX, mouseY, x, y, width, height);
+		Color backgroundColor = this.getBackgroundColor();
+		AccentColor currentColor = Soar.getInstance().getColorManager().getCurrentColor();
+		Color hoverColor = currentColor.getInterpolateColor(0);
+
+		animation.setAnimation(isHovered ? 1.0F : 0.0F, 10);
+
+		float animationValue = animation.getValue();
+		int red = (int) (255 - animationValue * (255 - hoverColor.getRed()));
+		int green = (int) (255 - animationValue * (255 - hoverColor.getGreen()));
+		int blue = (int) (255 - animationValue * (255 - hoverColor.getBlue()));
+		Color interpolatedColor = new Color(red, green, blue);
+
+		if (isHovered) {
+			nvg.save();
+//			nvg.scissor(x - 90, y, width, height);
+//			nvg.drawGradientCircle(mouseX, mouseY, radius, new Color(200, 200, 200), backgroundColor);
+//			float fillWidth = animation.getValue() * width; // 动态调整填充宽度
+//			nvg.drawRoundedRect(x - 90, y, fillWidth, height, 4.5F, Color.LIGHT_GRAY); // 从左到右填充
+			nvg.drawRoundedRect(x, y, width, height, 4F, Color.LIGHT_GRAY);
+			nvg.drawGradientOutlineRoundedRect(x, y, width, height, 4F, 1.5F, ColorUtils.applyAlpha(currentColor.getColor1(), (int) (animation.getValue() * 255)), ColorUtils.applyAlpha(currentColor.getColor2(), (int) (animation.getValue() * 255)));
+		}
+		nvg.drawRoundedRect(x, y, width, height, 4F, backgroundColor);
+		if(text.equals(Icon.X)) {
+			nvg.drawCenteredText(text, x + 9F, y + 2F, interpolatedColor, 18F, Fonts.ICON);
+		} else {
+			nvg.drawCenteredText(text, x + 10F, y + 3F, interpolatedColor, 16F, Fonts.ICON);
+		}
+		nvg.restore();
 	}
 	
 	private void drawButtons(int mouseX, int mouseY, ScaledResolution sr, NanoVGManager nvg) {
-		
+
 		closeFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - 28, 6, 22, 22) ? 1.0F : 0.0F, 16);
-		
+
 		nvg.drawRoundedRect(sr.getScaledWidth() - 28, 6, 22, 22, 4, this.getBackgroundColor());
 		nvg.drawCenteredText(Icon.X, sr.getScaledWidth() - 19F, 8F, new Color(255, 255 - (int) (closeFocusAnimation.getValue() * 200), 255 - (int) (closeFocusAnimation.getValue() * 200)), 18, Fonts.ICON);
-		
+
 		backgroundSelectFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - 28 - 28, 6, 22, 22) ? 1.0F : 0.0F, 16);
-		
+
 		nvg.drawRoundedRect(sr.getScaledWidth() - 28 - 28, 6, 22, 22, 4, this.getBackgroundColor());
 		nvg.drawCenteredText(Icon.IMAGE, sr.getScaledWidth() - 19F - 26.5F, 9.5F, new Color(255 - (int) (backgroundSelectFocusAnimation.getValue() * 200), 255, 255 - (int) (backgroundSelectFocusAnimation.getValue() * 200)), 15, Fonts.ICON);
-		
-		shopFocusAnimation.setAnimation(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - (28 * 3), 6, 22, 22) ? 1.0F : 0.0F, 16);
-		
-		nvg.drawRoundedRect(sr.getScaledWidth() - (28 * 3), 6, 22, 22, 4, this.getBackgroundColor());
-		nvg.drawCenteredText(Icon.SHOPPING, sr.getScaledWidth() - (26 * 3) + 4.5F, 9.5F, new Color(255 - (int) (shopFocusAnimation.getValue() * 200), 255, 255), 15, Fonts.ICON);
+
 	}
 	
 	private void drawAccount(int mouseX, int mouseY, Soar instance, NanoVGManager nvg) {
@@ -180,16 +217,17 @@ public class GuiSoarMainMenu extends GuiScreen {
 		AccountManager accountManager = instance.getAccountManager();
 		
 		if(accountManager.getCurrentAccount() != null) {
+			ArrayList<Account> accounts = new ArrayList<Account>(accountManager.getAccounts());
 			File headFile = new File(instance.getFileManager().getCacheDir(), "head/" + accountManager.getCurrentAccount().getName() + ".png");
 			String name = currentAccount.getName();
 			ColorPalette palette = instance.getColorManager().getPalette();
 			
 			float maxUserWidth = nvg.getTextWidth(name, 9.5F, Fonts.REGULAR);
 			float progress = accountAnimation.getValue();
-			int size = accountManager.getAccounts().size() - 1;
+			int size = accounts.size() - 1;
 			int offsetY = 20;
 			
-			for(Account acc : accountManager.getAccounts()) {
+			for(Account acc : accounts) {
 				
 				float tWidth = nvg.getTextWidth(acc.getName(), 9.5F, Fonts.REGULAR);
 				
@@ -226,7 +264,7 @@ public class GuiSoarMainMenu extends GuiScreen {
 			nvg.drawText(Icon.PLUS, maxUserWidth + 29, 10F, new Color(255, 255, 255, (int) (progress * 255)), 13F, Fonts.ICON);
 			nvg.restore();
 			
-			for(Account acc : accountManager.getAccounts()) {
+			for(Account acc : accounts) {
 				
 				if(!acc.equals(currentAccount)) {
 					
@@ -298,17 +336,14 @@ public class GuiSoarMainMenu extends GuiScreen {
 				this.setCurrentScene(this.getSceneByClass(BackgroundScene.class));
 			}
 			
-			if(MouseUtils.isInside(mouseX, mouseY, sr.getScaledWidth() - (28 * 3), 6, 22, 22)) {
-				this.setCurrentScene(this.getSceneByClass(ShopScene.class));
-			}
-			
 			if(openAccount) {
 				
 				Account currentAccount = accountManager.getCurrentAccount();
+				ArrayList<Account> accounts = new ArrayList<Account>(accountManager.getAccounts());
 				float maxUserWidth = nvg.getTextWidth(currentAccount.getName(), 9.5F, Fonts.REGULAR);
 				int offsetY = 20;
 				
-				for(Account acc : accountManager.getAccounts()) {
+				for(Account acc : accounts) {
 					
 					float tWidth = nvg.getTextWidth(acc.getName(), 9.5F, Fonts.REGULAR);
 					
@@ -321,7 +356,7 @@ public class GuiSoarMainMenu extends GuiScreen {
 					currentScene = getSceneByClass(AccountScene.class);
 				}
 				
-				for(Account acc : accountManager.getAccounts()) {
+				for(Account acc : accounts) {
 					
 					if(!acc.equals(currentAccount)) {
 						
@@ -330,7 +365,16 @@ public class GuiSoarMainMenu extends GuiScreen {
 						}
 						
 						if(MouseUtils.isInside(mouseX, mouseY, 6, 6 + offsetY, maxUserWidth + 20, 20)) {
-							accountManager.getAuthenticator().loginWithRefreshToken(acc.getRefreshToken());
+							if (acc.getType() == AccountType.MICROSOFT) {
+                                try {
+                                    accountManager.getAuthenticator().loginWithRefreshToken(acc.getRefreshToken());
+                                } catch (Exception e) {
+									NotificationManager notificationManager = instance.getNotificationManager();
+									notificationManager.post(TranslateText.LOGIN_FAILED, TranslateText.PLEASE_LOGIN_AGAIN, NotificationType.ERROR);
+                                }
+                            } else {
+								accountManager.setCurrentAccount(acc);
+							}
 						}
 						
 						offsetY+=20;

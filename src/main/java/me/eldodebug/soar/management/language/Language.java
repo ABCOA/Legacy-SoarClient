@@ -5,7 +5,8 @@ import net.minecraft.util.ResourceLocation;
 
 public enum Language {
 	JAPANESE("ja", TranslateText.JAPANESE, new ResourceLocation("soar/flag/ja.png")), 
-	CHINESE("cn", TranslateText.CHINESE, new ResourceLocation("soar/flag/cn.png")), 
+	CHINESE("cn", TranslateText.CHINESE, new ResourceLocation("soar/flag/cn.png")),
+	CHINESE_TRADITIONAL("cn_tr", TranslateText.CHINESE_TRADITIONAL, new ResourceLocation("soar/flag/cn_tr.png")),
 	ENGLISH("en", TranslateText.ENGLISH_US, new ResourceLocation("soar/flag/us.png"));
 	
 	private SimpleAnimation animation = new SimpleAnimation();

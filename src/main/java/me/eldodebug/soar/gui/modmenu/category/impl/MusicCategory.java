@@ -1,7 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -24,8 +22,11 @@ import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.SearchUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import net.minecraft.util.ResourceLocation;
+
+import java.awt.*;
 
 public class MusicCategory extends Category {
 
@@ -58,6 +59,8 @@ public class MusicCategory extends Category {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		boolean interactive = MouseCursor.isInteractive();
+		MouseCursor.setInteractive(interactive && !openDownloader && MouseUtils.isInside(mouseX, mouseY, this.getX(), this.getY(), this.getWidth(), this.getHeight() - 46));
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -78,6 +81,7 @@ public class MusicCategory extends Category {
 			
 			float textWidth = nvg.getTextWidth(t.getName(), 9, Fonts.MEDIUM);
 			boolean isCurrentCategory = t.equals(currentType);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scroll.getValue(), textWidth + 20, 16);
 			
 			t.getBackgroundAnimation().setAnimation(isCurrentCategory ? 1.0F : 0.0F, 16);
 			
@@ -103,6 +107,7 @@ public class MusicCategory extends Category {
 			}
 			
 			nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 46, 8, palette.getBackgroundColor(ColorType.DARK));
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY + scroll.getValue(), this.getWidth() - 30, 46);
 			
 			if(m.getIcon() == null) {
 				nvg.drawRoundedImage(new ResourceLocation("soar/music.png"), this.getX() + 21, this.getY() + offsetY + 6, 34, 34, 6);
@@ -124,6 +129,8 @@ public class MusicCategory extends Category {
 		nvg.restore();
 		
 		downloaderAnimation.setAnimation(openDownloader ? 1.0F : 0.0F, 16);
+		MouseCursor.setInteractive(interactive && openDownloader);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 34, this.getY() + this.getHeight() - 80, 18, 18);
 		
 		nvg.save();
 		nvg.translate(0, 60 - (downloaderAnimation.getValue() * 60));
@@ -138,6 +145,12 @@ public class MusicCategory extends Category {
 		nvg.restore();
 		
 		nvg.drawRoundedRectVarying(this.getX(), this.getY() + this.getHeight() - 46F, this.getWidth(), 46, 0, 0, 0, 12, palette.getBackgroundColor(ColorType.DARK));
+		MouseCursor.setInteractive(interactive && !openDownloader);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() / 2 - 9, this.getY() + this.getHeight() - 21.5F, 17, 17);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() / 2 - 34, this.getY() + this.getHeight() - 22.5F, 18, 18);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() / 2 + 16, this.getY() + this.getHeight() - 22.5F, 18, 18);
+		float addSongWidth = nvg.getTextWidth("+" + TranslateText.ADD_SONG.getText(), 9, Fonts.MEDIUM);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - addSongWidth - 10, this.getY() + this.getHeight() - 39, addSongWidth, 12);
 		
 		if(currentMusic == null || currentMusic.getIcon() == null) {
 			nvg.drawRoundedImage(new ResourceLocation("soar/music.png"), this.getX() + 15, this.getY() + this.getHeight() - 40F, 34, 34, 6);
@@ -190,6 +203,7 @@ public class MusicCategory extends Category {
 				palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
 		
 		scroll.setMaxScroll((index - (index > 3 ? 3.91F : index)) * 56);
+		MouseCursor.setInteractive(interactive);
 	}
 	
 	@Override

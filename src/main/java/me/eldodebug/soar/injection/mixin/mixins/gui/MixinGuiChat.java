@@ -1,18 +1,18 @@
 package me.eldodebug.soar.injection.mixin.mixins.gui;
 
+import me.eldodebug.soar.hooks.GuiChatHook;
+import me.eldodebug.soar.management.command.CommandManager;
+import me.eldodebug.soar.management.mods.impl.ChatTranslateMod;
+import me.eldodebug.soar.utils.Multithreading;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import me.eldodebug.soar.hooks.GuiChatHook;
-import me.eldodebug.soar.management.mods.impl.ChatTranslateMod;
-import me.eldodebug.soar.utils.Multithreading;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 
 @Mixin(GuiChat.class)
 public class MixinGuiChat extends GuiScreen {
@@ -41,7 +41,8 @@ public class MixinGuiChat extends GuiScreen {
         
         if (s.length() > 0) {
         	
-    		if(ChatTranslateMod.getInstance().isToggled() && GuiChatHook.isToggled()) {
+            if(ChatTranslateMod.getInstance().isToggled() && GuiChatHook.isToggled()
+                    && !CommandManager.isClientCommand(s) && !s.startsWith("/")) {
     			Multithreading.runAsync(() -> {
     				GuiChatHook.sendTranslatedMessage(s);
     			});

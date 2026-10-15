@@ -1,32 +1,15 @@
 package me.eldodebug.soar.management.music;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.AudioSpectrumListener;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaPlayer.Status;
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.file.FileManager;
 import me.eldodebug.soar.management.language.TranslateText;
 import me.eldodebug.soar.management.mods.impl.GlobalSettingsMod;
 import me.eldodebug.soar.management.mods.impl.MusicInfoMod;
-import me.eldodebug.soar.management.mods.settings.impl.ComboSetting;
+import me.eldodebug.soar.management.music.openal.OpenALMusicPlayer;
 import me.eldodebug.soar.management.music.ytdlp.Ytdlp;
 import me.eldodebug.soar.mp3agic.Mp3File;
 import me.eldodebug.soar.mp3agic.interfaces.ID3v2;
@@ -36,20 +19,49 @@ import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.RandomUtils;
 import me.eldodebug.soar.utils.file.FileUtils;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class MusicManager {
 
 	private CopyOnWriteArrayList<Music> musics = new CopyOnWriteArrayList<Music>();
 	private Ytdlp ytdlp = new Ytdlp();
 	
 	private Music currentMusic;
-	private Media media;
-	private MediaPlayer mediaPlayer;
-	
+	private OpenALMusicPlayer player = new OpenALMusicPlayer();
+	private float trackLengthSec = 0f;
+
 	public MusicManager() {
 		load();
 		loadData();
+
+		player.setVisualizerListener(mags -> {
+			boolean isWaveform = MusicInfoMod.getInstance()
+					.getDesignSetting().getOption().getTranslate().equals(TranslateText.WAVEFORM);
+			for (int i = 0; i < 100 && i < MusicWaveform.visualizer.length; i++) {
+				float v = mags[i]; // 0..1
+				MusicWaveform.visualizer[i] = (float) (v * (isWaveform ? 70.0 : 180.0));
+			}
+		});
+
+		player.setOnFinished(() -> {
+			try {
+				stop();
+				if (!musics.isEmpty()) {
+					currentMusic = musics.get(RandomUtils.getRandomInt(0, musics.size() - 1));
+					play();
+				}
+			} catch (Throwable ignored) {}
+		});
 	}
-	
+
+
 	public void loadData() {
 		
 		FileManager fileManager = Soar.getInstance().getFileManager();
@@ -129,63 +141,32 @@ public class MusicManager {
 	}
 	
 	public void play() {
-		
-		if(currentMusic == null) {
-			return;
+		if (currentMusic == null) return;
+
+		trackLengthSec = 0f;
+		if (FileUtils.getExtension(currentMusic.getAudio()).equalsIgnoreCase("mp3")) {
+			try {
+				Mp3File mp3 = new Mp3File(currentMusic.getAudio());
+				trackLengthSec = mp3.getLengthInSeconds();
+			} catch (Exception ignored) {}
 		}
-		
-		if(mediaPlayer != null) {
-			mediaPlayer.dispose();
-		}
-		
-		if(media == null || mediaPlayer == null) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					new JFXPanel();
-				}
-			});
-		}
-		
-		media = new Media(currentMusic.getAudio().toURI().toString());
-		mediaPlayer = new MediaPlayer(media);
-		mediaPlayer.setAudioSpectrumInterval(0.06);
-		mediaPlayer.setAudioSpectrumListener(new AudioSpectrumListener() {
-			
-			@Override
-			public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
-				
-				ComboSetting setting = MusicInfoMod.getInstance().getDesignSetting();
-				boolean isWaveform = setting.getOption().getTranslate().equals(TranslateText.WAVEFORM);
-				
-				for(int i = 0; i < 100; i++) {
-					
-					if(isWaveform) {
-						MusicWaveform.visualizer[i] = (float) ((magnitudes[i] + 60) * (-1.17));
-					} else {
-						MusicWaveform.visualizer[i] = (float) ((magnitudes[i] + 60) * (-3.0));
-					}
-				}
+
+		try {
+			player.stop();
+			if (FileUtils.getExtension(currentMusic.getAudio()).equalsIgnoreCase("mp3")) {
+				player.playMp3(currentMusic.getAudio());
+			} else {
+				System.err.println("Only mp3 supported by OpenAL player for now: " + currentMusic.getAudio());
+				return;
 			}
-		});
-		
-		mediaPlayer.setOnEndOfMedia(new Runnable() {
-			@Override
-			public void run() {
-				stop();
-				currentMusic = musics.get(RandomUtils.getRandomInt(0, musics.size() - 1));
-				play();
-			}
-		});
-		
-		mediaPlayer.play();
-		setVolume();
+			setVolume();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
-	
+
 	public void setVolume() {
-		if(mediaPlayer != null) {
-			mediaPlayer.setVolume(GlobalSettingsMod.getInstance().getVolumeSetting().getValue());
-		}
+		player.setVolume(GlobalSettingsMod.getInstance().getVolumeSetting().getValue());
 	}
 	
 	public void next() {
@@ -225,48 +206,25 @@ public class MusicManager {
 		currentMusic = musics.get(index);
 		play();
 	}
-	
+
 	public void switchPlayBack() {
-		if(mediaPlayer != null) {
-			if(mediaPlayer.getStatus().equals(Status.PAUSED)) {
-				mediaPlayer.play();
-			}else if(mediaPlayer.getStatus().equals(Status.PLAYING)) {
-				mediaPlayer.pause();
-			}
-		}
+		player.pauseResume();
 	}
 	
 	public void stop() {
-		if(mediaPlayer != null) {
-			mediaPlayer.stop();
-		}
+		player.stop();
 	}
 	
 	public boolean isPlaying() {
-		
-		if(mediaPlayer == null) {
-			return false;
-		}
-		
-		return mediaPlayer.getStatus().equals(Status.PLAYING);
+		return player.isPlaying();
 	}
 	
 	public float getCurrentTime() {
-		
-		if(mediaPlayer == null) {
-			return 0;
-		}
-		
-		return (float) mediaPlayer.getCurrentTime().toSeconds();
+		return player.getCurrentTimeSec();
 	}
 	
 	public float getEndTime() {
-		
-		if(mediaPlayer == null) {
-			return 0;
-		}
-		
-		return (float) mediaPlayer.getMedia().getDuration().toSeconds();
+		return trackLengthSec > 0 ? trackLengthSec : Math.max(player.getCurrentTimeSec(), 0f);
 	}
 	
 	public void load() {

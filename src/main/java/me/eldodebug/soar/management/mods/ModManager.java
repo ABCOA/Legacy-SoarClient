@@ -1,10 +1,10 @@
 package me.eldodebug.soar.management.mods;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import me.eldodebug.soar.management.mods.impl.*;
 import me.eldodebug.soar.management.mods.settings.Setting;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ModManager {
 
@@ -25,6 +25,7 @@ public class ModManager {
 		mods.add(new BowZoomMod());
 		mods.add(new BreadcrumbsMod());
 		mods.add(new CalendarMod());
+		mods.add(new ChatCopyMod());
 		mods.add(new ChatMod());
 		mods.add(new ChatTranslateMod());
 		mods.add(new ChunkAnimatorMod());
@@ -69,6 +70,7 @@ public class ModManager {
 		mods.add(new ImageDisplayMod());
 		mods.add(new InventoryDisplayMod());
 		mods.add(new InventoryMod());
+		mods.add(new IRCMod());
 		mods.add(new ItemInfoMod());
 		mods.add(new ItemPhysicsMod());
 		mods.add(new Items2DMod());
@@ -108,6 +110,8 @@ public class ModManager {
 		mods.add(new ReachCirclesMod());
 		mods.add(new ReachDisplayMod());
 		mods.add(new RearviewMod());
+		mods.add(new ResourceCounterMod());
+		mods.add(new RewardClaimer());
 		mods.add(new ScoreboardMod());
 		mods.add(new ServerIPDisplayMod());
 		mods.add(new SessionInfoMod());

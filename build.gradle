@@ -24,6 +24,26 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.hypixel.net/repository/Hypixel/' }
+    maven {
+        name = "aliyun"
+        url = "https://maven.aliyun.com/repository/public/"
+    }
+    maven {
+        name "jitpack"
+        url "https://jitpack.io"
+    }
+
+    maven {
+        name "spongepowered"
+        url "https://repo.spongepowered.org/maven/"
+    }
+
+    jcenter()
+}
+
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
@@ -34,6 +54,8 @@ archivesBaseName = "SoarClient"
 
 sourceCompatibility = targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
+compileJava.options.fork = true
+compileJava.options.forkOptions.memoryMaximumSize = '2g'
 
 minecraft {
     version = "1.8.9"
@@ -44,32 +66,26 @@ minecraft {
     makeObfSourceJar = false
 }
 
-repositories {
-    maven {
-        name "jitpack"
-        url "https://jitpack.io"
-    }
-
-    maven {
-        name "spongepowered"
-        url "https://repo.spongepowered.org/maven/"
-    }
-    jcenter()
-    mavenCentral()
-}
-
 configurations {
     embed
     compile.extendsFrom(embed)
 }
 
 dependencies {
+    // Embed the loader-neutral Java 8 core; Minecraft already supplies Netty/Gson.
+    embed('net.hypixel:mod-api:1.0.2') {
+        exclude group: 'io.netty'
+        exclude group: 'org.jetbrains'
+    }
     embed('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
         exclude module: 'gson'
         exclude module: 'commons-io'
     }
+    compile 'org.pircbotx:pircbotx:2.1'
+    embed 'javazoom:jlayer:1.0.1'
+    compileOnly 'org.lwjgl.lwjgl:lwjgl:2.9.3'
 }
 
 mixin {
@@ -105,9 +121,4 @@ jar {
             'FMLAT': 'soar_at.cfg'
     )
 
-    configurations.embed.each { dep ->
-        from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
-        }
-    }
 }

@@ -1,10 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-import java.io.File;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
@@ -28,7 +23,14 @@ import me.eldodebug.soar.utils.SearchUtils;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+import org.lwjgl.input.Keyboard;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
 
 public class ProfileCategory extends Category {
 
@@ -62,6 +64,7 @@ public class ProfileCategory extends Category {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		boolean interactive = MouseCursor.isInteractive();
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -83,6 +86,7 @@ public class ProfileCategory extends Category {
 		}
 		
 		// Draw profile scene
+		MouseCursor.setInteractive(interactive && !openProfile && profileAnimation.isDone(Direction.FORWARDS));
 		nvg.save();
 		nvg.translate((float) -(600 - (profileAnimation.getValue() * 600)), 0);
 		
@@ -90,6 +94,7 @@ public class ProfileCategory extends Category {
 			
 			float textWidth = nvg.getTextWidth(t.getName(), 9, Fonts.MEDIUM);
 			boolean isCurrentCategory = t.equals(currentType);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16);
 			
 			t.getBackgroundAnimation().setAnimation(isCurrentCategory ? 1.0F : 0.0F, 16);
 			
@@ -116,6 +121,7 @@ public class ProfileCategory extends Category {
 			}
 			
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY, 123, 46, 6, palette.getBackgroundColor(ColorType.DARK));
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY, 123, 46);
 			
 			if(p.getIcon() != null) {
 				nvg.drawRoundedImage(p.getIcon().getIcon(), this.getX() + 15 + offsetX + 6, this.getY() + offsetY + 6, 34, 34, 6);
@@ -150,6 +156,9 @@ public class ProfileCategory extends Category {
 		nvg.restore();
 		
 		// Draw profile add scene
+		MouseCursor.setInteractive(interactive && openProfile && profileAnimation.isDone(Direction.BACKWARDS));
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 231, 100, 21);
+		MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 44, 100, 21);
 		
 		nvg.save();
 		nvg.translate((float) (profileAnimation.getValue() * 600), 0);
@@ -158,11 +167,16 @@ public class ProfileCategory extends Category {
 		offsetX = 0;
 		
 		nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, this.getHeight() - 30, 10, palette.getBackgroundColor(ColorType.DARK));
+		nvg.drawRoundedRect(this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 231,
+				100, 21, 6, palette.getBackgroundColor(ColorType.NORMAL));
+		nvg.drawCenteredText(TranslateText.UPLOAD_PROFILE.getText(), this.getX() + this.getWidth() - 124 + 50, this.getY() + this.getHeight() - 224.5F,
+				palette.getFontColor(ColorType.DARK), 10, Fonts.REGULAR);
 		nvg.drawRect(this.getX() + 15, this.getY() + offsetY + 27, this.getWidth() - 30, 1, palette.getBackgroundColor(ColorType.NORMAL));
 		nvg.drawText(TranslateText.ADD_PROFILE.getText(), this.getX() + 26, this.getY() + offsetY + 9, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 		nvg.drawText(TranslateText.ICON.getText(), this.getX() + 30, this.getY() + offsetY + 35, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 		
 		for(ProfileIcon icon : ProfileIcon.values()) {
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 32 + offsetX, this.getY() + offsetY + 53, 32, 32);
 			
 			int alpha = (int) (icon.getAnimation().getValue() * 255);
 			
@@ -193,6 +207,7 @@ public class ProfileCategory extends Category {
 				palette.getFontColor(ColorType.DARK), 10, Fonts.REGULAR);
 		
 		nvg.restore();
+		MouseCursor.setInteractive(interactive);
 	}
 	
 	@Override
@@ -240,6 +255,18 @@ public class ProfileCategory extends Category {
 					
 					openProfile = false;
 				}
+			}
+			if(MouseUtils.isInside(mouseX, mouseY, this.getX() + this.getWidth() - 124, this.getY() + this.getHeight() - 231, 100, 21) && mouseButton == 0) {
+				SwingUtilities.invokeLater(() -> {
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setFileFilter(new FileNameExtensionFilter("JSON File", "json"));
+					int returnValue = fileChooser.showOpenDialog(null);
+					if (returnValue == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = fileChooser.getSelectedFile();
+						profileManager.upload(selectedFile);
+						openProfile = false;
+					}
+				});
 			}
 		} else {
 			

@@ -1,26 +1,15 @@
 package me.eldodebug.soar;
 
-import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
-
-import org.apache.commons.lang3.StringUtils;
-
+import me.abcoc.soar.irc.ChatClientManager;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.logger.SoarLogger;
 import me.eldodebug.soar.management.account.Account;
 import me.eldodebug.soar.management.account.AccountManager;
 import me.eldodebug.soar.management.account.AccountType;
 import me.eldodebug.soar.management.cape.CapeManager;
-import me.eldodebug.soar.management.cape.impl.Cape;
 import me.eldodebug.soar.management.event.EventTarget;
-import me.eldodebug.soar.management.event.impl.EventClickMouse;
-import me.eldodebug.soar.management.event.impl.EventJoinServer;
-import me.eldodebug.soar.management.event.impl.EventLocationCape;
-import me.eldodebug.soar.management.event.impl.EventLocationSkin;
-import me.eldodebug.soar.management.event.impl.EventReceivePacket;
-import me.eldodebug.soar.management.event.impl.EventTick;
-import me.eldodebug.soar.management.event.impl.EventUpdate;
+import me.eldodebug.soar.management.event.impl.*;
+import me.eldodebug.soar.management.mods.settings.KeybindConflicts;
 import me.eldodebug.soar.management.profile.Profile;
 import me.eldodebug.soar.utils.OptifineUtils;
 import me.eldodebug.soar.utils.TargetUtils;
@@ -28,6 +17,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 public class SoarHandler {
 
@@ -37,7 +30,8 @@ public class SoarHandler {
 	
 	private String prevOfflineName;
 	private ResourceLocation offlineSkin;
-	
+
+
 	public SoarHandler() {
 		instance = Soar.getInstance();
 	}
@@ -45,6 +39,11 @@ public class SoarHandler {
 	@EventTarget
 	public void onTick(EventTick event) {
 		OptifineUtils.disableFastRender();
+	}
+
+	@EventTarget
+	public void onKey(EventKey event) {
+		if(mc.currentScreen == null) KeybindConflicts.warnForKey(event.getKeyCode());
 	}
 	
 	@EventTarget
@@ -56,6 +55,11 @@ public class SoarHandler {
 				break;
 			}
 		}
+	}
+
+	@EventTarget
+	public void onLeaveServer(EventLeaveServer event) {
+		ChatClientManager.leaveGame();
 	}
 	
 	@EventTarget
@@ -80,18 +84,8 @@ public class SoarHandler {
 	
 	@EventTarget
 	public void onCape(EventLocationCape event) {
-		
 		CapeManager capeManager = instance.getCapeManager();
-		
-		if(event.getPlayerInfo() != null && event.getPlayerInfo().getGameProfile().getId().equals(mc.thePlayer.getGameProfile().getId())) {
-			
-			Cape currentCape = capeManager.getCurrentCape();
-			
-			if(!currentCape.equals(capeManager.getCapeByName("None"))) {
-				event.setCancelled(true);
-				event.setCape(currentCape.getCape());
-			}
-		}
+		if (capeManager != null) capeManager.resolve(event);
 	}
 	
 	@EventTarget
@@ -126,4 +120,5 @@ public class SoarHandler {
 			}
 		}
 	}
+
 }

@@ -1,15 +1,12 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
 import me.eldodebug.soar.gui.modmenu.category.Category;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.SettingScene;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.impl.AppearanceScene;
 import me.eldodebug.soar.gui.modmenu.category.impl.setting.impl.LanguageScene;
+import me.eldodebug.soar.gui.modmenu.category.impl.setting.impl.OnlineScene;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.color.palette.ColorType;
 import me.eldodebug.soar.management.language.TranslateText;
@@ -19,7 +16,11 @@ import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
 
 public class SettingCategory extends Category {
 	
@@ -33,10 +34,12 @@ public class SettingCategory extends Category {
 		
 		scenes.add(new AppearanceScene(this));
 		scenes.add(new LanguageScene(this));
+		scenes.add(new OnlineScene(this));
 	}
 	
 	@Override
 	public void initGui() {
+		onClosed();
 		sceneAnimation = new SmoothStepAnimation(260, 1.0);
 		sceneAnimation.setValue(1.0);
 		
@@ -47,6 +50,7 @@ public class SettingCategory extends Category {
 
 	@Override
 	public void initCategory() {
+		onClosed();
 		scroll.resetAll();
 		sceneAnimation = new SmoothStepAnimation(260, 1.0);
 		sceneAnimation.setValue(1.0);
@@ -54,6 +58,7 @@ public class SettingCategory extends Category {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		boolean interactive = MouseCursor.isInteractive();
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -72,6 +77,9 @@ public class SettingCategory extends Category {
 		for(SettingScene scene : scenes) {
 			
 			nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40, 8, palette.getBackgroundColor(ColorType.DARK));
+			if(currentScene == null && sceneAnimation.isDone(Direction.FORWARDS)) {
+				MouseCursor.pointer(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40);
+			}
 			nvg.drawText(scene.getName(), this.getX() + 52, this.getY() + offsetY + 15F, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 			nvg.drawText(scene.getIcon(), this.getX() + 26, this.getY() + offsetY + 14, palette.getFontColor(ColorType.DARK), 14, Fonts.ICON);
 			nvg.drawText(scene.getDescription(), this.getX() + (nvg.getTextWidth(scene.getName(), 14, Fonts.MEDIUM)) + 56, this.getY() + offsetY + 17, palette.getFontColor(ColorType.NORMAL), 9, Fonts.REGULAR);
@@ -86,8 +94,10 @@ public class SettingCategory extends Category {
 		nvg.translate((float) (sceneAnimation.getValue() * 600), 0);
 		
 		if(currentScene != null) {
+			MouseCursor.setInteractive(interactive && sceneAnimation.isDone(Direction.BACKWARDS));
 			currentScene.drawScreen(mouseX, mouseY, partialTicks);
 		}
+		MouseCursor.setInteractive(interactive);
 		
 		nvg.restore();
 	}
@@ -101,6 +111,8 @@ public class SettingCategory extends Category {
 			
 			if(MouseUtils.isInside(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40) && mouseButton == 0 && currentScene == null) {
 				currentScene = scene;
+				scene.initGui();
+				getSearchBox().setFocused(false);
 				this.setCanClose(false);
 				sceneAnimation.setDirection(Direction.BACKWARDS);
 			}
@@ -113,6 +125,7 @@ public class SettingCategory extends Category {
 		}
 		
 		if(currentScene != null && mouseButton == 3) {
+			currentScene.onClosed();
 			sceneAnimation.setDirection(Direction.FORWARDS);
 		}
 	}
@@ -129,8 +142,17 @@ public class SettingCategory extends Category {
 	public void keyTyped(char typedChar, int keyCode) {
 		
 		if(currentScene != null && keyCode == Keyboard.KEY_ESCAPE) {
+			currentScene.onClosed();
 			sceneAnimation.setDirection(Direction.FORWARDS);
+		} else if(currentScene != null && sceneAnimation.isDone(Direction.BACKWARDS)) {
+			currentScene.keyTyped(typedChar, keyCode);
 		}
+	}
+
+	@Override
+	public void onClosed() {
+		if(currentScene != null) currentScene.onClosed();
+		currentScene = null;
 	}
 	
 	public int getSceneX() {
