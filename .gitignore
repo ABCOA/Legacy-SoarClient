@@ -34,3 +34,18 @@ replay_pid*
 *.metadata/
 *.vs
 */.idea
+
+# Local runtime data and credentials
+/.gradle/
+/.gradle-user/
+/.idea/
+/out/
+/run/
+/config/
+/cache/
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx

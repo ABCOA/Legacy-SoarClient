@@ -13,6 +13,7 @@ import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.utils.ColorUtils;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 
 public class LanguageScene extends SettingScene {
@@ -33,6 +34,7 @@ public class LanguageScene extends SettingScene {
 		float offsetY = 0;
 		
 		for(Language lang : Language.values()) {
+			MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY() + offsetY, this.getWidth(), 40);
 			
 			nvg.drawRoundedRect(this.getX(), this.getY() + offsetY, this.getWidth(), 40, 8, palette.getBackgroundColor(ColorType.DARK));
 			nvg.drawRoundedImage(lang.getFlag(), this.getX() + 6, this.getY() + offsetY + 6, 3 * 14, 2 * 14, 4);

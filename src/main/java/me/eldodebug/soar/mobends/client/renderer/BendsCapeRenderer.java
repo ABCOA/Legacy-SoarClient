@@ -1,7 +1,5 @@
 package me.eldodebug.soar.mobends.client.renderer;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.model.TexturedQuad;
@@ -9,6 +7,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import org.lwjgl.opengl.GL11;
 
 public class BendsCapeRenderer {
 	
@@ -53,7 +52,6 @@ public class BendsCapeRenderer {
 	    private int displayList;
 	    private Slab childSlab;
 	    public boolean showModel;
-	    /** Hides the model. */
 	    public boolean isHidden;
 	    public int offsetX;
 	    public int offsetY;

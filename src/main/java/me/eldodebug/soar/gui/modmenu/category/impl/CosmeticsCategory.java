@@ -1,7 +1,5 @@
 package me.eldodebug.soar.gui.modmenu.category.impl;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.SoarAPI;
 import me.eldodebug.soar.gui.modmenu.GuiModMenu;
@@ -11,6 +9,7 @@ import me.eldodebug.soar.management.cape.CapeManager;
 import me.eldodebug.soar.management.cape.impl.Cape;
 import me.eldodebug.soar.management.cape.impl.CustomCape;
 import me.eldodebug.soar.management.cape.impl.NormalCape;
+import me.eldodebug.soar.management.cape.impl.OfficialCape;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
@@ -22,11 +21,21 @@ import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.management.notification.NotificationType;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.SearchUtils;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.nanovg.NVGPaint;
+import org.lwjgl.nanovg.NanoVG;
+import org.lwjgl.nanovg.NanoVGGL2;
+
+import java.awt.*;
 
 public class CosmeticsCategory extends Category {
 
 	private CapeCategory currentCategory;
+	private int officialImage;
+	private int officialTexture = -1;
 	
 	public CosmeticsCategory(GuiModMenu parent) {
 		super(parent, TranslateText.COSMETICS, Icon.SHOPPING, true);
@@ -64,6 +73,7 @@ public class CosmeticsCategory extends Category {
 			
 			float textWidth = nvg.getTextWidth(c.getName(), 9, Fonts.MEDIUM);
 			boolean isCurrentCategory = c.equals(currentCategory);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scroll.getValue(), textWidth + 20, 16);
 			
 			c.getBackgroundAnimation().setAnimation(isCurrentCategory ? 1.0F : 0.0F, 16);
 			
@@ -81,7 +91,9 @@ public class CosmeticsCategory extends Category {
 		}
 		
 		offsetX = 0;
-		offsetY = offsetY + 23;
+		nvg.drawText(nvg.getLimitText(capeManager.getSyncStatus() + (capeManager.getSyncDetail().isEmpty() ? "" : ": " + capeManager.getSyncDetail()), 8, Fonts.MEDIUM, 388),
+				this.getX() + 15, this.getY() + offsetY + 23, palette.getFontColor(ColorType.DARK), 8, Fonts.MEDIUM);
+		offsetY = offsetY + 38;
 		
 		for(Cape cp : capeManager.getCapes()) {
 			
@@ -90,11 +102,17 @@ public class CosmeticsCategory extends Category {
 			}
 			
 			cp.getAnimation().setAnimation(cp.equals(capeManager.getCurrentCape()) ? 1.0F : 0.0F, 16);
+			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY + scroll.getValue(), 88, 135);
 			
 			nvg.drawGradientRoundedRect(this.getX() + 15 + offsetX - 2, this.getY() + offsetY - 2, 88 + 4, 135 + 4, 8.5F, ColorUtils.applyAlpha(accentColor.getColor1(), (int) (cp.getAnimation().getValue() * 255)), ColorUtils.applyAlpha(accentColor.getColor2(), (int) (cp.getAnimation().getValue() * 255)));
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY, 88, 135, 8, palette.getBackgroundColor(ColorType.DARK));
 			
-			if(cp instanceof NormalCape) {
+			if(cp instanceof OfficialCape) {
+				ResourceLocation official = capeManager.getOfficialCape();
+				if (official != null) drawOfficialPreview(nvg, official, this.getX() + 24 + offsetX, this.getY() + offsetY + 9);
+				else nvg.drawCenteredText(capeManager.getOfficialStatus(), this.getX() + 59 + offsetX, this.getY() + offsetY + 52,
+						palette.getFontColor(ColorType.DARK), 7, Fonts.MEDIUM);
+			} else if(cp instanceof NormalCape) {
 				
 				NormalCape c = ((NormalCape)cp);
 				
@@ -110,7 +128,7 @@ public class CosmeticsCategory extends Category {
 				}
 			}
 			
-			nvg.drawCenteredText(cp.getName(), this.getX() + 15 + offsetX + (88 / 2), this.getY() + offsetY + 120.5F, palette.getFontColor(ColorType.DARK), 10, Fonts.MEDIUM);
+			nvg.drawCenteredText(capeManager.getDisplayName(cp), this.getX() + 15 + offsetX + (88 / 2), this.getY() + offsetY + 120.5F, palette.getFontColor(ColorType.DARK), 10, Fonts.MEDIUM);
 			
 			offsetX+=100;
 			
@@ -152,7 +170,7 @@ public class CosmeticsCategory extends Category {
 		}
 		
 		offsetX = 0;
-		offsetY = offsetY + 23;
+		offsetY = offsetY + 38;
 		
 		for(Cape cp : capeManager.getCapes()) {
 			
@@ -191,10 +209,35 @@ public class CosmeticsCategory extends Category {
 			return true;
 		}
 		
-		if(!this.getSearchBox().getText().isEmpty() && !SearchUtils.isSimillar(cp.getName(), this.getSearchBox().getText())) {
+		if(!this.getSearchBox().getText().isEmpty() && !SearchUtils.isSimillar(Soar.getInstance().getCapeManager().getDisplayName(cp), this.getSearchBox().getText())) {
 			return true;
 		}
 		
 		return false;
+	}
+
+	private void drawOfficialPreview(NanoVGManager nvg, ResourceLocation location, float x, float y) {
+		Minecraft minecraft = Minecraft.getMinecraft();
+		if (minecraft.getTextureManager().getTexture(location) == null) return;
+		int texture = minecraft.getTextureManager().getTexture(location).getGlTextureId();
+		long context = nvg.getContext();
+		if (texture != officialTexture) {
+			if (officialImage != 0) NanoVG.nvgDeleteImage(context, officialImage);
+			officialTexture = texture;
+			officialImage = NanoVGGL2.nvglCreateImageFromHandle(context, texture, 64, 32, NanoVGGL2.NVG_IMAGE_NODELETE);
+		}
+		if (officialImage == 0) return;
+		// Built-in samples include the top edge: (1, 0), 10 x 17 pixels in the 64 x 32 atlas.
+		float scaleX = 70F / 10F;
+		float scaleY = 105F / 17F;
+		NVGPaint paint = NVGPaint.calloc();
+		try {
+			NanoVG.nvgImagePattern(context, x - scaleX, y,
+					64F * scaleX, 32F * scaleY, 0, officialImage, 1, paint);
+			NanoVG.nvgBeginPath(context);
+			NanoVG.nvgRoundedRect(context, x, y, 70, 105, 8);
+			NanoVG.nvgFillPaint(context, paint);
+			NanoVG.nvgFill(context);
+		} finally { paint.free(); }
 	}
 }

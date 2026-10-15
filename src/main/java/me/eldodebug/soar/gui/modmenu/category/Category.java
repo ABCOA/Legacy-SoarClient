@@ -39,6 +39,8 @@ public class Category {
 	public void initGui() {}
 	
 	public void initCategory() {}
+
+	public void onClosed() {}
 	
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {}
 	
@@ -51,6 +53,8 @@ public class Category {
 	public String getName() {
 		return nameTranslate.getText();
 	}
+
+	public GuiModMenu getParent() { return parent; }
 
 	public String getNameKey() {
 		return nameTranslate.getKey();

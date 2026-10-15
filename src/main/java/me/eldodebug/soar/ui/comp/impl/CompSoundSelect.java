@@ -1,9 +1,5 @@
 package me.eldodebug.soar.ui.comp.impl;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
@@ -18,7 +14,12 @@ import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.file.FileUtils;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class CompSoundSelect extends Comp {
 
@@ -36,6 +37,7 @@ public class CompSoundSelect extends Comp {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.pointer(mouseX, mouseY, this.getX(), this.getY(), 16, 16);
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();

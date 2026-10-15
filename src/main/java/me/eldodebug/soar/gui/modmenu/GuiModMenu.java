@@ -1,30 +1,20 @@
 package me.eldodebug.soar.gui.modmenu;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.lwjgl.input.Keyboard;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.gui.GuiEditHUD;
 import me.eldodebug.soar.gui.modmenu.category.Category;
-import me.eldodebug.soar.gui.modmenu.category.impl.CosmeticsCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.HomeCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.ModuleCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.MusicCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.ProfileCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.ScreenshotCategory;
-import me.eldodebug.soar.gui.modmenu.category.impl.SettingCategory;
+import me.eldodebug.soar.gui.modmenu.category.impl.*;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.color.ColorManager;
 import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.color.palette.ColorType;
 import me.eldodebug.soar.management.event.impl.EventRenderNotification;
+import me.eldodebug.soar.management.language.TranslateText;
+import me.eldodebug.soar.management.mods.impl.FreelookMod;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.ui.comp.impl.CompSlider;
 import me.eldodebug.soar.ui.comp.impl.field.CompSearchBox;
 import me.eldodebug.soar.utils.MathUtils;
 import me.eldodebug.soar.utils.animation.normal.Animation;
@@ -32,12 +22,21 @@ import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.easing.EaseBackIn;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import me.eldodebug.soar.utils.buffer.ScreenAnimation;
+import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.mouse.Scroll;
 import me.eldodebug.soar.utils.render.BlurUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class GuiModMenu extends GuiScreen {
 
@@ -57,6 +56,9 @@ public class GuiModMenu extends GuiScreen {
 	private boolean toEditHUD, canClose;
 	
 	private CompSearchBox searchBox = new CompSearchBox();
+	private FreelookMod distancePreviewMod;
+	private CompSlider distancePreviewSlider;
+	private float distancePreviewScroll;
 	
 	public GuiModMenu() {
 		
@@ -73,6 +75,7 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void initGui() {
+		endFreelookDistancePreview();
 		
 		ScaledResolution sr = new ScaledResolution(mc);
 		
@@ -99,6 +102,12 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		MouseCursor.beginFrame();
+		if(distancePreviewSlider != null) {
+			drawFreelookDistancePreview(mouseX, mouseY, partialTicks);
+			MouseCursor.endFrame();
+			return;
+		}
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -113,6 +122,7 @@ public class GuiModMenu extends GuiScreen {
 		new EventRenderNotification().call();
 		
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		MouseCursor.endFrame();
 	}
 	
 	private void drawNanoVG(int mouseX, int mouseY, float partialTicks) {
@@ -157,6 +167,9 @@ public class GuiModMenu extends GuiScreen {
 			c.getTextAnimation().setAnimation(c.equals(currentCategory) ? 1.0F : 0.0F, 14);
 			
 			nvg.drawText(c.getIcon(), x + 9F, y + 42 + offsetY, textColor, 14, Fonts.ICON);
+			if(MouseUtils.isInside(mouseX, mouseY, x, y + 30, 32, height - 100)) {
+				MouseCursor.pointer(mouseX, mouseY, x + 5.5F, y + 38.5F + offsetY + categoryScroll.getValue(), 21, 21);
+			}
 			
 			offsetY+=30;
 		}
@@ -173,6 +186,7 @@ public class GuiModMenu extends GuiScreen {
 		
 		nvg.drawGradientRoundedRect(x + 5.5F, y + height - 60, 21, 21, 4, currentColor.getColor1(), currentColor.getColor2());
 		nvg.drawText(Icon.LAYOUT, x + 9, y + height - 56.5F, Color.WHITE, 14, Fonts.ICON);
+		MouseCursor.pointer(mouseX, mouseY, x + 5.5F, y + height - 60, 21, 21);
 		
 		for(Category c : categories) {
 			
@@ -197,7 +211,9 @@ public class GuiModMenu extends GuiScreen {
 				nvg.scissor(x + 32, y + 31, width - 32, height - 31);
 				nvg.translate(0, 50 - (c.getCategoryAnimation().getValue() * 50));
 				
+				MouseCursor.setInteractive(MouseUtils.isInside(mouseX, mouseY, x + 32, y + 31, width - 32, height - 31));
 				c.drawScreen(mouseX, mouseY, partialTicks);
+				MouseCursor.setInteractive(true);
 				
 				nvg.restore();
 				
@@ -227,6 +243,7 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if(distancePreviewSlider != null) return;
 		
 		int offsetY = 0;
 		
@@ -235,6 +252,7 @@ public class GuiModMenu extends GuiScreen {
 		for(Category c : categories) {
 			
 			if(MouseUtils.isInside(mouseX, mouseY, x, y + 30, 32, height - 100) && MouseUtils.isInside(mouseX, mouseY, x + 5.5F, y + 38.5F + offsetY, 21, 21) && mouseButton == 0) {
+				if(currentCategory != c) currentCategory.onClosed();
 				currentCategory = c;
 			}
 			
@@ -247,6 +265,7 @@ public class GuiModMenu extends GuiScreen {
 		}
 		
 		currentCategory.mouseClicked(mouseX, mouseY, mouseButton);
+		if(distancePreviewSlider != null) return;
 		searchBox.mouseClicked(mouseX, mouseY, mouseButton);
 		
 		try {
@@ -256,14 +275,25 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		if(distancePreviewSlider != null) {
+			if(mouseButton == 0) {
+				distancePreviewSlider.updateDrag(mouseX);
+				endFreelookDistancePreview();
+			}
+			return;
+		}
 		currentCategory.mouseReleased(mouseX, mouseY, mouseButton);
 	}
 	
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
+		if(distancePreviewSlider != null) {
+			if(keyCode == Keyboard.KEY_ESCAPE) endFreelookDistancePreview();
+			return;
+		}
 		
 		currentCategory.keyTyped(typedChar, keyCode);
-		searchBox.keyTyped(typedChar, keyCode);
+		if(currentCategory.isShowSearchBox()) searchBox.keyTyped(typedChar, keyCode);
 		
 		if(currentCategory.isShowSearchBox() && canClose) {
 			
@@ -294,7 +324,57 @@ public class GuiModMenu extends GuiScreen {
 	
 	@Override
 	public void onGuiClosed() {
+		endFreelookDistancePreview();
+		MouseCursor.reset();
+		currentCategory.mouseReleased(0, 0, 0);
+		currentCategory.onClosed();
 		Soar.getInstance().getProfileManager().save();
+	}
+
+	public void beginFreelookDistancePreview(FreelookMod mod, CompSlider slider, float scrollOffset) {
+		if(!mod.beginDistancePreview()) return;
+		distancePreviewMod = mod;
+		distancePreviewSlider = slider;
+		distancePreviewScroll = scrollOffset;
+	}
+
+	private void endFreelookDistancePreview() {
+		if(distancePreviewMod == null) return;
+		distancePreviewSlider.mouseReleased(0, 0, 0);
+		distancePreviewMod.endDistancePreview();
+		distancePreviewMod = null;
+		distancePreviewSlider = null;
+		MouseCursor.reset();
+	}
+
+	@Override
+	public void updateScreen() {
+		if(distancePreviewSlider != null && (mc.theWorld == null || mc.thePlayer == null
+				|| !distancePreviewMod.isDistancePreview() || !Display.isActive() || !Mouse.isButtonDown(0))) {
+			endFreelookDistancePreview();
+		}
+		super.updateScreen();
+	}
+
+	private void drawFreelookDistancePreview(int mouseX, int mouseY, float partialTicks) {
+		CompSlider slider = distancePreviewSlider;
+		slider.updateDrag(mouseX);
+		ScaledResolution sr = new ScaledResolution(mc);
+		Soar.getInstance().getNanoVGManager().setupAndDraw(() -> {
+			NanoVGManager nvg = Soar.getInstance().getNanoVGManager();
+			float sliderY = slider.getY() + distancePreviewScroll;
+			String label = TranslateText.CAMERA_DISTANCE.getText() + " " + String.format(java.util.Locale.ROOT, "%.2f", slider.getSetting().getValue());
+			float panelWidth = Math.max((float) slider.getWidth() + 24, nvg.getTextWidth(label, 10, Fonts.MEDIUM) + 24);
+			nvg.drawRoundedRect(slider.getX() - 12, sliderY - 33, panelWidth, 58, 6, new Color(20, 20, 20, 200));
+			nvg.drawText(label,
+					slider.getX() - 5, sliderY - 23, Color.WHITE, 10, Fonts.MEDIUM);
+			nvg.save();
+			nvg.translate(0, distancePreviewScroll);
+			slider.draw(mouseX, (int) (mouseY - distancePreviewScroll), partialTicks);
+			nvg.restore();
+			nvg.drawCenteredText(TranslateText.FREELOOK_DISTANCE_PREVIEW.getText(), sr.getScaledWidth() / 2F, sr.getScaledHeight() - 24,
+					Color.WHITE, 11, Fonts.MEDIUM);
+		});
 	}
 
 	public int getX() {

@@ -1,7 +1,5 @@
 package me.eldodebug.soar.management.notification;
 
-import java.awt.Color;
-
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.color.AccentColor;
 import me.eldodebug.soar.management.language.TranslateText;
@@ -16,10 +14,13 @@ import me.eldodebug.soar.utils.buffer.ScreenAlpha;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
+import java.awt.*;
+
 public class Notification {
 
 	private Animation animation;
 	private TranslateText title, message;
+	private String messageText;
 	private NotificationType type;
 	private TimerUtils timer;
 	
@@ -31,6 +32,13 @@ public class Notification {
 		this.type = type;
 		this.timer = new TimerUtils();
 	}
+
+	public Notification(TranslateText title, String message, NotificationType type) {
+		this(title, (TranslateText) null, type);
+		this.messageText = message;
+	}
+
+	public String getMessageText() { return message == null ? messageText : message.getText(); }
 	
 	public void draw() {
 		
@@ -47,7 +55,7 @@ public class Notification {
 		
 		float maxWidth;
 		float titleWidth = nvg.getTextWidth(title.getText(), 9.6F, Fonts.MEDIUM);
-		float messageWidth = nvg.getTextWidth(message.getText(), 7.6F, Fonts.REGULAR);
+		float messageWidth = nvg.getTextWidth(getMessageText(), 7.6F, Fonts.REGULAR);
 		
 		if(titleWidth > messageWidth) {
 			maxWidth = titleWidth;
@@ -71,7 +79,7 @@ public class Notification {
 		nvg.drawGradientRoundedRect(x, y, maxWidth, 29, 6, ColorUtils.applyAlpha(currentColor.getColor1(), 220), ColorUtils.applyAlpha(currentColor.getColor2(), 220));
 		nvg.drawText(type.getIcon(), x + 5, y + 6F, Color.WHITE, 17, Fonts.ICON);
 		nvg.drawText(title.getText(), x + 26, y + 6F, Color.white, 9.6F, Fonts.MEDIUM);
-		nvg.drawText(message.getText(), x + 26, y + 17.5F, Color.WHITE, 7.5F, Fonts.REGULAR);
+		nvg.drawText(getMessageText(), x + 26, y + 17.5F, Color.WHITE, 7.5F, Fonts.REGULAR);
 		
 		nvg.restore();
 	}
