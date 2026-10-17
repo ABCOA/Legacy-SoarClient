@@ -21,14 +21,22 @@ public class SoundSetting extends Setting {
 
 	@Override
 	public void reset() {
+        Object before = getSound();
+
 		this.sound = null;
-	}
+	
+        if (!java.util.Objects.equals(before, getSound())) changed();
+    }
 
 	public File getSound() {
 		return sound;
 	}
 
 	public void setSound(File sound) {
+        Object before = getSound();
+
 		this.sound = sound;
-	}
+	
+        if (!java.util.Objects.equals(before, getSound())) changed();
+    }
 }

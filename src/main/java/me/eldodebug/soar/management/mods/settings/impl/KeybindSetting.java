@@ -23,16 +23,24 @@ public class KeybindSetting extends Setting {
 
 	@Override
 	public void reset() {
+        Object before = getKeyCode();
+
 		this.keyCode = defaultKeyCode;
-	}
+	
+        if (!java.util.Objects.equals(before, getKeyCode())) changed();
+    }
 	
 	public int getKeyCode() {
 		return keyCode;
 	}
 
 	public void setKeyCode(int keyCode) {
+        Object before = getKeyCode();
+
 		this.keyCode = keyCode;
-	}
+	
+        if (!java.util.Objects.equals(before, getKeyCode())) changed();
+    }
 
 	public int getDefaultKeyCode() {
 		return defaultKeyCode;

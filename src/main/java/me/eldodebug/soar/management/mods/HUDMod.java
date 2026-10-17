@@ -274,7 +274,7 @@ public class HUDMod extends Mod {
 	}
 	
 	public void setX(int x) {
-		this.x = x;
+		if (this.x != x) { this.x = x; me.eldodebug.soar.management.profile.ProfileManager.changed(); }
 	}
 
 	public int getY() {
@@ -282,7 +282,7 @@ public class HUDMod extends Mod {
 	}
 
 	public void setY(int y) {
-		this.y = y;
+		if (this.y != y) { this.y = y; me.eldodebug.soar.management.profile.ProfileManager.changed(); }
 	}
 
 	public int getDraggingX() {
@@ -344,7 +344,7 @@ public class HUDMod extends Mod {
 			return;
 		}
 		
-		this.scale = scale;
+		if (this.scale != scale) { this.scale = scale; me.eldodebug.soar.management.profile.ProfileManager.changed(); }
 	}
 
 	public boolean isDraggable() {

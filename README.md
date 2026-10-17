@@ -1,9 +1,12 @@
 # Legacy SoarClient
+
+公开精简版为离线版本，供需要离线版本的玩家使用。
+开发使用 Java 8 和项目自带的 Gradle Wrapper。
+
 此项目是由EldoDebug开发的主要面向现代和强大的PvP客户端！  
 此Fork是由我(ABCOA)接续开发的版本。我仅为此项目爱好者，与EldoDebug无关。  
 [我的个人博客](https://blog.abcoc.cn)  
 [我的b站主页](https://space.bilibili.com/395383725)  
-此项目有关IRC的代码借鉴了小沙雕的hypixelhelper的在线聊天   
 [小沙雕b站主页](https://xiaoshadiao.club/xsdb)  
 [Hypixel Helper Mod](https://xiaoshadiao.club/modrinth)  
 
@@ -47,7 +50,6 @@ The project is mainly aimed at a modern and powerful PvP client developed by Eld
 This Fork is a version developed by me (ABCOA). I am only a hobbyist for this project and have nothing to do with EldoDebug.  
 [My person blog](https://blog.abcoc.cn)  
 [My bilibili page](https://space.bilibili.com/395383725)  
-The IRC code of this project is borrowed from Xiaoshadiao's hypixelhelper online chat   
 [Xiaoshadiao's bilibili page](https://xiaoshadiao.yqloss.net/xsdb)
 ## ABCOA's development plan
 ### Short-term plan:

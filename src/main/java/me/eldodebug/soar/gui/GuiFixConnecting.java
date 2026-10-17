@@ -25,6 +25,9 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 
 public class GuiFixConnecting extends GuiScreen {
+
+
+
 	
     private static final AtomicInteger CONNECTION_ID = new AtomicInteger(0);
     private static final Logger logger = LogManager.getLogger();
@@ -63,6 +66,7 @@ public class GuiFixConnecting extends GuiScreen {
                         return;
                     }
 
+                    if (cancel) return;
                     inetaddress = InetAddress.getByName(ip);
                     networkManager = NetworkManager.createNetworkManagerAndConnect(inetaddress, port, mc.gameSettings.isUsingNativeTransport());
                     networkManager.setNetHandler(new NetHandlerLoginClient(networkManager, mc, previousGuiScreen));
@@ -108,6 +112,7 @@ public class GuiFixConnecting extends GuiScreen {
                         return;
                     }
 
+                    if (cancel) return;
                     inetaddress = InetAddress.getByName(ip);
                     networkManager = NetworkManager.createNetworkManagerAndConnect(inetaddress, port, mc.gameSettings.isUsingNativeTransport());
                     networkManager.setNetHandler(new NetHandlerLoginClient(networkManager, mc, previousGuiScreen));

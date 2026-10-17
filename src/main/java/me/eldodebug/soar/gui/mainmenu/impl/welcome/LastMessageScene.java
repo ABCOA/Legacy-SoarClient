@@ -1,5 +1,6 @@
 package me.eldodebug.soar.gui.mainmenu.impl.welcome;
 
+import me.eldodebug.soar.management.language.TranslateText;
 import java.awt.Color;
 
 import me.eldodebug.soar.Soar;
@@ -36,8 +37,8 @@ public class LastMessageScene extends MainMenuScene {
 		
 		ScaledResolution sr = new ScaledResolution(mc);
 		NanoVGManager nvg = Soar.getInstance().getNanoVGManager();
-		String compMessage = "Setup is complete!";
-		String welcomeMessage = "Welcome to Soar Client!";
+		String compMessage = TranslateText.WELCOME_SETUP_COMPLETE.getText();
+		String welcomeMessage = TranslateText.WELCOME_TO_SOAR.getText();
 		
 		BlurUtils.drawBlurScreen(1 + blurAnimation.getValueFloat());
 		

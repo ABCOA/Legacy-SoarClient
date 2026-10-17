@@ -26,9 +26,12 @@ public class LanguageManager {
 			while((s = reader.readLine()) != null) {
 				
 				if(!s.equals("") && !s.startsWith("#")) {
-					String[] args = s.split("=");
-					
-					map.put(args[0], args[1]);
+					// Split at the first '=' only, so values may contain '='; skip malformed lines instead of aborting the file.
+					String[] args = s.split("=", 2);
+
+					if(args.length == 2 && !args[1].isEmpty()) {
+						map.put(args[0], args[1]);
+					}
 				}
 			}
 			

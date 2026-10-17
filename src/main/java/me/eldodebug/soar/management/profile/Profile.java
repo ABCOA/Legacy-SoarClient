@@ -13,6 +13,7 @@ public class Profile {
 	private String name, serverIp;
 	private ProfileType type;
 	private ProfileIcon icon;
+	private String stableId, sourceId = "", sourceHash = "", importedStateHash = "";
 	
 	public Profile(int id, String serverIp, File jsonFile, ProfileIcon icon) {
 		this.id = id;
@@ -58,4 +59,13 @@ public class Profile {
 	public void setServerIp(String serverIp) {
 		this.serverIp = serverIp;
 	}
+	public String getStableId() { return stableId; }
+	public void setStableId(String value) { stableId = value; }
+	public void setName(String value) { name = value; }
+	public void setIcon(ProfileIcon value) { icon = value; }
+	public boolean isDefault() { return jsonFile != null && jsonFile.getName().equalsIgnoreCase("Default.json"); }
+	public String getSourceId() { return sourceId; }
+	public String getSourceHash() { return sourceHash; }
+	public String getImportedStateHash() { return importedStateHash; }
+	public void setSource(String id, String hash, String stateHash) { sourceId = id; sourceHash = hash; importedStateHash = stateHash; }
 }

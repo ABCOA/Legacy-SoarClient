@@ -6,6 +6,7 @@ import me.eldodebug.soar.management.color.ColorManager;
 import me.eldodebug.soar.management.mods.settings.impl.ComboSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.MathUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
@@ -17,6 +18,7 @@ import java.awt.*;
 public class CompComboBox extends Comp {
 
 	private SimpleAnimation changeAnimation = new SimpleAnimation();
+	private SimpleAnimation previousHover = new SimpleAnimation(), nextHover = new SimpleAnimation();
 	private ComboSetting setting;
 	private float width;
 	private int changeDirection;
@@ -50,7 +52,9 @@ public class CompComboBox extends Comp {
 		changeAnimation.setAnimation(changeDirection, 16);
 		
 		nvg.drawGradientRoundedRect(this.getX(), this.getY(), width, 16, 4, accentColor.getColor1(), accentColor.getColor2());
-		
+		HoverStyle.sheen(nvg, HoverStyle.update(previousHover, HoverStyle.isHovered(mouseX, mouseY, this.getX(), this.getY(), 16, 16)), this.getX(), this.getY(), 16, 16, 4);
+		HoverStyle.sheen(nvg, HoverStyle.update(nextHover, HoverStyle.isHovered(mouseX, mouseY, this.getX() + width - 16, this.getY(), 16, 16)), this.getX() + width - 16, this.getY(), 16, 16, 4);
+
 		nvg.drawCenteredText(setting.getOption().getName(), this.getX() + (width / 2) + ((changeDirection - changeAnimation.getValue()) * 22), this.getY() + 5F, new Color(255, 255, 255, (int) (MathUtils.abs(changeAnimation.getValue()  * 255))), 8, Fonts.REGULAR);
 		
 		nvg.drawText("<", this.getX() + 4, this.getY() + 4.5F, Color.WHITE, 10, Fonts.REGULAR);

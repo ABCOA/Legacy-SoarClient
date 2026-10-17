@@ -11,7 +11,9 @@ import me.eldodebug.soar.management.mods.settings.impl.ImageSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.Comp;
+import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.file.FileUtils;
 import me.eldodebug.soar.utils.mouse.MouseCursor;
@@ -24,6 +26,7 @@ import java.io.IOException;
 public class CompImageSelect extends Comp {
 
 	private ImageSetting imageSetting;
+	private SimpleAnimation hoverAnimation = new SimpleAnimation();
 	
 	public CompImageSelect(float x, float y, ImageSetting imageSetting) {
 		super(x, y);
@@ -49,6 +52,7 @@ public class CompImageSelect extends Comp {
 		float nameWidth = nvg.getTextWidth(name, 9, Fonts.REGULAR);
 		
 		nvg.drawGradientRoundedRect(this.getX(), this.getY(), 16, 16, 4, accentColor.getColor1(), accentColor.getColor2());
+		HoverStyle.sheen(nvg, HoverStyle.update(hoverAnimation, HoverStyle.isHovered(mouseX, mouseY, this.getX(), this.getY(), 16, 16)), this.getX(), this.getY(), 16, 16, 4);
 		nvg.drawText(name, this.getX() - nameWidth - 5, this.getY() + 4, palette.getFontColor(ColorType.DARK), 9, Fonts.REGULAR);
 		nvg.drawCenteredText(Icon.FOLDER, this.getX() + 8, this.getY() + 2.5F, Color.WHITE, 10, Fonts.ICON);
 	}

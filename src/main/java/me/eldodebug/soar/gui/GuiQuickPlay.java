@@ -17,6 +17,8 @@ import me.eldodebug.soar.utils.animation.normal.Direction;
 import me.eldodebug.soar.utils.animation.normal.easing.EaseBackIn;
 import me.eldodebug.soar.utils.animation.normal.other.SmoothStepAnimation;
 import me.eldodebug.soar.utils.buffer.ScreenAnimation;
+import me.eldodebug.soar.management.language.TranslateText;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.mouse.Scroll;
 import me.eldodebug.soar.utils.render.BlurUtils;
@@ -64,12 +66,12 @@ public class GuiQuickPlay extends GuiScreen {
 			nvg.drawShadow(x, y, width, height, 12);
 		}, 2 - introAnimation.getValueFloat(), Math.min(introAnimation.getValueFloat(), 1));
 		
-		screenAnimation.wrap(() -> drawNanoVG(), x, y, width, height, 2 - introAnimation.getValueFloat(), Math.min(introAnimation.getValueFloat(), 1), true);
-		
+		screenAnimation.wrap(() -> drawNanoVG(mouseX, mouseY), x, y, width, height, 2 - introAnimation.getValueFloat(), Math.min(introAnimation.getValueFloat(), 1), true);
+
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
-	
-	private void drawNanoVG() {
+
+	private void drawNanoVG(int mouseX, int mouseY) {
 		
 		Soar instance = Soar.getInstance();
 		NanoVGManager nvg = instance.getNanoVGManager();
@@ -89,7 +91,7 @@ public class GuiQuickPlay extends GuiScreen {
 		}
 		
 		nvg.drawRoundedRect(x, y, width, height, 12, palette.getBackgroundColor(ColorType.NORMAL));
-		nvg.drawCenteredText("Choose a " + (currentQuickPlay != null ? "Mode" : "Game"), x + (width / 2), y + 10, palette.getFontColor(ColorType.DARK), 15, Fonts.MEDIUM);
+		nvg.drawCenteredText((currentQuickPlay != null ? TranslateText.QUICKPLAY_CHOOSE_MODE : TranslateText.QUICKPLAY_CHOOSE_GAME).getText(),x + (width / 2), y + 10, palette.getFontColor(ColorType.DARK), 15, Fonts.MEDIUM);
 		nvg.drawRect(x, y + 28, width, 1, palette.getBackgroundColor(ColorType.DARK));
 		
 		nvg.save();
@@ -98,6 +100,8 @@ public class GuiQuickPlay extends GuiScreen {
 		for(QuickPlay q : quickPlayManager.getQuickPlays()) {
 			
 			nvg.drawRoundedRect(x + 15 + offsetX, y + 42 + offsetY, 110, 42, 6, palette.getBackgroundColor(ColorType.DARK));
+			HoverStyle.tint(nvg, HoverStyle.update(q, currentQuickPlay == null && sceneChangeAnimation.isDone(Direction.FORWARDS)
+					&& MouseUtils.isInside(mouseX, mouseY, x + 15 + offsetX, y + 42 + offsetY, 110, 42)), HoverStyle.ROW, x + 15 + offsetX, y + 42 + offsetY, 110, 42, 6);
 			nvg.drawRoundedImage(q.getIcon(), x + 20 + offsetX, y + 47 + offsetY, 32, 32, 6);
 			
 			nvg.drawText(q.getName(), x + 58 + offsetX, y + 50 + offsetY, palette.getFontColor(ColorType.DARK), 10, Fonts.MEDIUM);
@@ -137,6 +141,8 @@ public class GuiQuickPlay extends GuiScreen {
 			for(QuickPlayCommand c : currentQuickPlay.getCommands()) {
 				
 				nvg.drawRoundedRect(x + 15 + offsetX, y + 80 + 32 + offsetY, 110, 20, 6, palette.getBackgroundColor(ColorType.DARK));
+				HoverStyle.tint(nvg, HoverStyle.update(c, sceneChangeAnimation.isDone(Direction.BACKWARDS) && MouseUtils.isInside(mouseX, mouseY, x, y + 29, width, height - 29)
+						&& MouseUtils.isInside(mouseX, mouseY, x + 15 + offsetX, y + 80 + 32 + offsetY + scroll.getValue(), 110, 20)), x + 15 + offsetX, y + 80 + 32 + offsetY, 110, 20, 6);
 				nvg.drawCenteredText(c.getName(), x + 15 + offsetX + (110 / 2), y + 80 + 38.5F + offsetY, palette.getFontColor(ColorType.NORMAL), 9, Fonts.REGULAR);
 				
 				offsetX+=120;

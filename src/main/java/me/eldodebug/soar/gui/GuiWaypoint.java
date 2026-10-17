@@ -14,6 +14,8 @@ import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.management.waypoint.Waypoint;
 import me.eldodebug.soar.management.waypoint.WaypointManager;
+import me.eldodebug.soar.management.language.TranslateText;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.impl.field.CompTextBox;
 import me.eldodebug.soar.utils.animation.normal.Animation;
 import me.eldodebug.soar.utils.animation.normal.Direction;
@@ -91,7 +93,7 @@ public class GuiWaypoint extends GuiScreen {
 		
 		nvg.drawShadow(x, y, width, height, 10);
 		nvg.drawRoundedRect(x, y, width, height, 10, palette.getBackgroundColor(ColorType.NORMAL));
-		nvg.drawText("Waypoint", x + 8, y + 8, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
+		nvg.drawText(TranslateText.WAYPOINT.getText(), x + 8, y + 8,palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 		nvg.drawRect(x, y + 24, width, 1, palette.getBackgroundColor(ColorType.DARK));
 		
 		for(Waypoint waypoint : waypointManager.getWaypoints()) {
@@ -102,6 +104,7 @@ public class GuiWaypoint extends GuiScreen {
 				nvg.drawRoundedRect(x + 16, y + 14 + offsetY + 26, 18, 18, 4, waypoint.getColor());
 				nvg.drawText(waypoint.getName(), x + 40, y + 45.5F + offsetY, palette.getFontColor(ColorType.DARK), 9.5F, Fonts.REGULAR);
 				
+				HoverStyle.tint(nvg, HoverStyle.update(waypoint, MouseUtils.isInside(mouseX, mouseY, x + 160, y + 41 + offsetY, 16, 16)), x + 158.5F, y + 39.5F + offsetY, 19, 19, 4);
 				nvg.drawText(Icon.TRASH, x + 162, y + 44 + offsetY, palette.getMaterialRed(), 11, Fonts.ICON);
 				
 				offsetY+=38;
@@ -110,12 +113,16 @@ public class GuiWaypoint extends GuiScreen {
 		}
 		
 		nvg.drawRoundedRect(x + width - 130, y + 25 + 10, 120, height - 35 - 10, 6, palette.getBackgroundColor(ColorType.DARK));
-		nvg.drawCenteredText("Create a waypoint", x + width - 130 + (120 / 2), y + 25 + 18, palette.getFontColor(ColorType.DARK), 10.5F, Fonts.MEDIUM);
+		nvg.drawCenteredText(TranslateText.WAYPOINT_CREATE.getText(),x + width - 130 + (120 / 2), y + 25 + 18, palette.getFontColor(ColorType.DARK), 10.5F, Fonts.MEDIUM);
 		
-		textBox.setDefaultText("Name");
+		textBox.setDefaultText(TranslateText.NAME.getText());
 		textBox.setPosition(x + width - 120, y + 25 + 34, 100, 18);
 		textBox.draw(mouseX, mouseY, partialTicks);
-		
+
+		if(textBox.isFocused()) {
+			nvg.drawOutlineRoundedRect(textBox.getX(), textBox.getY(), textBox.getWidth(), textBox.getHeight(), 6, 1, colorManager.getCurrentColor().getColor1());
+		}
+
 		offsetX = 0;
 		offsetY = 0;
 		index = 0;
@@ -123,6 +130,8 @@ public class GuiWaypoint extends GuiScreen {
 		for(Color c : colors) {
 			
 			nvg.drawRoundedRect(x + width - 120 + offsetX, y + 84 + offsetY, 13, 13, 2, c);
+			HoverStyle.outline(nvg, 0.6F * HoverStyle.update(c, !currentColor.equals(c) && MouseUtils.isInside(mouseX, mouseY, x + width - 120 + offsetX, y + 84 + offsetY, 13, 13)),
+					x + width - 120 + offsetX, y + 84 + offsetY, 13, 13, 2);
 			
 			if(currentColor.equals(c)) {
 				nvg.drawText(Icon.CHECK, x + width - 118 + offsetX, y + 86.5F + offsetY, Color.WHITE, 9, Fonts.ICON);
@@ -138,7 +147,9 @@ public class GuiWaypoint extends GuiScreen {
 		}
 		
 		nvg.drawRoundedRect(x + width - 85, y + height - 34, 65, 18, 6, palette.getBackgroundColor(ColorType.NORMAL));
-		nvg.drawCenteredText("Save", x + width - 85 + (65 / 2), y + height - 29, palette.getFontColor(ColorType.DARK), 9, Fonts.REGULAR);
+		HoverStyle.tint(nvg, HoverStyle.update("waypoint-save", !textBox.getText().isEmpty() && MouseUtils.isInside(mouseX, mouseY, x + width - 85, y + height - 34, 65, 18)),
+				x + width - 85, y + height - 34, 65, 18, 6);
+		nvg.drawCenteredText(TranslateText.SAVE.getText(),x + width - 85 + (65 / 2), y + height - 29, palette.getFontColor(ColorType.DARK), 9, Fonts.REGULAR);
 		
 		if(removeWaypoint != null) {
 			waypointManager.getWaypoints().remove(removeWaypoint);

@@ -13,6 +13,7 @@ import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.mcef.McefBrowser;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.impl.field.CompSearchBox;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import me.eldodebug.soar.utils.network.HttpUtils;
@@ -67,7 +68,12 @@ public class GuiWebBrowser extends GuiScreen {
         	nvg.drawRoundedRect(26, 4, 16, 16, 8, palette.getBackgroundColor(ColorType.DARK));
         	nvg.drawRoundedRect(46, 4, 16, 16, 8, palette.getBackgroundColor(ColorType.DARK));
         	nvg.drawRoundedRect(width - 6 - 16, 4, 16, 16, 8, palette.getBackgroundColor(ColorType.DARK));
-        	
+
+        	HoverStyle.tint(nvg, HoverStyle.update("browser-back", browser.canGoBack() && MouseUtils.isInside(mouseX, mouseY, 6, 4, 16, 16)), 6, 4, 16, 16, 8);
+        	HoverStyle.tint(nvg, HoverStyle.update("browser-forward", browser.canGoForward() && MouseUtils.isInside(mouseX, mouseY, 26, 4, 16, 16)), 26, 4, 16, 16, 8);
+        	HoverStyle.tint(nvg, HoverStyle.update("browser-refresh", MouseUtils.isInside(mouseX, mouseY, 46, 4, 16, 16)), 46, 4, 16, 16, 8);
+        	HoverStyle.tint(nvg, HoverStyle.update("browser-close", MouseUtils.isInside(mouseX, mouseY, width - 6 - 16, 4, 16, 16)), width - 6 - 16, 4, 16, 16, 8);
+
         	nvg.drawText(Icon.ARROW_LEFT, 8.5F, 6.5F, palette.getFontColor(ColorType.DARK), 11.5F, Fonts.ICON);
         	nvg.drawText(Icon.ARROW_RIGHT, 28.5F, 6.5F, palette.getFontColor(ColorType.DARK), 11.5F, Fonts.ICON);
         	nvg.drawText(Icon.REFRESH, 48.5F, 6.5F, palette.getFontColor(ColorType.DARK), 11.5F, Fonts.ICON);

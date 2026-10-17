@@ -16,6 +16,7 @@ import me.eldodebug.soar.management.music.MusicManager;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import net.minecraft.util.ResourceLocation;
@@ -83,10 +84,14 @@ public class HomeCategory extends Category {
 			nvg.drawGradientRoundedRect(this.getX() + 68, this.getY() + 122, (current / end) * 144, 3F, 1.6F, currentColor.getColor1(), currentColor.getColor2());
 		}
 		
+		float playHover = HoverStyle.update("home-play", HoverStyle.isHovered(mouseX, mouseY, this.getX() + 129, this.getY() + 128.5F, 16, 16));
+		float backHover = HoverStyle.update("home-back", HoverStyle.isHovered(mouseX, mouseY, this.getX() + 106, this.getY() + 128.5F, 16, 16));
+		float forwardHover = HoverStyle.update("home-forward", HoverStyle.isHovered(mouseX, mouseY, this.getX() + 154, this.getY() + 128.5F, 16, 16));
+		
 		nvg.drawText(currentMusic == null || !musicManager.isPlaying() ? Icon.PLAY : Icon.PAUSE, 
-				this.getX() + 68 + (144 / 2) - 10, this.getY() + 128.5F, palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
-		nvg.drawText(Icon.BACK, this.getX() + 68 + (144 / 2) - 10 - 24, this.getY() + 128.5F, palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
-		nvg.drawText(Icon.FORWARD, this.getX() + 68 + (144 / 2) - 10 + 24, this.getY() + 128.5F, palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
+				this.getX() + 68 + (144 / 2) - 10, this.getY() + 128.5F, HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), playHover), 16, Fonts.ICON);
+		nvg.drawText(Icon.BACK, this.getX() + 68 + (144 / 2) - 10 - 24, this.getY() + 128.5F, HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), backHover), 16, Fonts.ICON);
+		nvg.drawText(Icon.FORWARD, this.getX() + 68 + (144 / 2) - 10 + 24, this.getY() + 128.5F, HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), forwardHover), 16, Fonts.ICON);
 		
 		// Changelog
 		MouseCursor.pointer(mouseX, mouseY, this.getX() + 129, this.getY() + 128.5F, 16, 16);
@@ -118,6 +123,7 @@ public class HomeCategory extends Category {
 		nvg.drawText(Icon.DISCORD, this.getX() + 15 + 18.5F, this.getY() + 164 + 20.5F, currentColor.getInterpolateColor(), 17, Fonts.ICON);
 		
 		nvg.drawRoundedRect(this.getX() + 15 + 50, this.getY() + 164 + 43, 52, 18, 8, Color.WHITE);
+		HoverStyle.tint(nvg, HoverStyle.update("home-discord", HoverStyle.isHovered(mouseX, mouseY, this.getX() + 65, this.getY() + 207, 52, 18)), this.getX() + 15 + 50, this.getY() + 164 + 43, 52, 18, 8);
 		nvg.drawCenteredText(TranslateText.JOIN.getText() + " >", this.getX() + 15 + 50 + (52 / 2), this.getY() + 164 + 48, currentColor.getInterpolateColor(), 9, Fonts.REGULAR);
 	}
 	
