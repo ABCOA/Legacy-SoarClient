@@ -17,6 +17,7 @@ import me.eldodebug.soar.management.mods.settings.impl.*;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.ui.comp.impl.*;
 import me.eldodebug.soar.ui.comp.impl.field.CompModTextBox;
@@ -118,6 +119,8 @@ public class ModuleCategory extends Category {
 			Color textColor = c.getTextColorAnimation().getColor(isCurrentCategory ? Color.WHITE : palette.getFontColor(ColorType.DARK), 20);
 
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6, defaultColor);
+			HoverStyle.tint(nvg, HoverStyle.update(c, !isCurrentCategory && HoverStyle.isHovered(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scrollValue, textWidth + 20, 16)),
+					this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6);
 			nvg.drawGradientRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6, color1, color2);
 			
 			nvg.drawText(c.getName(), this.getX() + 15 + offsetX + ((textWidth + 20) - textWidth) / 2, this.getY() + offsetY + 1.5F, textColor, 9, Fonts.MEDIUM);
@@ -137,6 +140,8 @@ public class ModuleCategory extends Category {
 				MouseCursor.pointer(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY + scrollValue, this.getWidth() - 60, 40);
 				
 				nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40, 8, palette.getBackgroundColor(ColorType.DARK));
+				HoverStyle.tint(nvg, HoverStyle.update(m, HoverStyle.isHovered(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY + scrollValue, this.getWidth() - 30, 40)),
+						HoverStyle.ROW, this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 40, 8);
 				nvg.drawRoundedRect(this.getX() + 21, this.getY() + offsetY + 6, 28, 28, 6, palette.getBackgroundColor(ColorType.NORMAL));
 				nvg.drawText(m.getName(), this.getX() + 56, this.getY() + offsetY + 15F, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 				nvg.drawText(m.getDescription(), this.getX() + 56 + (nvg.getTextWidth(m.getName(), 13, Fonts.MEDIUM)) + 5, this.getY() + offsetY + 16, palette.getFontColor(ColorType.NORMAL), 9, Fonts.REGULAR);
@@ -152,7 +157,9 @@ public class ModuleCategory extends Category {
 				
 				if(modManager.getSettingsByMod(m) != null) {
 					MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 44, this.getY() + offsetY + 9 + scrollValue, 22, 22);
-					nvg.drawText(Icon.SETTINGS, this.getX() + this.getWidth() - 39, this.getY() + offsetY + 13.5F, palette.getFontColor(ColorType.NORMAL), 13, Fonts.ICON);
+					float gearHover = HoverStyle.update(m.getName() + "-settings", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() - 44, this.getY() + offsetY + 9 + scrollValue, 22, 22));
+					HoverStyle.tint(nvg, gearHover, this.getX() + this.getWidth() - 44, this.getY() + offsetY + 9, 22, 22, 5);
+					nvg.drawText(Icon.SETTINGS, this.getX() + this.getWidth() - 39, this.getY() + offsetY + 13.5F, HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), gearHover), 13, Fonts.ICON);
 				}
 			}
 			
@@ -188,9 +195,11 @@ public class ModuleCategory extends Category {
 			boolean backHovered = MouseCursor.isInteractive() && isBackHovered(mouseX, mouseY);
 			boolean resetHovered = MouseCursor.isInteractive() && isResetHovered(mouseX, mouseY);
 			nvg.drawRoundedRect(this.getX() + 21, this.getY() + 18, 22, 22, 5, palette.getBackgroundColor(backHovered ? ColorType.NORMAL : ColorType.DARK));
+			HoverStyle.tint(nvg, HoverStyle.update("module-back", backHovered), this.getX() + 21, this.getY() + 18, 22, 22, 5);
 			nvg.drawText(Icon.BACK, this.getX() + 25.5F, this.getY() + 22.5F, palette.getFontColor(ColorType.DARK), 13, Fonts.ICON);
 			nvg.drawText(nvg.getLimitText(currentMod.getName(), 13, Fonts.MEDIUM, this.getWidth() - 102), this.getX() + 50, this.getY() + offsetY + 9, palette.getFontColor(ColorType.DARK), 13, Fonts.MEDIUM);
 			nvg.drawRoundedRect(this.getX() + this.getWidth() - 45, this.getY() + 18, 22, 22, 5, palette.getBackgroundColor(resetHovered ? ColorType.NORMAL : ColorType.DARK));
+			HoverStyle.tint(nvg, HoverStyle.update("module-reset", resetHovered), this.getX() + this.getWidth() - 45, this.getY() + 18, 22, 22, 5);
 			nvg.drawText(Icon.REFRESH, this.getX() + this.getWidth() - 39, this.getY() + offsetY + 7.5F, palette.getFontColor(ColorType.DARK), 13, Fonts.ICON);
 			MouseCursor.pointer(mouseX, mouseY, this.getX() + 21, this.getY() + 18, 22, 22);
 			MouseCursor.pointer(mouseX, mouseY, this.getX() + this.getWidth() - 45, this.getY() + 18, 22, 22);

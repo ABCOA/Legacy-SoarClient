@@ -14,6 +14,7 @@ import me.eldodebug.soar.management.mods.impl.FreelookMod;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.impl.CompSlider;
 import me.eldodebug.soar.ui.comp.impl.field.CompSearchBox;
 import me.eldodebug.soar.utils.MathUtils;
@@ -72,7 +73,7 @@ public class GuiModMenu extends GuiScreen {
 		
 		currentCategory = getCategoryByClass(HomeCategory.class);
 	}
-	
+
 	@Override
 	public void initGui() {
 		endFreelookDistancePreview();
@@ -132,7 +133,7 @@ public class GuiModMenu extends GuiScreen {
 		ColorManager colorManager = instance.getColorManager();
 		ColorPalette palette = colorManager.getPalette();
 		AccentColor currentColor = colorManager.getCurrentColor();
-		File headFile = new File(instance.getFileManager().getCacheDir(), "head/" + instance.getAccountManager().getCurrentAccount().getName() + ".png");
+		File headFile = new File(instance.getFileManager().getCacheDir(), "head/" + (instance.getAccountManager().getCurrentAccount() == null ? "steve" : instance.getAccountManager().getCurrentAccount().getName()) + ".png");
 		
 		if(introAnimation.isDone(Direction.BACKWARDS)) {
 			mc.displayGuiScreen(toEditHUD ? new GuiEditHUD(true) : null);
@@ -165,7 +166,11 @@ public class GuiModMenu extends GuiScreen {
 			Color textColor = c.getTextColorAnimation().getColor(MathUtils.isInRange(moveAnimation.getValue(), offsetY - 8, offsetY + 8) ? Color.WHITE : palette.getFontColor(ColorType.NORMAL), 18);
 			
 			c.getTextAnimation().setAnimation(c.equals(currentCategory) ? 1.0F : 0.0F, 14);
-			
+
+			boolean hovered = !c.equals(currentCategory) && MouseUtils.isInside(mouseX, mouseY, x, y + 30, 32, height - 100)
+					&& HoverStyle.isHovered(mouseX, mouseY, x + 5.5F, y + 38.5F + offsetY + categoryScroll.getValue(), 21, 21);
+			HoverStyle.tint(nvg, HoverStyle.update(c, hovered), x + 5.5F, y + 38.5F + offsetY, 21, 21, 4);
+
 			nvg.drawText(c.getIcon(), x + 9F, y + 42 + offsetY, textColor, 14, Fonts.ICON);
 			if(MouseUtils.isInside(mouseX, mouseY, x, y + 30, 32, height - 100)) {
 				MouseCursor.pointer(mouseX, mouseY, x + 5.5F, y + 38.5F + offsetY + categoryScroll.getValue(), 21, 21);
@@ -185,6 +190,7 @@ public class GuiModMenu extends GuiScreen {
 		}
 		
 		nvg.drawGradientRoundedRect(x + 5.5F, y + height - 60, 21, 21, 4, currentColor.getColor1(), currentColor.getColor2());
+		HoverStyle.sheen(nvg, HoverStyle.update("menu-edit-hud", HoverStyle.isHovered(mouseX, mouseY, x + 5.5F, y + height - 60, 21, 21)), x + 5.5F, y + height - 60, 21, 21, 4);
 		nvg.drawText(Icon.LAYOUT, x + 9, y + height - 56.5F, Color.WHITE, 14, Fonts.ICON);
 		MouseCursor.pointer(mouseX, mouseY, x + 5.5F, y + height - 60, 21, 21);
 		
@@ -234,7 +240,7 @@ public class GuiModMenu extends GuiScreen {
 		
 		categoryScroll.onAnimation();
 		
-		categoryScroll.setMaxScroll((categories.size() - 5.85F) * 30);
+		categoryScroll.setMaxScroll(Math.max(0, (categories.size() - 5.85F) * 30));
 		
 		if(currentCategory.isShowSearchBox() && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_F)) {
 			currentCategory.getSearchBox().setFocused(true);

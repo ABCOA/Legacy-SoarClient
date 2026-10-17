@@ -21,14 +21,22 @@ public class ImageSetting extends Setting {
 
 	@Override
 	public void reset() {
+        Object before = getImage();
+
 		this.image = null;
-	}
+	
+        if (!java.util.Objects.equals(before, getImage())) changed();
+    }
 
 	public File getImage() {
 		return image;
 	}
 
 	public void setImage(File image) {
+        Object before = getImage();
+
 		this.image = image;
-	}
+	
+        if (!java.util.Objects.equals(before, getImage())) changed();
+    }
 }

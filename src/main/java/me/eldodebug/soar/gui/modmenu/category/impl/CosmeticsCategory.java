@@ -19,6 +19,7 @@ import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.management.notification.NotificationType;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.SearchUtils;
 import me.eldodebug.soar.utils.mouse.MouseCursor;
@@ -83,6 +84,8 @@ public class CosmeticsCategory extends Category {
 			Color textColor = c.getTextColorAnimation().getColor(isCurrentCategory ? Color.WHITE : palette.getFontColor(ColorType.DARK), 20);
 
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6, defaultColor);
+			HoverStyle.tint(nvg, HoverStyle.update(c, !isCurrentCategory && HoverStyle.isHovered(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scroll.getValue(), textWidth + 20, 16)),
+					this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6);
 			nvg.drawGradientRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6, color1, color2);
 			
 			nvg.drawText(c.getName(), this.getX() + 15 + offsetX + ((textWidth + 20) - textWidth) / 2, this.getY() + offsetY + 1.5F, textColor, 9, Fonts.MEDIUM);
@@ -91,8 +94,6 @@ public class CosmeticsCategory extends Category {
 		}
 		
 		offsetX = 0;
-		nvg.drawText(nvg.getLimitText(capeManager.getSyncStatus() + (capeManager.getSyncDetail().isEmpty() ? "" : ": " + capeManager.getSyncDetail()), 8, Fonts.MEDIUM, 388),
-				this.getX() + 15, this.getY() + offsetY + 23, palette.getFontColor(ColorType.DARK), 8, Fonts.MEDIUM);
 		offsetY = offsetY + 38;
 		
 		for(Cape cp : capeManager.getCapes()) {
@@ -106,6 +107,8 @@ public class CosmeticsCategory extends Category {
 			
 			nvg.drawGradientRoundedRect(this.getX() + 15 + offsetX - 2, this.getY() + offsetY - 2, 88 + 4, 135 + 4, 8.5F, ColorUtils.applyAlpha(accentColor.getColor1(), (int) (cp.getAnimation().getValue() * 255)), ColorUtils.applyAlpha(accentColor.getColor2(), (int) (cp.getAnimation().getValue() * 255)));
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY, 88, 135, 8, palette.getBackgroundColor(ColorType.DARK));
+			HoverStyle.tint(nvg, HoverStyle.update(cp, !cp.equals(capeManager.getCurrentCape()) && HoverStyle.isHovered(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY + scroll.getValue(), 88, 135)),
+					HoverStyle.ROW, this.getX() + 15 + offsetX, this.getY() + offsetY, 88, 135, 8);
 			
 			if(cp instanceof OfficialCape) {
 				ResourceLocation official = capeManager.getOfficialCape();

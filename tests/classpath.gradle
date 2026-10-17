@@ -1,0 +1,13 @@
+allprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin('java')) {
+            task writeTestClasspath {
+                doLast {
+                    def target = project.file('build/qa/classpath.txt')
+                    target.parentFile.mkdirs()
+                    target.text = sourceSets.main.output.asPath + File.pathSeparator + sourceSets.main.compileClasspath.asPath
+                }
+            }
+        }
+    }
+}

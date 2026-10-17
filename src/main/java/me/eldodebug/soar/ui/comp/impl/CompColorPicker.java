@@ -3,6 +3,7 @@ package me.eldodebug.soar.ui.comp.impl;
 import me.eldodebug.soar.Soar;
 import me.eldodebug.soar.management.mods.settings.impl.ColorSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.MathUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
@@ -19,6 +20,7 @@ public class CompColorPicker extends Comp {
 	private SimpleAnimation saturationAnimation = new SimpleAnimation();
 	private SimpleAnimation brightnessAnimation = new SimpleAnimation();
 	private SimpleAnimation alphaAnimation = new SimpleAnimation();
+	private SimpleAnimation hoverAnimation = new SimpleAnimation();
 	
 	private ColorSetting colorSetting;
 	private boolean open;
@@ -147,6 +149,8 @@ public class CompColorPicker extends Comp {
 		nvg.restore();
 		
 		nvg.drawRoundedRect(this.getX() + (106 * scale), this.getY(), 16 * scale, 16 * scale, 4, colorSetting.getColor());
+		HoverStyle.outline(nvg, 0.6F * HoverStyle.update(hoverAnimation, HoverStyle.isHovered(mouseX, mouseY, this.getX() + 106 * scale, this.getY(), 16 * scale, 16 * scale)),
+				this.getX() + (106 * scale), this.getY(), 16 * scale, 16 * scale, 4);
 	}
 	
 	@Override

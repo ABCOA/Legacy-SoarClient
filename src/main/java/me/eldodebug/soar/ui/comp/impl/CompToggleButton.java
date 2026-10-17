@@ -7,6 +7,7 @@ import me.eldodebug.soar.management.color.palette.ColorPalette;
 import me.eldodebug.soar.management.color.palette.ColorType;
 import me.eldodebug.soar.management.mods.settings.impl.BooleanSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.Comp;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.animation.ColorAnimation;
@@ -21,6 +22,7 @@ public class CompToggleButton extends Comp {
 	private SimpleAnimation opacityAnimation = new SimpleAnimation();
 	private SimpleAnimation toggleAnimation = new SimpleAnimation();
 	private ColorAnimation circleAnimation = new ColorAnimation();
+	private SimpleAnimation hoverAnimation = new SimpleAnimation();
 	
 	private BooleanSetting setting;
 	
@@ -70,6 +72,14 @@ public class CompToggleButton extends Comp {
 		
 		nvg.drawRoundedRect(x, y, width, height, (7 * scale), palette.getBackgroundColor(ColorType.NORMAL));
 		nvg.drawGradientRoundedRect(x, y, width, height, (7 * scale), ColorUtils.applyAlpha(accentColor.getColor1(), (int) (opacityAnimation.getValue() * 255)), ColorUtils.applyAlpha(accentColor.getColor2(), (int) (opacityAnimation.getValue() * 255)));
+
+		float hover = HoverStyle.update(hoverAnimation, HoverStyle.isHovered(mouseX, mouseY, x, y, width, height));
+
+		if(toggled) {
+			HoverStyle.sheen(nvg, hover, x, y, width, height, 7 * scale);
+		} else {
+			HoverStyle.tint(nvg, hover, x, y, width, height, 7 * scale);
+		}
 		nvg.drawRoundedRect(x + (toggleAnimation.getValue() * scale), y + (2.5F * scale), circle, circle, circle / 2, circleAnimation.getColor(toggled ? Color.WHITE : palette.getBackgroundColor(ColorType.DARK), 16));
 	}
 	

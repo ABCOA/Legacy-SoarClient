@@ -18,6 +18,7 @@ import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.management.notification.NotificationType;
 import me.eldodebug.soar.ui.comp.impl.CompSlider;
 import me.eldodebug.soar.ui.comp.impl.field.CompTextBox;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.Multithreading;
 import me.eldodebug.soar.utils.SearchUtils;
@@ -91,6 +92,8 @@ public class MusicCategory extends Category {
 			Color textColor = t.getTextColorAnimation().getColor(isCurrentCategory ? Color.WHITE : palette.getFontColor(ColorType.DARK), 20);
 
 			nvg.drawRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6, defaultColor);
+			HoverStyle.tint(nvg, HoverStyle.update(t, !isCurrentCategory && HoverStyle.isHovered(mouseX, mouseY, this.getX() + 15 + offsetX, this.getY() + offsetY - 3 + scroll.getValue(), textWidth + 20, 16)),
+					this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6);
 			nvg.drawGradientRoundedRect(this.getX() + 15 + offsetX, this.getY() + offsetY - 3, textWidth + 20, 16, 6, color1, color2);
 			
 			nvg.drawText(t.getName(), this.getX() + 15 + offsetX + ((textWidth + 20) - textWidth) / 2, this.getY() + offsetY + 1.5F, textColor, 9, Fonts.MEDIUM);
@@ -108,6 +111,12 @@ public class MusicCategory extends Category {
 			
 			nvg.drawRoundedRect(this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 46, 8, palette.getBackgroundColor(ColorType.DARK));
 			MouseCursor.pointer(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY + scroll.getValue(), this.getWidth() - 30, 46);
+			HoverStyle.tint(nvg, HoverStyle.update(m, HoverStyle.isHovered(mouseX, mouseY, this.getX() + 15, this.getY() + offsetY + scroll.getValue(), this.getWidth() - 30, 46)),
+					HoverStyle.ROW, this.getX() + 15, this.getY() + offsetY, this.getWidth() - 30, 46, 8);
+			HoverStyle.tint(nvg, HoverStyle.update(m.getName() + ":favorite", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() - 59, this.getY() + offsetY + 14 + scroll.getValue(), 18, 18)),
+					this.getX() + this.getWidth() - 59, this.getY() + offsetY + 14, 18, 18, 4);
+			HoverStyle.tint(nvg, HoverStyle.update(m.getName() + ":trash", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() - 41, this.getY() + offsetY + 14 + scroll.getValue(), 18, 18)),
+					this.getX() + this.getWidth() - 41, this.getY() + offsetY + 14, 18, 18, 4);
 			
 			if(m.getIcon() == null) {
 				nvg.drawRoundedImage(new ResourceLocation("soar/music.png"), this.getX() + 21, this.getY() + offsetY + 6, 34, 34, 6);
@@ -139,7 +148,13 @@ public class MusicCategory extends Category {
 		textBox.setPosition(this.getX() + this.getWidth() - 169, this.getY() + this.getHeight() - 80, 129, 18);
 		textBox.draw(mouseX, mouseY, partialTicks);
 		
+		if(textBox.isFocused()) {
+			nvg.drawOutlineRoundedRect(textBox.getX(), textBox.getY(), textBox.getWidth(), textBox.getHeight(), 6, 1, accentColor.getColor1());
+		}
+		
 		nvg.drawRoundedRect(this.getX() + this.getWidth() - 34, this.getY() + this.getHeight() - 80, 18, 18, 4, palette.getBackgroundColor(ColorType.NORMAL));
+		HoverStyle.tint(nvg, HoverStyle.update("music-download", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() - 34, this.getY() + this.getHeight() - 80, 18, 18)),
+				this.getX() + this.getWidth() - 34, this.getY() + this.getHeight() - 80, 18, 18, 4);
 		nvg.drawText(Icon.DOWNLOAD, this.getX() + this.getWidth() - 30.5F, this.getY() + this.getHeight() - 76.5F, palette.getFontColor(ColorType.DARK), 11, Fonts.ICON);
 		
 		nvg.restore();
@@ -161,17 +176,22 @@ public class MusicCategory extends Category {
 		nvg.drawText(currentMusic == null ? TranslateText.NOTHING_IS_PLAYING.getText() : nvg.getLimitText(currentMusic.getName(), 9, Fonts.MEDIUM, 290), this.getX() + 56, this.getY() + this.getHeight() - 37,
 				palette.getFontColor(ColorType.DARK), 9, Fonts.MEDIUM);
 		
+		float playHover = HoverStyle.update("music-play", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() / 2 - 9, this.getY() + this.getHeight() - 21.5F, 17, 17));
+		float backHover = HoverStyle.update("music-back", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() / 2 - 34, this.getY() + this.getHeight() - 22.5F, 18, 18));
+		float forwardHover = HoverStyle.update("music-forward", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() / 2 + 16, this.getY() + this.getHeight() - 22.5F, 18, 18));
+		float addHover = HoverStyle.update("music-add", HoverStyle.isHovered(mouseX, mouseY, this.getX() + this.getWidth() - addSongWidth - 10, this.getY() + this.getHeight() - 39, addSongWidth, 12));
+		
 		nvg.drawText(currentMusic == null || !musicManager.isPlaying() ? Icon.PLAY : Icon.PAUSE, this.getX() + (this.getWidth() / 2) - 8, this.getY() + this.getHeight() - 21.5F, 
-				palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
+				HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), playHover), 16, Fonts.ICON);
 		
 		nvg.drawText(Icon.BACK, this.getX() + (this.getWidth() / 2) - 33, this.getY() + this.getHeight() - 21.5F, 
-				palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
+				HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), backHover), 16, Fonts.ICON);
 		
 		nvg.drawText(Icon.FORWARD, this.getX() + (this.getWidth() / 2) + 17, this.getY() + this.getHeight() - 21.5F, 
-				palette.getFontColor(ColorType.NORMAL), 16, Fonts.ICON);
+				HoverStyle.blend(palette.getFontColor(ColorType.NORMAL), forwardHover), 16, Fonts.ICON);
 		
 		nvg.drawText("+" + TranslateText.ADD_SONG.getText(), this.getX() + this.getWidth() - (nvg.getTextWidth("+" + TranslateText.ADD_SONG.getText(), 9, Fonts.MEDIUM)) - 10, this.getY() + this.getHeight() - 37,
-				palette.getFontColor(ColorType.DARK), 9, Fonts.MEDIUM);
+				HoverStyle.blend(palette.getFontColor(ColorType.DARK), addHover), 9, Fonts.MEDIUM);
 		
 		volumeSlider.setX(this.getX() + this.getWidth() - 62 - 10);
 		volumeSlider.setY(this.getY() + this.getHeight() - 20);

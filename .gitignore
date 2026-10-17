@@ -49,3 +49,7 @@ replay_pid*
 *.key
 *.p12
 *.pfx
+
+/logs/
+*.log.gz
+/token.txt

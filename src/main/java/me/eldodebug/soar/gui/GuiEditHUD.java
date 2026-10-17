@@ -237,6 +237,7 @@ public class GuiEditHUD extends GuiScreen {
 			m.setDragging(false);
 		}
 		
+		Soar.getInstance().getProfileManager().save();
 		try {
 			super.mouseClicked(mouseX, mouseY, mouseButton);
 		} catch (IOException e) {}
@@ -253,6 +254,7 @@ public class GuiEditHUD extends GuiScreen {
 		}
 	}
 	
+	@Override public void onGuiClosed() { Soar.getInstance().getProfileManager().save(); }
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;

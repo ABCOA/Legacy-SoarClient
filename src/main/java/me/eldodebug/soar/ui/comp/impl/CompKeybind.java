@@ -8,7 +8,9 @@ import me.eldodebug.soar.management.mods.settings.KeybindConflicts;
 import me.eldodebug.soar.management.mods.settings.impl.KeybindSetting;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.Comp;
+import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import me.eldodebug.soar.utils.mouse.MouseCursor;
 import me.eldodebug.soar.utils.mouse.MouseUtils;
 import org.lwjgl.input.Keyboard;
@@ -20,6 +22,7 @@ public class CompKeybind extends Comp {
 	private KeybindSetting setting;
 	private float width;
 	private boolean binding;
+	private SimpleAnimation hoverAnimation = new SimpleAnimation();
 	
 	public CompKeybind(float x, float y, float width, KeybindSetting setting) {
 		super(x, y);
@@ -44,11 +47,12 @@ public class CompKeybind extends Comp {
 		
 		java.util.List<KeybindSetting> conflicts = KeybindConflicts.findFor(setting);
 		boolean conflict = !binding && !conflicts.isEmpty();
-		String info = binding ? "Binding..." : KeybindConflicts.keyName(setting.getKeyCode()) + (conflict ? " !" : "");
+		String info = binding ? TranslateText.KEYBIND_BINDING.getText() :KeybindConflicts.keyName(setting.getKeyCode()) + (conflict ? " !" : "");
 		
 		nvg.drawGradientRoundedRect(this.getX(), this.getY(), width, 16, 4,
 				conflict ? new Color(220, 120, 45) : accentColor.getColor1(), conflict ? new Color(205, 70, 50) : accentColor.getColor2());
-		
+		HoverStyle.sheen(nvg, HoverStyle.update(hoverAnimation, HoverStyle.isHovered(mouseX, mouseY, this.getX(), this.getY(), width, 16)), this.getX(), this.getY(), width, 16, 4);
+
 		nvg.drawCenteredText(info, this.getX() + (width / 2), this.getY() + 5F, new Color(255, 255, 255), 8, Fonts.REGULAR);
 		if(conflict && MouseUtils.isInside(mouseX, mouseY, this.getX(), this.getY(), width, 16)) {
 			String warning = TranslateText.KEYBIND_CONFLICT.getText() + ": " + KeybindConflicts.names(conflicts);

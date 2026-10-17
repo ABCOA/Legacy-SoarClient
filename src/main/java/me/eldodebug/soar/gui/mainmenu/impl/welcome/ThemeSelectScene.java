@@ -1,5 +1,6 @@
 package me.eldodebug.soar.gui.mainmenu.impl.welcome;
 
+import me.eldodebug.soar.management.language.TranslateText;
 import java.awt.Color;
 
 import me.eldodebug.soar.Soar;
@@ -66,7 +67,7 @@ public class ThemeSelectScene extends MainMenuScene {
 		int index = 1;
 		
 		nvg.drawRoundedRect(x, y, width, height, 8, this.getBackgroundColor());
-		nvg.drawCenteredText("Choose a theme", x + (width / 2), y + 10, Color.WHITE, 16, Fonts.MEDIUM);
+		nvg.drawCenteredText(TranslateText.WELCOME_CHOOSE_THEME.getText(), x + (width / 2), y + 10, Color.WHITE, 16, Fonts.MEDIUM);
 		nvg.drawRect(x, y + 27, width, 1, Color.WHITE);
 		
 		scroll.onScroll();
@@ -96,7 +97,7 @@ public class ThemeSelectScene extends MainMenuScene {
 		nvg.restore();
 		
 		nvg.drawRoundedRect(x + width - 86, y + height - 26, 80, 20, 6, this.getBackgroundColor());
-		nvg.drawCenteredText("Next", x + width - 86 + (80 / 2), y + height - 20, Color.WHITE, 10, Fonts.REGULAR);
+		nvg.drawCenteredText(TranslateText.WELCOME_NEXT.getText(), x + width - 86 + (80 / 2), y + height - 20, Color.WHITE, 10, Fonts.REGULAR);
 	}
 	
 	private void drawModMenuExample(float x, float y, Theme theme) {

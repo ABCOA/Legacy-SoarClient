@@ -1,5 +1,6 @@
 package me.eldodebug.soar.gui.mainmenu.impl.welcome;
 
+import me.eldodebug.soar.management.language.TranslateText;
 import java.awt.Color;
 
 import me.eldodebug.soar.Soar;
@@ -28,7 +29,7 @@ public class LoginMessageScene extends MainMenuScene {
 		
 		ScaledResolution sr = new ScaledResolution(mc);
 		NanoVGManager nvg = Soar.getInstance().getNanoVGManager();
-		String message = "Finally, let's login to Minecraft!";
+		String message = TranslateText.WELCOME_LOGIN.getText();
 		
 		BlurUtils.drawBlurScreen(14);
 		

@@ -1,5 +1,6 @@
 package me.eldodebug.soar.gui.mainmenu.impl.welcome;
 
+import me.eldodebug.soar.management.language.TranslateText;
 import java.awt.Color;
 
 import me.eldodebug.soar.Soar;
@@ -26,7 +27,7 @@ public class CheckingDataScene extends MainMenuScene {
 		
 		ScaledResolution sr = new ScaledResolution(mc);
 		NanoVGManager nvg = Soar.getInstance().getNanoVGManager();
-		String message = "Checking the data...";
+		String message = TranslateText.WELCOME_CHECKING_DATA.getText();
 		
 		BlurUtils.drawBlurScreen(14);
 		

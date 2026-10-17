@@ -24,8 +24,12 @@ public class NumberSetting extends Setting {
 	
 	@Override
 	public void reset() {
+        Object before = getValue();
+
 		this.value = defaultValue;
-	}
+	
+        if (!java.util.Objects.equals(before, getValue())) changed();
+    }
 	
 	public double getValue() {
 		
@@ -64,8 +68,12 @@ public class NumberSetting extends Setting {
 	}
 	
 	public void setValue(double value) {
+        Object before = getValue();
+
 		this.value = value;
-	}
+	
+        if (!java.util.Objects.equals(before, getValue())) changed();
+    }
 
 	public double getMinValue() {
 		return minValue;

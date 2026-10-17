@@ -13,6 +13,7 @@ public class Setting {
 		this.parent = parent;
 	}
 
+	protected void changed() { me.eldodebug.soar.management.profile.ProfileManager.changed(this); }
 	public void reset() {}
 	
 	public Mod getParent() {

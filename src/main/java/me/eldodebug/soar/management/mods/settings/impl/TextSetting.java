@@ -19,16 +19,24 @@ public class TextSetting extends Setting {
 	
 	@Override
 	public void reset() {
+        Object before = getText();
+
 		this.text = defaultText;
-	}
+	
+        if (!java.util.Objects.equals(before, getText())) changed();
+    }
 
 	public String getText() {
 		return text;
 	}
 
 	public void setText(String text) {
+        Object before = getText();
+
 		this.text = text;
-	}
+	
+        if (!java.util.Objects.equals(before, getText())) changed();
+    }
 
 	public String getDefaultText() {
 		return defaultText;

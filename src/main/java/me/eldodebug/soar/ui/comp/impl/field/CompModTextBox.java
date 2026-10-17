@@ -106,8 +106,12 @@ public class CompModTextBox extends CompTextBoxBase {
 		if(!focused) {
 			setting.setText(this.getText());
 		}
-		
+
 		nvg.restore();
+
+		if(focused) {
+			nvg.drawOutlineRoundedRect(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 4, 1, colorManager.getCurrentColor().getColor1());
+		}
 	}
 	
 	@Override

@@ -83,7 +83,6 @@ dependencies {
         exclude module: 'gson'
         exclude module: 'commons-io'
     }
-    compile 'org.pircbotx:pircbotx:2.1'
     embed 'javazoom:jlayer:1.0.1'
     compileOnly 'org.lwjgl.lwjgl:lwjgl:2.9.3'
 }

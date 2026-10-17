@@ -13,6 +13,7 @@ import me.eldodebug.soar.management.mods.impl.GlobalSettingsMod;
 import me.eldodebug.soar.management.nanovg.NanoVGManager;
 import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.ui.comp.impl.CompComboBox;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.mouse.MouseCursor;
@@ -60,6 +61,8 @@ public class AppearanceScene extends SettingScene {
 			t.getAnimation().setAnimation(t.equals(colorManager.getTheme()) ? 1.0F : 0.0F, 16);
 			
 			nvg.drawGradientOutlineRoundedRect(this.getX() + offsetX + 12, this.getY() + 28, 36, 36, 6, 1.4F * t.getAnimation().getValue(), ColorUtils.applyAlpha(currentColor.getColor1(), alpha), ColorUtils.applyAlpha(currentColor.getColor2(), alpha));
+			HoverStyle.outline(nvg, 0.6F * HoverStyle.update(t, !t.equals(colorManager.getTheme()) && HoverStyle.isHovered(mouseX, mouseY, this.getX() + offsetX + 12, this.getY() + 28, 36, 36)),
+					this.getX() + offsetX + 12, this.getY() + 28, 36, 36, 6);
 			
 			offsetX+=46;
 		}
@@ -84,6 +87,9 @@ public class AppearanceScene extends SettingScene {
 			}
 			
 			nvg.drawGradientRoundedRect(this.getX() + offsetX + 12, this.getY() + 28 + 91, 32, 32, 6, c.getColor1(), c.getColor2());
+			HoverStyle.sheen(nvg, HoverStyle.update(c, MouseUtils.isInside(mouseX, mouseY, this.getX(), this.getY() + 91, this.getWidth(), 72)
+					&& HoverStyle.isHovered(mouseX, mouseY, this.getX() + offsetX + 12 + scroll.getValue(), this.getY() + 119, 32, 32)),
+					this.getX() + offsetX + 12, this.getY() + 28 + 91, 32, 32, 6);
 			
 			c.getAnimation().setAnimation(c.equals(currentColor) ? 1.0F : 0.0F, 16);
 			

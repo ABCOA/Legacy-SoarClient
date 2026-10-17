@@ -1,5 +1,6 @@
 package me.eldodebug.soar.gui.mainmenu.impl.welcome;
 
+import me.eldodebug.soar.management.language.TranslateText;
 import java.awt.Color;
 
 import me.eldodebug.soar.Soar;
@@ -74,7 +75,7 @@ public class AccentColorSelectScene extends MainMenuScene {
 		int index = 1;
 		
 		nvg.drawRoundedRect(x, y, width, height, 8, this.getBackgroundColor());
-		nvg.drawCenteredText("Choose a accent color", x + (width / 2), y + 10, Color.WHITE, 16, Fonts.MEDIUM);
+		nvg.drawCenteredText(TranslateText.WELCOME_CHOOSE_ACCENT.getText(), x + (width / 2), y + 10, Color.WHITE, 16, Fonts.MEDIUM);
 		nvg.drawRect(x, y + 27, width, 1, Color.WHITE);
 		
 		nvg.drawRoundedImage(new ResourceLocation("soar/backgrounds/example-vertical.png"), x + width - 108, y + 40, 96, 96, 6);
@@ -110,7 +111,7 @@ public class AccentColorSelectScene extends MainMenuScene {
 		nvg.restore();
 		
 		nvg.drawRoundedRect(x + width - 108, y + height - 26, 96, 20, 6, this.getBackgroundColor());
-		nvg.drawCenteredText("Next", x + width - 108 + (96 / 2), y + height - 20, Color.WHITE, 10, Fonts.REGULAR);
+		nvg.drawCenteredText(TranslateText.WELCOME_NEXT.getText(), x + width - 108 + (96 / 2), y + height - 20, Color.WHITE, 10, Fonts.REGULAR);
 	}
 	
 	@Override

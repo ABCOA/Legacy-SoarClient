@@ -20,16 +20,24 @@ public class BooleanSetting extends Setting {
 	
 	@Override
 	public void reset() {
+        Object before = isToggled();
+
 		this.toggled = defaultValue;
-	}
+	
+        if (!java.util.Objects.equals(before, isToggled())) changed();
+    }
 	
 	public boolean isToggled() {
 		return toggled;
 	}
 
 	public void setToggled(boolean toggle) {
+        Object before = isToggled();
+
 		this.toggled = toggle;
-	}
+	
+        if (!java.util.Objects.equals(before, isToggled())) changed();
+    }
 
 	public boolean isDefaultValue() {
 		return defaultValue;

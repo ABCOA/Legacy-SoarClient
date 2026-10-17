@@ -26,16 +26,24 @@ public class ComboSetting extends Setting {
 
 	@Override
 	public void reset() {
+        Object before = getOption();
+
 		this.option = defaultOption;
-	}
+	
+        if (!java.util.Objects.equals(before, getOption())) changed();
+    }
 	
 	public Option getOption() {
 		return option;
 	}
 
 	public void setOption(Option option) {
+        Object before = getOption();
+
 		this.option = option;
-	}
+	
+        if (!java.util.Objects.equals(before, getOption())) changed();
+    }
 
 	public ArrayList<Option> getOptions() {
 		return options;

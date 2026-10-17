@@ -36,28 +36,14 @@ public class Mod {
 		Soar.getInstance().getEventManager().unregister(this);
 	}
 	
-	public void toggle() {
-		
-		toggled = !toggled;
-		
-		if(toggled) {
-			onEnable();
-		}else {
-			onDisable();
-		}
-	}
-	
-	public void setToggled(boolean toggled) {
-		
-		this.toggled = toggled;
-		
-		if(toggled) {
-			onEnable();
-		}else {
-			onDisable();
-		}
-	}
-	
+	public void toggle() { setToggled(!toggled); }
+    public void setToggled(boolean toggled) {
+        if (this.toggled == toggled) return;
+        this.toggled = toggled;
+        if (toggled) onEnable(); else onDisable();
+        me.eldodebug.soar.management.profile.ProfileManager.changed();
+    }
+    
 	public String getName() {
 		return nameTranslate.getText();
 	}

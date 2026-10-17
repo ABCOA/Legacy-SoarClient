@@ -13,6 +13,7 @@ import me.eldodebug.soar.management.nanovg.font.Fonts;
 import me.eldodebug.soar.management.nanovg.font.Icon;
 import me.eldodebug.soar.management.screenshot.Screenshot;
 import me.eldodebug.soar.management.screenshot.ScreenshotManager;
+import me.eldodebug.soar.ui.HoverStyle;
 import me.eldodebug.soar.utils.ColorUtils;
 import me.eldodebug.soar.utils.animation.simple.SimpleAnimation;
 import me.eldodebug.soar.utils.mouse.MouseCursor;
@@ -99,6 +100,9 @@ public class ScreenshotCategory extends Category {
 					}
 					
 					nvg.drawRoundedRect(this.getX() + offsetX + 62, this.getY() + this.getHeight() - 36, 23, 23, 5, palette.getBackgroundColor(ColorType.NORMAL));
+					boolean thumbnailHovered = !currentScreenshot.equals(s) && MouseUtils.isInside(mouseX, mouseY, this.getX() + addX, this.getY() + this.getHeight() - 40, this.getWidth() - addX * 2, 30)
+							&& HoverStyle.isHovered(mouseX, mouseY, this.getX() + offsetX + 62 + scroll.getValue(), this.getY() + this.getHeight() - 36, 23, 23);
+					float thumbnailHover = HoverStyle.update(s, thumbnailHovered);
 					
 					nvg.save();
 					nvg.scale(this.getX() + offsetX + 62, this.getY() + this.getHeight() - 31, 0.07F);
@@ -108,6 +112,7 @@ public class ScreenshotCategory extends Category {
 					s.getSelectAnimation().setAnimation(currentScreenshot.equals(s) ? 1.0F : 0.0F, 16);
 					
 					nvg.drawGradientOutlineRoundedRect(this.getX() + offsetX + 62, this.getY() + this.getHeight() - 36, 23, 23, 5, s.getSelectAnimation().getValue() * 1.2F, ColorUtils.applyAlpha(accentColor.getColor1(), alpha), ColorUtils.applyAlpha(accentColor.getColor2(), alpha));
+					HoverStyle.outline(nvg, thumbnailHover * 0.6F, this.getX() + offsetX + 62, this.getY() + this.getHeight() - 36, 23, 23, 5);
 				}
 				
 				offsetX+=27;
